@@ -1,0 +1,81 @@
+\section{实验预习}
+\subsection{进程的概念、创建和回收方法(5分)}
+
+\paragraph{进程}进程（Process）是计算机中的程序关于某数据集合上的一次运行活动，是系统进行资源分配和调度的基本单位，是操作系统结构的基础。在早期面向进程设计的计算机结构中，进程是程序的基本执行实体；在当代面向线程设计的计算机结构中，进程是线程的容器。程序是指令、数据及其组织形式的描述，进程是程序的实体。
+
+\paragraph{进程的创建}Linux提供了两个函数来创建进程。
+
+\begin{enumerate}
+    \item fork:提供了创建进程的基本操作，可以说它是Linux系统多任务的基础。
+    \item exec函数族:建立一个全新的新进程。
+\end{enumerate}
+
+\paragraph{进程的回收}Linux提供了两个函数来回收子进程。
+
+\begin{enumerate}
+    \item wait():阻塞父进程直到子进程退出然后回收子进程
+    \item waitpid():可以指定回收某个进程组里面的进程，也可以指定回收某个进程
+\end{enumerate}
+
+\subsection{信号的机制、种类(5分)}
+\paragraph{信号机制}
+
+\paragraph{信号种类}共64个信号，分为两种信号：非实时信号和实时信号。其中1-31个信号为非实时信号，32-64为实时信号。当一信号在阻塞状态下产生多次信号，当解除该信号的阻塞后，非实时信号仅传递一次信号，而实时信号会传递多次。
+
+\begin{enumerate}
+    \item 非实时信号：内核会为每个信号维护一个信号掩码，并阻塞信号针对该进程的传递。如果将阻塞的信号发送给某进程，对该信号的传递将延时，直至从进程掩码中移除该信号为止。当从进程掩码中移除该信号时该信号将传递给该进程。如果信号在阻塞期间传递过多次该信号，信号解除阻塞后仅传递一次。
+    \item 实时信号：实时信号采用队列化处理，一个实时信号的多个实例发送给进程，信号将会传递多次。可以制定伴随数据，用于产生信号时的数据传递。不同实时信号的传递顺序是固定的，优先传递信号编号小的。
+\end{enumerate}
+
+\subsection{信号的发送方法、阻塞方法、处理程序的设置方法(5分)}
+\paragraph{信号的发送}发送信号的主要函数有：kill()、raise()、 sigqueue()、alarm()、setitimer()以及abort()。
+\begin{enumerate}
+    \item \mint{c}{int kill(pid_t pid,int signo)}最常用于pid>0时的信号发送，调用成功返回 0； 否则，返回 -1。
+    \item \mint{c}{int raise(int signo)}向进程本身发送信号，参数为即将发送的信号值。调用成功返回 0；否则，返回 -1。
+    \item \mint{c}{int sigqueue(pid_t pid, int sig, const union sigval val)} 主要是针对实时信号提出的（当然也支持前32种），支持信号带有参数，与函数sigaction()配合使用。
+    \item \mint{c}{unsigned int alarm(unsigned int seconds)}专门为SIGALRM信号而设，在指定的时间seconds秒后，将向进程本身发送SIGALRM信号，又称为闹钟时间。进程调用alarm后，任何以前的alarm()调用都将无效。如果参数seconds为零，那么进程内将不再包含任何闹钟时间。 
+    返回值，如果调用alarm（）前，进程中已经设置了闹钟时间，则返回上一个闹钟时间的剩余时间，否则返回0。
+    \item \mint{c}{int setitimer(int which, const struct itimerval *value, struct itimerval *ovalue))}比alarm功能强大，支持3种类型的定时器：
+    \item \mint{c}{void abort(void);} 向进程发送SIGABORT信号，默认情况下进程会异常退出，当然可定义自己的信号处理函数。即使SIGABORT被进程设置为阻塞信号，调用abort()后，SIGABORT仍然能被进程接收。该函数无返回值。
+\end{enumerate}
+
+\paragraph{信号的阻塞}每个进程都有一个用来描述哪些信号递送到进程时将被阻塞的信号集，该信号集中的所有信号在递送到进程后都将被阻塞。下面是与信号阻塞相关的几个函数：
+
+\begin{minted}{c}
+# include <signal.h>
+int sigprocmask(int how,const sigset_t *set,sigset_t *oldset);
+int sigpending(sigset_t *set));
+int sigsuspend(const sigset_t *mask));
+\end{minted}
+
+\textbf{Sigprocmask}函数能够根据参数how来实现对信号集的操作，操作主要有三种：
+
+\begin{enumerate}
+    \item SIG\_BLOCK	在进程当前阻塞信号集中添加set指向信号集中的信号
+    \item SIG\_UNBLOCK	如果进程阻塞信号集中包含set指向信号集中的信号，则解除对该信号的阻塞
+    \item SIG\_SETMASK	更新进程阻塞信号集为set指向的信号集
+\end{enumerate}
+
+\paragraph{处理程序的设置}linux主要有两个函数实现信号的安装：signal()、sigaction()。
+\begin{enumerate}
+\item siganl():其中signal()在可靠信号系统调用的基础上实现, 是库函数。它只有两个参数，不支持信号传递信息，主要是用于前32种非实时信号的安装；
+\item sigaction():由两个系统调用实现：sys\_signal以及sys\_rt\_sigaction），有三个参数，支持信号传递信息，主要用来与 sigqueue() 系统调用配合使用，当然，sigaction()同样支持非实时信号的安装。
+\end{enumerate}
+
+\subsection{什么是shell，功能和处理流程(5分)}
+shell 就是一个程序，它接受从键盘输入的命令， 然后把命令传递给操作系统去执行。
+\paragraph{功能}
+\begin{itemize}
+    \item 解释用户输入的命令，将它传递给内核
+    \item 调用其他程序，给其他程序传递数据或参数，并获取程序的处理结果
+    \item 在多个程序之间传递数据，把一个程序的输出作为另一个程序的输入
+    \item 也可以被其他程序调用
+\end{itemize}
+
+\paragraph{处理流程}
+\begin{enumerate}
+    \item 将输入命令进行预处理，切分成tokens。
+    \item 程序块tokens被处理，检查看他们是否是shell中所引用到的关键字。 
+    \item 初始化所有的输入输出重定向。 
+    \item 最后，执行命令。 
+\end{enumerate}

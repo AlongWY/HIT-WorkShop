@@ -1,0 +1,7 @@
+digraph G{
+    randdir = LR;
+    node [shape="box",fontname = "Noto Sans CJK SC"];
+    "是否是内置命令" -> "执行内置命令"[label="是"];
+    "执行内置命令" -> "返回1";
+    "是否是内置命令" -> "返回0"[label="否"];
+} 

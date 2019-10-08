@@ -1,0 +1,356 @@
+\documentclass{ctexart}
+\usepackage{color}
+\usepackage{alltt}
+\usepackage[T1]{fontenc}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage{marvosym}
+
+% highlight theme: vim bclear
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.2,0.2,0.2}{#1}}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.06,0.58,0.63}{#1}}
+\newcommand{\hlesc}[1]{\textcolor[rgb]{0.86,0.41,0.09}{#1}}
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.06,0.58,0.63}{#1}}
+\newcommand{\hlpps}[1]{\textcolor[rgb]{0.06,0.58,0.63}{#1}}
+\newcommand{\hlslc}[1]{\textcolor[rgb]{0.59,0.59,0.59}{#1}}
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.59,0.59,0.59}{#1}}
+\newcommand{\hlppc}[1]{\textcolor[rgb]{0.41,0.78,0.23}{#1}}
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0.2,0.2,0.2}{#1}}
+\newcommand{\hlipl}[1]{\textcolor[rgb]{0.45,0.46,0.77}{#1}}
+\newcommand{\hllin}[1]{\textcolor[rgb]{0.59,0.59,0.59}{#1}}
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.23,0.42,0.78}{#1}}
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.63,0,0.31}{#1}}
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0,0.63,0.31}{#1}}
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.78,0.23,0.41}{#1}}
+\definecolor{bgcolor}{rgb}{1,1,1}
+
+\title{GraphMain.cpp}
+\begin{document}
+\pagecolor{bgcolor}
+\noindent
+\ttfamily
+\hlstd{}\hllin{01\ }\hlstd{}\hlslc{//}\\
+\hllin{02\ }\hlstd{}\hlslc{//\ Created\ by\ along\ on\ 17{-}11{-}26.}\\
+\hllin{03\ }\hlstd{}\hlslc{//}\\
+\hllin{04\ }\hlstd{}\\
+\hllin{05\ }\hlstd{}\hlppc{\#include\ }\hlpps{"Graph.h"}\hlppc{}\\
+\hllin{06\ }\hlstd{}\hlppc{\#include\ $<$iostream$>$}\\
+\hllin{07\ }\hlstd{}\hlppc{\#include\ $<$fstream$>$}\\
+\hllin{08\ }\hlstd{}\hlppc{\#include\ $<$ncurses.h$>$}\\
+\hllin{09\ }\hlstd{}\hlppc{\#include\ $<$cstring$>$}\\
+\hllin{10\ }\hlstd{}\hlppc{\#include\ $<$functional$>$}\\
+\hllin{11\ }\hlstd{}\hlppc{\#include\ $<$sys/time.h$>$}\\
+\hllin{12\ }\hlstd{}\\
+\hllin{13\ }\hlstd{}\hlppc{\#define\ KEY\textunderscore ESC\ (27)}\\
+\hllin{14\ }\hlstd{}\\
+\hllin{15\ }\hlstd{}\hlkwa{using\ namespace\ }\hlstd{std}\hlopt{;}\\
+\hllin{16\ }\hlstd{}\hlkwb{int\ }\hlstd{row}\hlopt{,\ }\hlstd{col}\hlopt{;}\\
+\hllin{17\ }\hlstd{}\hlkwb{const\ int\ }\hlstd{Offset\ }\hlopt{=\ }\hlstd{}\hlnum{5}\hlstd{}\hlopt{;}\\
+\hllin{18\ }\hlstd{}\hlkwb{const\ char\ }\hlstd{title}\hlopt{{[}{]}\ =\ }\hlstd{}\hlstr{"{-}{-}{-}{-}{-}图管理器{-}{-}{-}{-}{-}"}\hlstd{}\hlopt{;}\\
+\hllin{19\ }\hlstd{}\hlkwb{const\ char\ }\hlstd{exitStr}\hlopt{{[}{]}\ =\ }\hlstd{}\hlstr{"右方向键确认\ ESC退出"}\hlstd{}\hlopt{;}\\
+\hllin{20\ }\hlstd{}\\
+\hllin{21\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{readFromFile}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{);}\\
+\hllin{22\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{menu}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{int\ }\hlstd{choice}\hlopt{,\ }\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{);}\\
+\hllin{23\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{addEdge}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{);}\\
+\hllin{24\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{delEdge}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{);}\\
+\hllin{25\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{outDegree}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{);}\\
+\hllin{26\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{printGraph}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{);}\\
+\hllin{27\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{printDot}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{);}\\
+\hllin{28\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{DFS}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{);}\\
+\hllin{29\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{DFSR}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{);}\\
+\hllin{30\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{BFS}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{);}\\
+\hllin{31\ }\hlstd{}\\
+\hllin{32\ }\hlstd{}\hlkwb{int\ }\hlstd{}\hlkwd{main}\hlstd{}\hlopt{()\ \{}\\
+\hllin{33\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{Graph\ }\hlopt{{*}}\hlstd{graph\ }\hlopt{=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;}\\
+\hllin{34\ }\hlstd{}\\
+\hllin{35\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{vector}\hlopt{$<$}\hlstd{string}\hlopt{$>$\ }\hlstd{}\hlkwd{Choices}\hlstd{}\hlopt{(\{}\hlstd{}\hlstr{"创建图(邻接表)"}\hlstd{}\hlopt{,}\\
+\hllin{36\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlstr{"创建图(邻接矩阵)"}\hlstd{}\hlopt{,}\\
+\hllin{37\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlstr{"创建图(十字链表)"}\hlstd{}\hlopt{,}\\
+\hllin{38\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlstr{"查看某个顶点的出�}\Righttorque\\
+\hllin{39\ }\hlstr{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstr{�"}\hlstd{}\hlopt{,}\\
+\hllin{40\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlstr{"查看图的所有信息"}\hlstd{}\hlopt{,}\\
+\hllin{41\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlstr{"打印Dot图到文件"}\hlstd{}\hlopt{,}\\
+\hllin{42\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlstr{"添加一条边"}\hlstd{}\hlopt{,}\\
+\hllin{43\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlstr{"删除一条边"}\hlstd{}\hlopt{,}\\
+\hllin{44\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlstr{"重置本图"}\hlstd{}\hlopt{,}\\
+\hllin{45\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlstr{"先深遍历"}\hlstd{}\hlopt{,}\\
+\hllin{46\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlstr{"先深遍历(递归)"}\hlstd{}\hlopt{,}\\
+\hllin{47\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlstr{"先广遍历"}\hlstd{}\hlopt{\});}\\
+\hllin{48\ }\hlstd{}\\
+\hllin{49\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{int\ }\hlstd{key}\hlopt{,\ }\hlstd{choice\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;}\hlstd{}\hlslc{//用于指定光标位置}\\
+\hllin{50\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{setlocale}\hlstd{}\hlopt{(}\hlstd{LC\textunderscore ALL}\hlopt{,\ }\hlstd{}\hlstr{""}\hlstd{}\hlopt{);}\\
+\hllin{51\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{initscr}\hlstd{}\hlopt{();}\\
+\hllin{52\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{keypad}\hlstd{}\hlopt{(}\hlstd{stdscr}\hlopt{,\ }\hlstd{TRUE}\hlopt{);}\\
+\hllin{53\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{noecho}\hlstd{}\hlopt{();}\\
+\hllin{54\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{cbreak}\hlstd{}\hlopt{();}\\
+\hllin{55\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//界面}\\
+\hllin{56\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{do\ }\hlstd{}\hlopt{\{}\\
+\hllin{57\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{getmaxyx}\hlstd{}\hlopt{(}\hlstd{stdscr}\hlopt{,\ }\hlstd{row}\hlopt{,\ }\hlstd{col}\hlopt{);}\\
+\hllin{58\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{();}\\
+\hllin{59\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{,\ (}\hlstd{}\hlkwb{int}\hlstd{}\hlopt{)\ (}\hlstd{col\ }\hlopt{{-}\ }\hlstd{}\hlkwd{strlen}\hlstd{}\hlopt{(}\hlstd{title}\hlopt{))\ /\ }\hlstd{}\hlnum{2}\hlstd{}\hlopt{,\ }\hlstd{}\hlstr{"\%s"}\hlstd{}\hlopt{,\ }\Righttorque\\
+\hllin{60\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{title}\hlopt{);}\\
+\hllin{61\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwb{int\ }\hlstd{i\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;\ }\hlstd{i\ }\hlopt{!=\ }\hlstd{Choices}\hlopt{.}\hlstd{}\hlkwd{size}\hlstd{}\hlopt{();\ ++}\hlstd{i}\hlopt{)\ \{}\\
+\hllin{62\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{i\ }\hlopt{+\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{Offset}\hlopt{,\ }\hlstd{}\hlstr{"\%u.\%s"}\hlstd{}\hlopt{,\ }\hlstd{i\ }\hlopt{+\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{Choices}\hlopt{{[}}\Righttorque\\
+\hllin{63\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{i}\hlopt{{]}.}\hlstd{}\hlkwd{c\textunderscore str}\hlstd{}\hlopt{());}\\
+\hllin{64\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{65\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{choice\ }\hlopt{+\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{Offset\ }\hlopt{{-}\ }\hlstd{}\hlnum{2}\hlstd{}\hlopt{,\ }\hlstd{}\hlstr{"{*}"}\hlstd{}\hlopt{);}\\
+\hllin{66\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{row\ }\hlopt{{-}\ }\hlstd{}\hlnum{2}\hlstd{}\hlopt{,\ (}\hlstd{}\hlkwb{int}\hlstd{}\hlopt{)\ (}\hlstd{col\ }\hlopt{{-}\ }\hlstd{}\hlkwd{strlen}\hlstd{}\hlopt{(}\hlstd{exitStr}\hlopt{))\ /\ }\hlstd{}\hlnum{2}\hlstd{}\hlopt{,\ }\Righttorque\\
+\hllin{67\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlstr{"\%s"}\hlstd{}\hlopt{,\ }\hlstd{exitStr}\hlopt{);}\\
+\hllin{68\ }\hlstd{}\\
+\hllin{69\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{refresh}\hlstd{}\hlopt{();}\\
+\hllin{70\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{key\ }\hlopt{=\ }\hlstd{}\hlkwd{getch}\hlstd{}\hlopt{();}\\
+\hllin{71\ }\hlstd{}\\
+\hllin{72\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{switch\ }\hlstd{}\hlopt{(}\hlstd{key}\hlopt{)\ \{}\\
+\hllin{73\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{KEY\textunderscore UP}\hlopt{:}\\
+\hllin{74\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{({-}{-}}\hlstd{choice\ }\hlopt{==\ {-}}\hlstd{}\hlnum{1}\hlstd{}\hlopt{)}\\
+\hllin{75\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{choice\ }\hlopt{=\ (}\hlstd{}\hlkwb{int}\hlstd{}\hlopt{)\ (}\hlstd{Choices}\hlopt{.}\hlstd{}\hlkwd{size}\hlstd{}\hlopt{()\ {-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{);}\\
+\hllin{76\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{77\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{KEY\textunderscore DOWN}\hlopt{:}\\
+\hllin{78\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(++}\hlstd{choice\ }\hlopt{==\ }\hlstd{Choices}\hlopt{.}\hlstd{}\hlkwd{size}\hlstd{}\hlopt{())}\\
+\hllin{79\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{choice\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;}\\
+\hllin{80\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{81\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{KEY\textunderscore RIGHT}\hlopt{:}\hlstd{}\hlkwd{menu}\hlstd{}\hlopt{(}\hlstd{choice}\hlopt{,\ }\hlstd{graph}\hlopt{);}\\
+\hllin{82\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{83\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{default}\hlstd{}\hlopt{:}\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{84\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{85\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(}\hlstd{key\ }\hlopt{!=\ }\hlstd{KEY\textunderscore ESC}\hlopt{);}\\
+\hllin{86\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{endwin}\hlstd{}\hlopt{();}\\
+\hllin{87\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;}\\
+\hllin{88\ }\hlstd{}\hlopt{\}}\\
+\hllin{89\ }\hlstd{}\\
+\hllin{90\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{addEdge}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{)\ \{}\\
+\hllin{91\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{graph\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{92\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{93\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{row\ }\hlopt{{-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{Offset}\hlopt{,\ }\Righttorque\\
+\hllin{94\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlstr{"输入要添加的边的起点和终点(使用','分隔)}\Righttorque\\
+\hllin{95\ }\hlstr{}\hlstd{\ \ \ \ }\hlstr{:"}\hlstd{}\hlopt{);}\\
+\hllin{96\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{refresh}\hlstd{}\hlopt{();}\\
+\hllin{97\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{echo}\hlstd{}\hlopt{();}\\
+\hllin{98\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{src}\hlopt{,\ }\hlstd{dst}\hlopt{;}\\
+\hllin{99\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{scanw}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"\%ul,\%ul"}\hlstd{}\hlopt{,\ \&}\hlstd{src}\hlopt{,\ \&}\hlstd{dst}\hlopt{);}\\
+\hllin{100\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{graph}\hlopt{{-}$>$}\hlstd{}\hlkwd{addEdge}\hlstd{}\hlopt{(}\hlstd{src}\hlopt{,\ }\hlstd{dst}\hlopt{);}\\
+\hllin{101\ }\hlstd{}\hlopt{\}}\\
+\hllin{102\ }\hlstd{}\\
+\hllin{103\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{delEdge}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{)\ \{}\\
+\hllin{104\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{graph\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{105\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{106\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{row\ }\hlopt{{-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{Offset}\hlopt{,\ }\Righttorque\\
+\hllin{107\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlstr{"输入要删除的边的起点和终点(使用','分隔)}\Righttorque\\
+\hllin{108\ }\hlstr{}\hlstd{\ \ \ \ }\hlstr{:"}\hlstd{}\hlopt{);}\\
+\hllin{109\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{refresh}\hlstd{}\hlopt{();}\\
+\hllin{110\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{echo}\hlstd{}\hlopt{();}\\
+\hllin{111\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{src}\hlopt{,\ }\hlstd{dst}\hlopt{;}\\
+\hllin{112\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{scanw}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"\%ul,\%ul"}\hlstd{}\hlopt{,\ \&}\hlstd{src}\hlopt{,\ \&}\hlstd{dst}\hlopt{);}\\
+\hllin{113\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{graph}\hlopt{{-}$>$}\hlstd{}\hlkwd{delEdge}\hlstd{}\hlopt{(}\hlstd{src}\hlopt{,\ }\hlstd{dst}\hlopt{);}\\
+\hllin{114\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{noecho}\hlstd{}\hlopt{();}\\
+\hllin{115\ }\hlstd{}\hlopt{\}}\\
+\hllin{116\ }\hlstd{}\\
+\hllin{117\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{readFromFile}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{)\ \{}\\
+\hllin{118\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{row\ }\hlopt{{-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{Offset}\hlopt{,\ }\Righttorque\\
+\hllin{119\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlstr{"输入图信息所在的文件名:"}\hlstd{}\hlopt{);}\\
+\hllin{120\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{refresh}\hlstd{}\hlopt{();}\\
+\hllin{121\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{echo}\hlstd{}\hlopt{();}\\
+\hllin{122\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{char\ }\hlstd{filename}\hlopt{{[}}\hlstd{}\hlnum{50}\hlstd{}\hlopt{{]};}\\
+\hllin{123\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{getnstr}\hlstd{}\hlopt{(}\hlstd{filename}\hlopt{,\ }\hlstd{}\hlkwa{sizeof}\hlstd{}\hlopt{(}\hlstd{filename}\hlopt{));}\\
+\hllin{124\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{ifstream\ }\hlkwd{Stream}\hlstd{}\hlopt{(}\hlstd{filename}\hlopt{);}\\
+\hllin{125\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{Stream}\hlopt{)\ \{}\\
+\hllin{126\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{graph}\hlopt{{-}$>$}\hlstd{}\hlkwd{resetFromStream}\hlstd{}\hlopt{(}\hlstd{Stream}\hlopt{);}\\
+\hllin{127\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{Stream}\hlopt{.}\hlstd{}\hlkwd{close}\hlstd{}\hlopt{();}\\
+\hllin{128\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{noecho}\hlstd{}\hlopt{();}\\
+\hllin{129\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlopt{\{}\\
+\hllin{130\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{131\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{132\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{noecho}\hlstd{}\hlopt{();}\\
+\hllin{133\ }\hlstd{}\hlopt{\}}\\
+\hllin{134\ }\hlstd{}\\
+\hllin{135\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{outDegree}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{)\ \{}\\
+\hllin{136\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{graph\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{137\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{138\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{row\ }\hlopt{{-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{Offset}\hlopt{,\ }\Righttorque\\
+\hllin{139\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlstr{"输入要查看出度的顶点:"}\hlstd{}\hlopt{);}\\
+\hllin{140\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{refresh}\hlstd{}\hlopt{();}\\
+\hllin{141\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{echo}\hlstd{}\hlopt{();}\\
+\hllin{142\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{src}\hlopt{;}\\
+\hllin{143\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{scanw}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"\%lu"}\hlstd{}\hlopt{,\ \&}\hlstd{src}\hlopt{);}\\
+\hllin{144\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{auto\ }\hlstd{outDegree\ }\hlopt{=\ }\hlstd{graph}\hlopt{{-}$>$}\hlstd{}\hlkwd{outDegree}\hlstd{}\hlopt{(}\hlstd{src}\hlopt{);}\\
+\hllin{145\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{row\ }\hlopt{{-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{Offset}\hlopt{,\ }\hlstd{}\hlstr{""}\hlstd{}\hlopt{);}\\
+\hllin{146\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{clrtobot}\hlstd{}\hlopt{();}\\
+\hllin{147\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{row\ }\hlopt{{-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{Offset}\hlopt{,\ }\hlstd{}\hlstr{"顶点'\%lu'的出度是\%lu"}\hlstd{}\hlopt{,\ }\Righttorque\\
+\hllin{148\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{src}\hlopt{,\ }\hlstd{outDegree}\hlopt{);}\\
+\hllin{149\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{refresh}\hlstd{}\hlopt{();}\\
+\hllin{150\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{noecho}\hlstd{}\hlopt{();}\\
+\hllin{151\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{getch}\hlstd{}\hlopt{();}\\
+\hllin{152\ }\hlstd{}\hlopt{\}}\\
+\hllin{153\ }\hlstd{}\\
+\hllin{154\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{printGraph}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{)\ \{}\\
+\hllin{155\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{graph\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{156\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{157\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{();}\\
+\hllin{158\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{bool}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{)$>$\ }\hlstd{func\ }\hlopt{=\ {[}\&{]}(}\Righttorque\\
+\hllin{159\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{src}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{dst}\hlopt{)\ \{}\\
+\hllin{160\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{printw}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"\ \%d\ "}\hlstd{}\hlopt{,\ }\hlstd{dst}\hlopt{);}\\
+\hllin{161\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ true}\hlstd{}\hlopt{;}\\
+\hllin{162\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{163\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{,\ (}\hlstd{}\hlkwb{int}\hlstd{}\hlopt{)\ (}\hlstd{col\ }\hlopt{{-}\ }\hlstd{}\hlkwd{strlen}\hlstd{}\hlopt{(}\hlstd{title}\hlopt{))\ /\ }\hlstd{}\hlnum{2}\hlstd{}\hlopt{,\ }\hlstd{}\hlstr{"\%s"}\hlstd{}\hlopt{,\ }\hlstd{title}\hlopt{)}\Righttorque\\
+\hllin{164\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{;}\\
+\hllin{165\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{Offset\ }\hlopt{{-}\ }\hlstd{}\hlnum{2}\hlstd{}\hlopt{,\ }\hlstd{}\hlstr{"顶点\ \textbar \ 邻接点"}\hlstd{}\hlopt{);}\\
+\hllin{166\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{vex\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;\ }\hlstd{vex\ }\hlopt{!=\ }\hlstd{graph}\hlopt{{-}$>$}\hlstd{}\hlkwd{vexCount}\hlstd{}\hlopt{();\ ++}\Righttorque\\
+\hllin{167\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{vex}\hlopt{)\ \{}\\
+\hllin{168\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{((}\hlstd{}\hlkwb{int}\hlstd{}\hlopt{)\ }\hlstd{vex\ }\hlopt{+\ }\hlstd{}\hlnum{2}\hlstd{}\hlopt{,\ }\hlstd{Offset}\hlopt{,\ }\hlstd{}\hlstr{"\ \%d\ \textbar "}\hlstd{}\hlopt{,\ }\hlstd{vex}\hlopt{);}\\
+\hllin{169\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{graph}\hlopt{{-}$>$}\hlstd{}\hlkwd{foreach}\hlstd{}\hlopt{(}\hlstd{vex}\hlopt{,\ }\hlstd{func}\hlopt{);}\\
+\hllin{170\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{171\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{move}\hlstd{}\hlopt{({-}}\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ {-}}\hlstd{}\hlnum{1}\hlstd{}\hlopt{);}\\
+\hllin{172\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{refresh}\hlstd{}\hlopt{();}\\
+\hllin{173\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{getch}\hlstd{}\hlopt{();}\\
+\hllin{174\ }\hlstd{}\hlopt{\}}\\
+\hllin{175\ }\hlstd{}\\
+\hllin{176\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{printDot}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{)\ \{}\\
+\hllin{177\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{graph\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{178\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{179\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{row\ }\hlopt{{-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{Offset}\hlopt{,\ }\hlstd{}\hlstr{"输入要写入的文件名:"}\hlstd{}\hlopt{)}\Righttorque\\
+\hllin{180\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{;}\\
+\hllin{181\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{refresh}\hlstd{}\hlopt{();}\\
+\hllin{182\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{echo}\hlstd{}\hlopt{();}\\
+\hllin{183\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{char\ }\hlstd{filename}\hlopt{{[}}\hlstd{}\hlnum{50}\hlstd{}\hlopt{{]};}\\
+\hllin{184\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{getnstr}\hlstd{}\hlopt{(}\hlstd{filename}\hlopt{,\ }\hlstd{}\hlkwa{sizeof}\hlstd{}\hlopt{(}\hlstd{filename}\hlopt{));}\\
+\hllin{185\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{ofstream\ }\hlkwd{Stream}\hlstd{}\hlopt{(}\hlstd{filename}\hlopt{);}\\
+\hllin{186\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{Stream}\hlopt{)\ \{}\\
+\hllin{187\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{graph}\hlopt{{-}$>$}\hlstd{}\hlkwd{printDot}\hlstd{}\hlopt{(}\hlstd{Stream}\hlopt{);}\\
+\hllin{188\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{Stream}\hlopt{.}\hlstd{}\hlkwd{close}\hlstd{}\hlopt{();}\\
+\hllin{189\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{noecho}\hlstd{}\hlopt{();}\\
+\hllin{190\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlopt{\{}\\
+\hllin{191\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{192\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{193\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{noecho}\hlstd{}\hlopt{();}\\
+\hllin{194\ }\hlstd{}\hlopt{\}}\\
+\hllin{195\ }\hlstd{}\\
+\hllin{196\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{menu}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{int\ }\hlstd{choice}\hlopt{,\ }\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{)\ \{}\\
+\hllin{197\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{choice\ }\hlopt{$>$\ }\hlstd{}\hlnum{2\ }\hlstd{}\hlopt{\&\&\ }\hlstd{graph\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{}\\
+\hllin{198\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{row\ }\hlopt{{-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{Offset}\hlopt{,\ }\hlstd{}\hlstr{"图未建立"}\hlstd{}\hlopt{);}\\
+\hllin{199\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{refresh}\hlstd{}\hlopt{();}\\
+\hllin{200\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{getch}\hlstd{}\hlopt{();}\\
+\hllin{201\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{202\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{203\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{switch\ }\hlstd{}\hlopt{(}\hlstd{choice}\hlopt{)\ \{}\\
+\hllin{204\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{:}\hlstd{}\hlkwa{delete\ }\hlstd{graph}\hlopt{;}\\
+\hllin{205\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{graph\ }\hlopt{=\ }\hlstd{}\hlkwa{new\ }\hlstd{}\hlkwd{GraphT}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{);}\\
+\hllin{206\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{readFromFile}\hlstd{}\hlopt{(}\hlstd{graph}\hlopt{);}\\
+\hllin{207\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{208\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{:}\hlstd{}\hlkwa{delete\ }\hlstd{graph}\hlopt{;}\\
+\hllin{209\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{graph\ }\hlopt{=\ }\hlstd{}\hlkwa{new\ }\hlstd{}\hlkwd{GraphM}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{);}\\
+\hllin{210\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{readFromFile}\hlstd{}\hlopt{(}\hlstd{graph}\hlopt{);}\\
+\hllin{211\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{212\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{}\hlnum{2}\hlstd{}\hlopt{:}\hlstd{}\hlkwa{delete\ }\hlstd{graph}\hlopt{;}\\
+\hllin{213\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{graph\ }\hlopt{=\ }\hlstd{}\hlkwa{new\ }\hlstd{}\hlkwd{GraphL}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{);}\\
+\hllin{214\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{readFromFile}\hlstd{}\hlopt{(}\hlstd{graph}\hlopt{);}\\
+\hllin{215\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{216\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{}\hlnum{3}\hlstd{}\hlopt{:}\hlstd{}\hlkwd{outDegree}\hlstd{}\hlopt{(}\hlstd{graph}\hlopt{);}\\
+\hllin{217\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{218\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{}\hlnum{4}\hlstd{}\hlopt{:}\hlstd{}\hlkwd{printGraph}\hlstd{}\hlopt{(}\hlstd{graph}\hlopt{);}\\
+\hllin{219\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{220\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{}\hlnum{5}\hlstd{}\hlopt{:}\hlstd{}\hlkwd{printDot}\hlstd{}\hlopt{(}\hlstd{graph}\hlopt{);}\\
+\hllin{221\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{222\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{}\hlnum{6}\hlstd{}\hlopt{:}\hlstd{}\hlkwd{addEdge}\hlstd{}\hlopt{(}\hlstd{graph}\hlopt{);}\\
+\hllin{223\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{graph}\hlopt{{-}$>$}\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{();}\\
+\hllin{224\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{225\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{}\hlnum{7}\hlstd{}\hlopt{:}\hlstd{}\hlkwd{delEdge}\hlstd{}\hlopt{(}\hlstd{graph}\hlopt{);}\\
+\hllin{226\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{227\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{}\hlnum{8}\hlstd{}\hlopt{:}\hlstd{graph}\hlopt{{-}$>$}\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{();}\\
+\hllin{228\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{229\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{}\hlnum{9}\hlstd{}\hlopt{:}\hlstd{}\hlkwd{DFS}\hlstd{}\hlopt{(}\hlstd{graph}\hlopt{);}\\
+\hllin{230\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{231\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{}\hlnum{10}\hlstd{}\hlopt{:}\hlstd{}\hlkwd{DFSR}\hlstd{}\hlopt{(}\hlstd{graph}\hlopt{);}\\
+\hllin{232\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{233\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{}\hlnum{11}\hlstd{}\hlopt{:}\hlstd{}\hlkwd{BFS}\hlstd{}\hlopt{(}\hlstd{graph}\hlopt{);}\\
+\hllin{234\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{235\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{default}\hlstd{}\hlopt{:}\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{236\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{237\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{graph}\hlopt{{-}$>$}\hlstd{}\hlkwd{vexCount}\hlstd{}\hlopt{()\ ==\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{)\ \{}\\
+\hllin{238\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{delete\ }\hlstd{graph}\hlopt{;}\\
+\hllin{239\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{graph\ }\hlopt{=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;}\\
+\hllin{240\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{241\ }\hlstd{}\hlopt{\}}\\
+\hllin{242\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{DFS}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{)\ \{}\\
+\hllin{243\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{graph\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{244\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{245\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{void}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{)$>$\ }\hlstd{func\ }\hlopt{=\ {[}\&{]}(}\hlstd{}\hlkwb{unsigned\ long\ }\Righttorque\\
+\hllin{246\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{dst}\hlopt{)\ \{}\\
+\hllin{247\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{printw}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"\%d\ "}\hlstd{}\hlopt{,\ }\hlstd{dst}\hlopt{);}\\
+\hllin{248\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{249\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{row\ }\hlopt{{-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{Offset}\hlopt{,\ }\hlstd{}\hlstr{"先深遍历："}\hlstd{}\hlopt{);}\\
+\hllin{250\ }\hlstd{}\\
+\hllin{251\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//计时准备}\\
+\hllin{252\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{struct\ }\hlstd{timeval\ tpstart}\hlopt{\{\},\ }\hlstd{tpend}\hlopt{\{\};}\\
+\hllin{253\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{double\ }\hlstd{timeuse}\hlopt{;}\\
+\hllin{254\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{gettimeofday}\hlstd{}\hlopt{(\&}\hlstd{tpstart}\hlopt{,\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{);}\\
+\hllin{255\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//遍历}\\
+\hllin{256\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{graph}\hlopt{{-}$>$}\hlstd{}\hlkwd{DFS}\hlstd{}\hlopt{(}\hlstd{func}\hlopt{);}\\
+\hllin{257\ }\hlstd{}\\
+\hllin{258\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//计时结束}\\
+\hllin{259\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{gettimeofday}\hlstd{}\hlopt{(\&}\hlstd{tpend}\hlopt{,\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{);}\\
+\hllin{260\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{timeuse\ }\hlopt{=\ }\hlstd{}\hlnum{1000000\ }\hlstd{}\hlopt{{*}\ (}\hlstd{tpend}\hlopt{.}\hlstd{tv\textunderscore sec\ }\hlopt{{-}\ }\hlstd{tpstart}\hlopt{.}\hlstd{tv\textunderscore sec}\hlopt{)\ +\ }\Righttorque\\
+\hllin{261\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{tpend}\hlopt{.}\hlstd{tv\textunderscore usec\ }\hlopt{{-}\ }\hlstd{tpstart}\hlopt{.}\hlstd{tv\textunderscore usec}\hlopt{;}\Righttorque\\
+\hllin{262\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//注意，秒的读数和微秒的读数都应计算在�}\Righttorque\\
+\hllin{263\ }\hlslc{}\hlstd{\ \ \ \ }\hlslc{��}\\
+\hllin{264\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{row\ }\hlopt{{-}\ }\hlstd{}\hlnum{2}\hlstd{}\hlopt{,\ }\hlstd{Offset}\hlopt{,\ }\hlstd{}\hlstr{"用时:\%lfus"}\hlstd{}\hlopt{,\ }\hlstd{timeuse}\hlopt{);}\\
+\hllin{265\ }\hlstd{}\\
+\hllin{266\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{refresh}\hlstd{}\hlopt{();}\\
+\hllin{267\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{getch}\hlstd{}\hlopt{();}\\
+\hllin{268\ }\hlstd{}\hlopt{\}}\\
+\hllin{269\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{DFSR}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{)\ \{}\\
+\hllin{270\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{graph\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{271\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{272\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{void}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{)$>$\ }\hlstd{func\ }\hlopt{=\ {[}\&{]}(}\hlstd{}\hlkwb{unsigned\ long\ }\Righttorque\\
+\hllin{273\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{dst}\hlopt{)\ \{}\\
+\hllin{274\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{printw}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"\%d\ "}\hlstd{}\hlopt{,\ }\hlstd{dst}\hlopt{);}\\
+\hllin{275\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{276\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{row\ }\hlopt{{-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{Offset}\hlopt{,\ }\hlstd{}\hlstr{"先深遍历："}\hlstd{}\hlopt{);}\\
+\hllin{277\ }\hlstd{}\\
+\hllin{278\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//计时准备}\\
+\hllin{279\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{struct\ }\hlstd{timeval\ tpstart}\hlopt{\{\},\ }\hlstd{tpend}\hlopt{\{\};}\\
+\hllin{280\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{double\ }\hlstd{timeuse}\hlopt{;}\\
+\hllin{281\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{gettimeofday}\hlstd{}\hlopt{(\&}\hlstd{tpstart}\hlopt{,\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{);}\\
+\hllin{282\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//遍历}\\
+\hllin{283\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{graph}\hlopt{{-}$>$}\hlstd{}\hlkwd{DFSR}\hlstd{}\hlopt{(}\hlstd{func}\hlopt{);}\\
+\hllin{284\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//计时结束}\\
+\hllin{285\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{gettimeofday}\hlstd{}\hlopt{(\&}\hlstd{tpend}\hlopt{,\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{);}\\
+\hllin{286\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{timeuse\ }\hlopt{=\ }\hlstd{}\hlnum{1000000\ }\hlstd{}\hlopt{{*}\ (}\hlstd{tpend}\hlopt{.}\hlstd{tv\textunderscore sec\ }\hlopt{{-}\ }\hlstd{tpstart}\hlopt{.}\hlstd{tv\textunderscore sec}\hlopt{)\ +\ }\Righttorque\\
+\hllin{287\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{tpend}\hlopt{.}\hlstd{tv\textunderscore usec\ }\hlopt{{-}\ }\hlstd{tpstart}\hlopt{.}\hlstd{tv\textunderscore usec}\hlopt{;}\Righttorque\\
+\hllin{288\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//注意，秒的读数和微秒的读数都应计算在�}\Righttorque\\
+\hllin{289\ }\hlslc{}\hlstd{\ \ \ \ }\hlslc{��}\\
+\hllin{290\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{row\ }\hlopt{{-}\ }\hlstd{}\hlnum{2}\hlstd{}\hlopt{,\ }\hlstd{Offset}\hlopt{,\ }\hlstd{}\hlstr{"用时:\%lfus"}\hlstd{}\hlopt{,\ }\hlstd{timeuse}\hlopt{);}\\
+\hllin{291\ }\hlstd{}\\
+\hllin{292\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{refresh}\hlstd{}\hlopt{();}\\
+\hllin{293\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{getch}\hlstd{}\hlopt{();}\\
+\hllin{294\ }\hlstd{}\hlopt{\}}\\
+\hllin{295\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{BFS}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{{*}\&}\hlstd{graph}\hlopt{)\ \{}\\
+\hllin{296\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{graph\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{297\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{298\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{void}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{)$>$\ }\hlstd{func\ }\hlopt{=\ {[}\&{]}(}\hlstd{}\hlkwb{unsigned\ long\ }\Righttorque\\
+\hllin{299\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{dst}\hlopt{)\ \{}\\
+\hllin{300\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{printw}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"\%d\ "}\hlstd{}\hlopt{,\ }\hlstd{dst}\hlopt{);}\\
+\hllin{301\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{302\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{row\ }\hlopt{{-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{Offset}\hlopt{,\ }\hlstd{}\hlstr{"先深遍历："}\hlstd{}\hlopt{);}\\
+\hllin{303\ }\hlstd{}\\
+\hllin{304\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//计时准备}\\
+\hllin{305\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{struct\ }\hlstd{timeval\ tpstart}\hlopt{\{\},\ }\hlstd{tpend}\hlopt{\{\};}\\
+\hllin{306\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{double\ }\hlstd{timeuse}\hlopt{;}\\
+\hllin{307\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{gettimeofday}\hlstd{}\hlopt{(\&}\hlstd{tpstart}\hlopt{,\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{);}\\
+\hllin{308\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//遍历}\\
+\hllin{309\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{graph}\hlopt{{-}$>$}\hlstd{}\hlkwd{BFS}\hlstd{}\hlopt{(}\hlstd{func}\hlopt{);}\\
+\hllin{310\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//计时结束}\\
+\hllin{311\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{gettimeofday}\hlstd{}\hlopt{(\&}\hlstd{tpend}\hlopt{,\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{);}\\
+\hllin{312\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{timeuse\ }\hlopt{=\ }\hlstd{}\hlnum{1000000\ }\hlstd{}\hlopt{{*}\ (}\hlstd{tpend}\hlopt{.}\hlstd{tv\textunderscore sec\ }\hlopt{{-}\ }\hlstd{tpstart}\hlopt{.}\hlstd{tv\textunderscore sec}\hlopt{)\ +\ }\Righttorque\\
+\hllin{313\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{tpend}\hlopt{.}\hlstd{tv\textunderscore usec\ }\hlopt{{-}\ }\hlstd{tpstart}\hlopt{.}\hlstd{tv\textunderscore usec}\hlopt{;}\Righttorque\\
+\hllin{314\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlslc{//注意，秒的读数和微秒的读数都应计算在�}\Righttorque\\
+\hllin{315\ }\hlslc{}\hlstd{\ \ \ \ }\hlslc{��}\\
+\hllin{316\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{mvprintw}\hlstd{}\hlopt{(}\hlstd{row\ }\hlopt{{-}\ }\hlstd{}\hlnum{2}\hlstd{}\hlopt{,\ }\hlstd{Offset}\hlopt{,\ }\hlstd{}\hlstr{"用时:\%lfus"}\hlstd{}\hlopt{,\ }\hlstd{timeuse}\hlopt{);}\\
+\hllin{317\ }\hlstd{}\\
+\hllin{318\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{refresh}\hlstd{}\hlopt{();}\\
+\hllin{319\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{getch}\hlstd{}\hlopt{();}\\
+\hllin{320\ }\hlstd{}\hlopt{\}}\hlstd{}\\
+\mbox{}
+\normalfont
+\normalsize
+\end {document}
+(* LaTeX generated by highlight 3.40, http://www.andre-simon.de/ *)

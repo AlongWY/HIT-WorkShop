@@ -1,0 +1,69 @@
+\section{程序运行分析}
+\subsection{SUM的分析(20分)}
+
+\begin{minted}{c}
+int sum(int a[], unsigned len) {
+    int i, sum = 0;
+    for (i = 0; i <= len - 1; i++)
+    sum += a[i];
+    return sum;
+}
+\end{minted}
+
+\subsubsection{运行结果}程序运行后会发生数组越界，而后被系统强行终止。
+
+\subsubsection{原因分析}\mintinline{c}|len|是\mintinline{c}|unsigned|类型，输入\mintinline{c}|len=0|,导致的结果其实是\mintinline{c}|i|始终与\mintinline{c}|0xFFFFFFFF|比较大小,\mintinline{c}|i|是\mintinline{c}|int|类型，进行了类型后转换后始终比\mintinline{c}|len|小，之后在循环过程中就会越来越大，最终数组访问到无权限的位置被强行终止。
+
+\subsubsection{改进方法}修改 \mintinline{c}|for(i = 0;i <= len-1;i++)| 为 \mintinline{c}|for(i = len;i > 0;i++)|。
+
+\subsection{FLOAT的分析(20分)} 
+\begin{minted}{c}
+#include <stdio.h>
+
+int main() {
+  float f;
+  for (;;) {
+  printf("请输入一个浮点数:");
+  scanf("%f", &f);
+  printf("这个浮点数的值是:%f\n", f);
+  if (f == 0)
+    break;
+  }
+  return 0;
+}
+\end{minted}
+
+\subsubsection{运行结果}
+\begin{tabular}{|c|c|c|c|}
+	\hline 
+	输入 & 输出 & 输入 & 输出 \\ 
+	\hline 
+	61.419997 & 61.419998 & 10.186810 & 10.186810 \\ 
+	\hline 
+	61.419998 & 61.419998 & 10.186811 & 10.186811 \\ 
+	\hline 
+	61.419999 & 61.419998 & 10.186812 & 10.186812 \\ 
+	\hline 
+	61.420000 & 61.419998 & 10.186813 & 10.186813 \\ 
+	\hline 
+	61.420001 & 61.420002 & 10.186814 & 10.186814 \\ 
+	\hline
+	          &           & 10.186815 & 10.186815 \\ 
+	\hline 
+\end{tabular} 
+
+\subsubsection{原因分析}
+由于\mintinline{c}|float|是用有限的内存存储无限的数据，这当然是不可能的，所以\mintinline{c}|float|的值是离散的，不精确的，在输入60.419998等数据时，精度是不足的，C语言对其进行了舍入，而在输入10.186810时，\mintinline{c}|float|精度足够，所以可以取得精确值。
+
+\subsubsection{注意事项}
+C语言中\mintinline{c}|float|的精度是有限的，数值越大，越不精确，所以在使用\mintinline{c}|float|类型时需要考虑精确度的问题。
+
+
+\section{总结}
+\subsection{本次实验的收获}
+本次实验，我学会了虚拟机的安装与使用，学会使用C语言和操作系统进行交互，而不仅仅停留于表面，在对程序进行分析的时候，更进一步的明白了C语言的相关特性，获益匪浅。
+
+\subsection{对本次实验内容的建议} 
+希望能同时给出 \LaTeX 模板，方便使用。
+
+

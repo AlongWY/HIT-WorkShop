@@ -1,0 +1,6 @@
+cupy
+chainer
+scikit-image
+matplotlib
+opencv-python
+requests

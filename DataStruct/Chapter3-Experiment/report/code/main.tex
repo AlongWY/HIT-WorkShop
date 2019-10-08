@@ -1,0 +1,129 @@
+\documentclass[11pt,a4paper]{ctexart}
+% 调整页面大小，默认页面与常用规格不符
+\usepackage[margin=1in,top=1.5in]{geometry}
+\usepackage{color}
+\usepackage{alltt}
+\usepackage[T1]{fontenc}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage{marvosym}
+
+% highlight theme: vim bclear
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.2,0.2,0.2}{#1}}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.06,0.58,0.63}{#1}}
+\newcommand{\hlesc}[1]{\textcolor[rgb]{0.86,0.41,0.09}{#1}}
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.06,0.58,0.63}{#1}}
+\newcommand{\hlpps}[1]{\textcolor[rgb]{0.06,0.58,0.63}{#1}}
+\newcommand{\hlslc}[1]{\textcolor[rgb]{0.59,0.59,0.59}{#1}}
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.59,0.59,0.59}{#1}}
+\newcommand{\hlppc}[1]{\textcolor[rgb]{0.41,0.78,0.23}{#1}}
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0.2,0.2,0.2}{#1}}
+\newcommand{\hlipl}[1]{\textcolor[rgb]{0.45,0.46,0.77}{#1}}
+\newcommand{\hllin}[1]{\textcolor[rgb]{0.59,0.59,0.59}{#1}}
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.23,0.42,0.78}{#1}}
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.63,0,0.31}{#1}}
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0,0.63,0.31}{#1}}
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.78,0.23,0.41}{#1}}
+\definecolor{bgcolor}{rgb}{1,1,1}
+
+\title{treeMain.cpp}
+\begin{document}
+\pagecolor{bgcolor}
+\noindent
+\ttfamily
+\hlstd{}\hllin{01\ }\hlstd{}\hlslc{//}\\
+\hllin{02\ }\hlstd{}\hlslc{//\ Created\ by\ along\ on\ 17{-}11{-}11.}\\
+\hllin{03\ }\hlstd{}\hlslc{//}\\
+\hllin{04\ }\hlstd{}\\
+\hllin{05\ }\hlstd{}\hlppc{\#include\ $<$vector$>$}\\
+\hllin{06\ }\hlstd{}\hlppc{\#include\ $<$cstring$>$}\\
+\hllin{07\ }\hlstd{}\hlppc{\#include\ $<$fstream$>$}\\
+\hllin{08\ }\hlstd{}\hlppc{\#include\ $<$sstream$>$}\\
+\hllin{09\ }\hlstd{}\hlppc{\#include\ }\hlpps{"BitTree.h"}\hlppc{}\\
+\hllin{10\ }\hlstd{}\\
+\hllin{11\ }\hlstd{}\hlkwa{using\ namespace\ }\hlstd{std}\hlopt{;}\\
+\hllin{12\ }\hlstd{}\\
+\hllin{13\ }\hlstd{}\hlkwb{int\ }\hlstd{}\hlkwd{main}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{int\ }\hlstd{argv}\hlopt{,\ }\hlstd{}\hlkwb{char\ }\hlstd{}\hlopt{{*}{*}}\hlstd{argc}\hlopt{)\ \{}\\
+\hllin{14\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{ifstream\ fileIn}\hlopt{;}\\
+\hllin{15\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{ofstream\ }\hlkwd{dotFile}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"tree.dot"}\hlstd{}\hlopt{);}\\
+\hllin{16\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{vector}\hlopt{$<$}\hlstd{}\hlkwb{int}\hlstd{}\hlopt{$>$\ }\hlstd{front}\hlopt{;}\\
+\hllin{17\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{vector}\hlopt{$<$}\hlstd{}\hlkwb{int}\hlstd{}\hlopt{$>$\ }\hlstd{middle}\hlopt{;}\\
+\hllin{18\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{BitTree}\hlopt{$<$}\hlstd{}\hlkwb{int}\hlstd{}\hlopt{$>$\ }\hlstd{tree}\hlopt{;}\\
+\hllin{19\ }\hlstd{}\\
+\hllin{20\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{argv\ }\hlopt{$>$\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{)\ \{}\\
+\hllin{21\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwb{int\ }\hlstd{i\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;\ }\hlstd{i\ }\hlopt{!=\ }\hlstd{argv}\hlopt{;\ ++}\hlstd{i}\hlopt{)\ \{}\\
+\hllin{22\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{}\hlnum{0\ }\hlstd{}\hlopt{==\ }\hlstd{}\hlkwd{strncmp}\hlstd{}\hlopt{(}\hlstd{argc}\hlopt{{[}++}\hlstd{i}\hlopt{{]},\ }\hlstd{}\hlstr{"{-}I"}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{2}\hlstd{}\hlopt{))\ \{}\\
+\hllin{23\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{int\ }\hlstd{data}\hlopt{;}\\
+\hllin{24\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{string\ line}\hlopt{;}\\
+\hllin{25\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{istringstream\ lineStream}\hlopt{;}\\
+\hllin{26\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{fileIn}\hlopt{.}\hlstd{}\hlkwd{open}\hlstd{}\hlopt{(}\hlstd{argc}\hlopt{{[}++}\hlstd{i}\hlopt{{]});}\\
+\hllin{27\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{getline}\hlstd{}\hlopt{(}\hlstd{fileIn}\hlopt{,\ }\hlstd{line}\hlopt{);}\\
+\hllin{28\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{lineStream}\hlopt{.}\hlstd{}\hlkwd{str}\hlstd{}\hlopt{(}\hlstd{line}\hlopt{);}\\
+\hllin{29\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{lineStream}\hlopt{.}\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{();}\\
+\hllin{30\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(}\hlstd{lineStream\ }\hlopt{$>$$>$\ }\hlstd{data}\hlopt{)\ \{}\\
+\hllin{31\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{front}\hlopt{.}\hlstd{}\hlkwd{push\textunderscore back}\hlstd{}\hlopt{(}\hlstd{data}\hlopt{);}\\
+\hllin{32\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{33\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{getline}\hlstd{}\hlopt{(}\hlstd{fileIn}\hlopt{,\ }\hlstd{line}\hlopt{);}\\
+\hllin{34\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{lineStream}\hlopt{.}\hlstd{}\hlkwd{str}\hlstd{}\hlopt{(}\hlstd{line}\hlopt{);}\\
+\hllin{35\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{lineStream}\hlopt{.}\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{();}\\
+\hllin{36\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(}\hlstd{lineStream\ }\hlopt{$>$$>$\ }\hlstd{data}\hlopt{)\ \{}\\
+\hllin{37\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{middle}\hlopt{.}\hlstd{}\hlkwd{push\textunderscore back}\hlstd{}\hlopt{(}\hlstd{data}\hlopt{);}\\
+\hllin{38\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{39\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{tree\ }\hlopt{=\ }\hlstd{BitTree}\hlopt{$<$}\hlstd{}\hlkwb{int}\hlstd{}\hlopt{$>$::}\hlstd{}\hlkwd{CreateBitTree}\hlstd{}\hlopt{(}\hlstd{front}\hlopt{,\ }\Righttorque\\
+\hllin{40\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{middle}\hlopt{);}\\
+\hllin{41\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{42\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{43\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlopt{\{}\\
+\hllin{44\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{tree\ }\hlopt{=}\\
+\hllin{45\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{BitTree}\hlopt{$<$}\hlstd{}\hlkwb{int}\hlstd{}\hlopt{$>$::}\hlstd{}\hlkwd{CreateBitTree}\hlstd{}\hlopt{(\{}\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{2}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{3}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{4}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{5}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{6}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{7}\hlstd{}\hlopt{,}\Righttorque\\
+\hllin{46\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlnum{8}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{9}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{10}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{11}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{12}\hlstd{}\hlopt{\},\ }\Righttorque\\
+\hllin{47\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{true}\hlstd{}\hlopt{);}\\
+\hllin{48\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{49\ }\hlstd{}\\
+\hllin{50\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"先序非递归:"}\hlstd{}\hlopt{;}\\
+\hllin{51\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{tree}\hlopt{.}\hlstd{}\hlkwd{visitTree}\hlstd{}\hlopt{(}\hlstd{tree}\hlopt{.}\hlstd{DLR}\hlopt{);}\\
+\hllin{52\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{endl}\hlopt{;}\\
+\hllin{53\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"中序非递归:"}\hlstd{}\hlopt{;}\\
+\hllin{54\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{tree}\hlopt{.}\hlstd{}\hlkwd{visitTree}\hlstd{}\hlopt{(}\hlstd{tree}\hlopt{.}\hlstd{LDR}\hlopt{);}\\
+\hllin{55\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{endl}\hlopt{;}\\
+\hllin{56\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"后序非递归:"}\hlstd{}\hlopt{;}\\
+\hllin{57\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{tree}\hlopt{.}\hlstd{}\hlkwd{visitTree}\hlstd{}\hlopt{(}\hlstd{tree}\hlopt{.}\hlstd{LRD}\hlopt{);}\\
+\hllin{58\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{endl}\hlopt{;}\\
+\hllin{59\ }\hlstd{}\\
+\hllin{60\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"先序递归:"}\hlstd{}\hlopt{;}\\
+\hllin{61\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{tree}\hlopt{.}\hlstd{}\hlkwd{visitTreeR}\hlstd{}\hlopt{(}\hlstd{tree}\hlopt{.}\hlstd{DLR}\hlopt{);}\\
+\hllin{62\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{endl}\hlopt{;}\\
+\hllin{63\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"中序递归:"}\hlstd{}\hlopt{;}\\
+\hllin{64\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{tree}\hlopt{.}\hlstd{}\hlkwd{visitTreeR}\hlstd{}\hlopt{(}\hlstd{tree}\hlopt{.}\hlstd{LDR}\hlopt{);}\\
+\hllin{65\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{endl}\hlopt{;}\\
+\hllin{66\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"后序递归:"}\hlstd{}\hlopt{;}\\
+\hllin{67\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{tree}\hlopt{.}\hlstd{}\hlkwd{visitTreeR}\hlstd{}\hlopt{(}\hlstd{tree}\hlopt{.}\hlstd{LRD}\hlopt{);}\\
+\hllin{68\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{endl}\hlopt{;}\\
+\hllin{69\ }\hlstd{}\\
+\hllin{70\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{BitTree}\hlopt{$<$}\hlstd{}\hlkwb{int}\hlstd{}\hlopt{$>$::}\hlstd{}\hlkwd{BitTreeThreading}\hlstd{}\hlopt{(}\hlstd{tree}\hlopt{);}\\
+\hllin{71\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{tree}\hlopt{.}\hlstd{}\hlkwd{printGraph}\hlstd{}\hlopt{(}\hlstd{dotFile}\hlopt{);}\\
+\hllin{72\ }\hlstd{}\\
+\hllin{73\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"先序线索:"}\hlstd{}\hlopt{;}\\
+\hllin{74\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{tree}\hlopt{.}\hlstd{}\hlkwd{threadVisit}\hlstd{}\hlopt{(}\hlstd{tree}\hlopt{.}\hlstd{DLR}\hlopt{);}\\
+\hllin{75\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{endl}\hlopt{;}\\
+\hllin{76\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"中序线索:"}\hlstd{}\hlopt{;}\\
+\hllin{77\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{tree}\hlopt{.}\hlstd{}\hlkwd{threadVisit}\hlstd{}\hlopt{(}\hlstd{tree}\hlopt{.}\hlstd{LDR}\hlopt{);}\\
+\hllin{78\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{endl}\hlopt{;}\\
+\hllin{79\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"后序线索:"}\hlstd{}\hlopt{;}\\
+\hllin{80\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{tree}\hlopt{.}\hlstd{}\hlkwd{threadVisit}\hlstd{}\hlopt{(}\hlstd{tree}\hlopt{.}\hlstd{LRD}\hlopt{);}\\
+\hllin{81\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{endl}\hlopt{;}\\
+\hllin{82\ }\hlstd{}\\
+\hllin{83\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"层序非递归:"}\hlstd{}\hlopt{;}\\
+\hllin{84\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{tree}\hlopt{.}\hlstd{}\hlkwd{visitTreeCover}\hlstd{}\hlopt{();}\\
+\hllin{85\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{cout\ }\hlopt{$<$$<$\ }\hlstd{endl}\hlopt{;}\\
+\hllin{86\ }\hlstd{}\\
+\hllin{87\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{fileIn}\hlopt{.}\hlstd{}\hlkwd{close}\hlstd{}\hlopt{();}\\
+\hllin{88\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{dotFile}\hlopt{.}\hlstd{}\hlkwd{close}\hlstd{}\hlopt{();}\\
+\hllin{89\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;}\\
+\hllin{90\ }\hlstd{}\hlopt{\}}\\
+\hllin{91\ }\hlstd{}\\
+\mbox{}
+\normalfont
+\normalsize
+\end {document}
+(* LaTeX generated by highlight 3.40, http://www.andre-simon.de/ *)

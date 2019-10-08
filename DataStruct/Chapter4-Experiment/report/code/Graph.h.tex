@@ -1,0 +1,348 @@
+\documentclass{ctexart}
+\usepackage{color}
+\usepackage{alltt}
+\usepackage[T1]{fontenc}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage{marvosym}
+
+% highlight theme: vim bclear
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.2,0.2,0.2}{#1}}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.06,0.58,0.63}{#1}}
+\newcommand{\hlesc}[1]{\textcolor[rgb]{0.86,0.41,0.09}{#1}}
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.06,0.58,0.63}{#1}}
+\newcommand{\hlpps}[1]{\textcolor[rgb]{0.06,0.58,0.63}{#1}}
+\newcommand{\hlslc}[1]{\textcolor[rgb]{0.59,0.59,0.59}{#1}}
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.59,0.59,0.59}{#1}}
+\newcommand{\hlppc}[1]{\textcolor[rgb]{0.41,0.78,0.23}{#1}}
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0.2,0.2,0.2}{#1}}
+\newcommand{\hlipl}[1]{\textcolor[rgb]{0.45,0.46,0.77}{#1}}
+\newcommand{\hllin}[1]{\textcolor[rgb]{0.59,0.59,0.59}{#1}}
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.23,0.42,0.78}{#1}}
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.63,0,0.31}{#1}}
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0,0.63,0.31}{#1}}
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.78,0.23,0.41}{#1}}
+\definecolor{bgcolor}{rgb}{1,1,1}
+
+\title{Graph.h}
+\begin{document}
+\pagecolor{bgcolor}
+\noindent
+\ttfamily
+\hlstd{}\hllin{01\ }\hlstd{}\hlslc{//}\\
+\hllin{02\ }\hlstd{}\hlslc{//\ Created\ by\ along\ on\ 17{-}11{-}26.}\\
+\hllin{03\ }\hlstd{}\hlslc{//}\\
+\hllin{04\ }\hlstd{}\\
+\hllin{05\ }\hlstd{}\hlppc{\#ifndef\ PROJECT\textunderscore GRAPH\textunderscore H}\\
+\hllin{06\ }\hlstd{}\hlppc{\#define\ PROJECT\textunderscore GRAPH\textunderscore H}\\
+\hllin{07\ }\hlstd{}\\
+\hllin{08\ }\hlstd{}\hlppc{\#ifdef\ USE\textunderscore BOOST\textunderscore LIB}\\
+\hllin{09\ }\hlstd{}\hlppc{\#include\ $<$boost/dynamic\textunderscore bitset.hpp$>$}\\
+\hllin{10\ }\hlstd{}\hlppc{\#endif}\\
+\hllin{11\ }\hlstd{}\\
+\hllin{12\ }\hlstd{}\hlppc{\#include\ $<$vector$>$}\\
+\hllin{13\ }\hlstd{}\hlppc{\#include\ $<$forward\textunderscore list$>$}\\
+\hllin{14\ }\hlstd{}\hlppc{\#include\ $<$functional$>$}\\
+\hllin{15\ }\hlstd{}\\
+\hllin{16\ }\hlstd{}\hlkwc{class\ }\hlstd{Graph\ }\hlopt{\{}\\
+\hllin{17\ }\hlstd{}\hlkwc{public}\hlstd{}\hlopt{:}\\
+\hllin{18\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{19\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 产生一个顶点为0\ {-}{-}\ n{-}1的图}\\
+\hllin{20\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ n}\\
+\hllin{21\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{22\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{explicit\ }\hlstd{}\hlkwd{Graph}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{n}\hlopt{)\ :\ }\hlstd{}\hlkwd{vexNum}\hlstd{}\hlopt{(}\hlstd{n}\hlopt{),\ }\hlstd{}\hlkwd{edgeNum}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{)\ \{}\Righttorque\\
+\hllin{23\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{24\ }\hlstd{}\\
+\hllin{25\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{26\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 使用已有的图构造一个新图}\\
+\hllin{27\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ rhs}\\
+\hllin{28\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{29\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{Graph}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{Graph\ }\hlopt{\&}\hlstd{rhs}\hlopt{);}\\
+\hllin{30\ }\hlstd{}\\
+\hllin{31\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{32\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 析构函数，避免内存泄漏}\\
+\hllin{33\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{34\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlopt{$\sim$}\hlstd{}\hlkwd{Graph}\hlstd{}\hlopt{()\ \{\ }\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{();\ \};}\\
+\hllin{35\ }\hlstd{}\\
+\hllin{36\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{37\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 拷贝赋值函数}\\
+\hllin{38\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ rhs}\\
+\hllin{39\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @return}\\
+\hllin{40\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{41\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{Graph\ }\hlopt{\&}\hlstd{}\hlkwc{operator}\hlstd{}\hlopt{=(}\hlstd{}\hlkwb{const\ }\hlstd{Graph\ }\hlopt{\&}\hlstd{rhs}\hlopt{);}\\
+\hllin{42\ }\hlstd{}\\
+\hllin{43\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{44\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 添加一条边}\\
+\hllin{45\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ source}\\
+\hllin{46\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ sink}\\
+\hllin{47\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{48\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{addEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\Righttorque\\
+\hllin{49\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{sink}\hlopt{);}\\
+\hllin{50\ }\hlstd{}\\
+\hllin{51\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{52\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 删除一条边}\\
+\hllin{53\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ source}\\
+\hllin{54\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ sink}\\
+\hllin{55\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{56\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{delEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\Righttorque\\
+\hllin{57\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{sink}\hlopt{);}\\
+\hllin{58\ }\hlstd{}\\
+\hllin{59\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{60\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 返回顶点个数}\\
+\hllin{61\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @return}\\
+\hllin{62\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{63\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{vexCount}\hlstd{}\hlopt{()\ }\hlstd{}\hlkwb{const}\hlstd{}\hlopt{;}\\
+\hllin{64\ }\hlstd{}\\
+\hllin{65\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{66\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 边的个数}\\
+\hllin{67\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @return}\\
+\hllin{68\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{69\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{edgeCount}\hlstd{}\hlopt{()\ }\hlstd{}\hlkwb{const}\hlstd{}\hlopt{;}\\
+\hllin{70\ }\hlstd{}\\
+\hllin{71\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{72\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 顶点的出度}\\
+\hllin{73\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ source}\\
+\hllin{74\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @return}\\
+\hllin{75\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{76\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{outDegree}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{)\ }\Righttorque\\
+\hllin{77\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const}\hlstd{}\hlopt{;}\\
+\hllin{78\ }\hlstd{}\\
+\hllin{79\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{80\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 顶点的入度}\\
+\hllin{81\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ source}\\
+\hllin{82\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @return}\\
+\hllin{83\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{84\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{inDegree}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{)\ }\Righttorque\\
+\hllin{85\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const}\hlstd{}\hlopt{;}\\
+\hllin{86\ }\hlstd{}\\
+\hllin{87\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{88\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 两个顶点之间是否有边}\\
+\hllin{89\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ source}\\
+\hllin{90\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ sink}\\
+\hllin{91\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @return}\\
+\hllin{92\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{93\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{bool\ }\hlstd{}\hlkwd{hasEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\Righttorque\\
+\hllin{94\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{sink}\hlopt{)\ }\hlstd{}\hlkwb{const}\hlstd{}\hlopt{;}\\
+\hllin{95\ }\hlstd{}\\
+\hllin{96\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{97\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 遍历与某个顶点相临接的所有顶点}\\
+\hllin{98\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 当func返回值为false的时候可以停止访问}\\
+\hllin{99\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ source}\\
+\hllin{100\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ func}\\
+\hllin{101\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{102\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{foreach}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\Righttorque\\
+\hllin{103\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{bool}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{)$>$\ \&}\hlstd{func}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;}\\
+\hllin{104\ }\hlstd{}\\
+\hllin{105\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{106\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 先深遍历}\\
+\hllin{107\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ DFSTree}\\
+\hllin{108\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ out}\\
+\hllin{109\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{110\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{DFS}\hlstd{}\hlopt{(}\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{void}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{)$>$\ }\Righttorque\\
+\hllin{111\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\&}\hlstd{visit}\hlopt{)\ }\hlstd{}\hlkwb{const}\hlstd{}\hlopt{;}\\
+\hllin{112\ }\hlstd{}\\
+\hllin{113\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{114\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 先深遍历(递归)}\\
+\hllin{115\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ DFSTree}\\
+\hllin{116\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ out}\\
+\hllin{117\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{118\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{DFSR}\hlstd{}\hlopt{(}\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{void}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{)$>$\ }\Righttorque\\
+\hllin{119\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\&}\hlstd{visit}\hlopt{)\ }\hlstd{}\hlkwb{const}\hlstd{}\hlopt{;}\\
+\hllin{120\ }\hlstd{}\\
+\hllin{121\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{122\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 先广遍历}\\
+\hllin{123\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ BFSTree}\\
+\hllin{124\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ out}\\
+\hllin{125\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{126\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{BFS}\hlstd{}\hlopt{(}\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{void}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{)$>$\ }\Righttorque\\
+\hllin{127\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\&}\hlstd{visit}\hlopt{)\ }\hlstd{}\hlkwb{const}\hlstd{}\hlopt{;}\\
+\hllin{128\ }\hlstd{}\\
+\hllin{129\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{130\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 带起始点的先深遍历}\\
+\hllin{131\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ DFSTree}\\
+\hllin{132\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ start}\\
+\hllin{133\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ visit}\\
+\hllin{134\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{135\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{DFS}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{\&}\hlstd{DFSTree}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{start}\hlopt{,\ }\Righttorque\\
+\hllin{136\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{void}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{)$>$\ \&}\hlstd{visit}\hlopt{)\ }\hlstd{}\hlkwb{const}\hlstd{}\hlopt{;}\\
+\hllin{137\ }\hlstd{}\\
+\hllin{138\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{139\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 带起始点的先深遍历(递归)}\\
+\hllin{140\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ DFSTree}\\
+\hllin{141\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ start}\\
+\hllin{142\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ out}\\
+\hllin{143\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{144\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{DFSR}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{\&}\hlstd{DFSTree}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{start}\hlopt{,\ }\Righttorque\\
+\hllin{145\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{void}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{)$>$\ \&}\hlstd{visit}\hlopt{)\ }\hlstd{}\hlkwb{const}\hlstd{}\hlopt{;}\\
+\hllin{146\ }\hlstd{}\\
+\hllin{147\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{148\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 带起始点的先广遍历}\\
+\hllin{149\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ BFSTree}\\
+\hllin{150\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ start}\\
+\hllin{151\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ out}\\
+\hllin{152\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{153\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{BFS}\hlstd{}\hlopt{(}\hlstd{Graph\ }\hlopt{\&}\hlstd{BFSTree}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{start}\hlopt{,\ }\Righttorque\\
+\hllin{154\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{void}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{)$>$\ \&}\hlstd{visit}\hlopt{)\ }\hlstd{}\hlkwb{const}\hlstd{}\hlopt{;}\\
+\hllin{155\ }\hlstd{}\\
+\hllin{156\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{157\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 重置}\\
+\hllin{158\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{159\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{();}\\
+\hllin{160\ }\hlstd{}\\
+\hllin{161\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{162\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 重置}\\
+\hllin{163\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ vexNum}\\
+\hllin{164\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{165\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{vexNum}\hlopt{);}\\
+\hllin{166\ }\hlstd{}\\
+\hllin{167\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{168\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 将dot图打印到流}\\
+\hllin{169\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ out}\\
+\hllin{170\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{171\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{printDot}\hlstd{}\hlopt{(}\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{ostream\ }\hlopt{\&}\hlstd{out}\hlopt{);}\\
+\hllin{172\ }\hlstd{}\\
+\hllin{173\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{174\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 从文件构造一个图}\\
+\hllin{175\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ filename}\\
+\hllin{176\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{177\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{resetFromStream}\hlstd{}\hlopt{(}\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{istream\ }\hlopt{\&}\hlstd{theStream}\hlopt{);}\\
+\hllin{178\ }\hlstd{}\hlkwc{protected}\hlstd{}\hlopt{:}\\
+\hllin{179\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{180\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 对数据进行清空}\\
+\hllin{181\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{182\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{();}\\
+\hllin{183\ }\hlstd{}\hlkwc{private}\hlstd{}\hlopt{:}\\
+\hllin{184\ }\hlstd{}\\
+\hllin{185\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{186\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 克隆一个图}\\
+\hllin{187\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ graph}\\
+\hllin{188\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{189\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{clone}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{Graph\ }\hlopt{\&}\hlstd{graph}\hlopt{);}\\
+\hllin{190\ }\hlstd{}\\
+\hllin{191\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{vexNum}\hlopt{;}\\
+\hllin{192\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{edgeNum}\hlopt{;}\\
+\hllin{193\ }\hlstd{}\hlopt{\};}\\
+\hllin{194\ }\hlstd{}\\
+\hllin{195\ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{196\ }\hlcom{\ {*}\ 图的邻接表实现}\\
+\hllin{197\ }\hlcom{\ {*}\ T:Table}\\
+\hllin{198\ }\hlcom{\ {*}/}\hlstd{}\\
+\hllin{199\ }\hlstd{}\hlkwc{class\ }\hlstd{GraphT\ }\hlopt{:\ }\hlstd{}\hlkwc{public\ }\hlstd{Graph\ }\hlopt{\{}\\
+\hllin{200\ }\hlstd{}\hlkwc{public}\hlstd{}\hlopt{:}\\
+\hllin{201\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{explicit\ }\hlstd{}\hlkwd{GraphT}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{n}\hlopt{);}\\
+\hllin{202\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{explicit\ }\hlstd{}\hlkwd{GraphT}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{Graph\ }\hlopt{\&}\hlstd{rhs}\hlopt{);}\\
+\hllin{203\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{addEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{sink}\hlopt{)\ }\Righttorque\\
+\hllin{204\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override}\hlopt{;}\\
+\hllin{205\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{delEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{sink}\hlopt{)\ }\Righttorque\\
+\hllin{206\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override}\hlopt{;}\\
+\hllin{207\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{inline\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{vexCount}\hlstd{}\hlopt{()\ }\hlstd{}\hlkwb{const\ }\hlstd{override}\hlopt{;}\\
+\hllin{208\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{edgeCount}\hlstd{}\hlopt{()\ }\hlstd{}\hlkwb{const\ }\hlstd{override}\hlopt{;}\\
+\hllin{209\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{outDegree}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\Righttorque\\
+\hllin{210\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override}\hlopt{;}\\
+\hllin{211\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{inDegree}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\Righttorque\\
+\hllin{212\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override}\hlopt{;}\\
+\hllin{213\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{bool\ }\hlstd{}\hlkwd{hasEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{sink}\hlopt{)\ }\Righttorque\\
+\hllin{214\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{override}\hlopt{;}\\
+\hllin{215\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{foreach}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{bool}\hlstd{}\hlopt{(}\Righttorque\\
+\hllin{216\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{)$>$\ \&}\hlstd{func}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{override}\hlopt{;}\\
+\hllin{217\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{()\ }\hlstd{override}\hlopt{;}\\
+\hllin{218\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{vexNum}\hlopt{)\ }\hlstd{override}\hlopt{;}\\
+\hllin{219\ }\hlstd{}\hlkwc{private}\hlstd{}\hlopt{:}\\
+\hllin{220\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{()\ }\hlstd{override}\hlopt{;}\\
+\hllin{221\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 顶点表的数据结构\ {*}/}\hlstd{}\\
+\hllin{222\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{typedef\ }\hlstd{}\hlkwb{struct\ }\hlstd{VexNode\ }\hlopt{\{}\\
+\hllin{223\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{in}\hlopt{;}\\
+\hllin{224\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{out}\hlopt{;}\\
+\hllin{225\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{forward\textunderscore list}\hlopt{$<$}\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{$>$\ }\hlstd{adjVex}\hlopt{;}\\
+\hllin{226\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{VexNode}\hlopt{;}\\
+\hllin{227\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 邻接表顶点\ {*}/}\hlstd{}\\
+\hllin{228\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{vector}\hlopt{$<$}\hlstd{VexNode}\hlopt{$>$\ }\hlstd{vexes}\hlopt{;}\\
+\hllin{229\ }\hlstd{}\hlopt{\};}\\
+\hllin{230\ }\hlstd{}\\
+\hllin{231\ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{232\ }\hlcom{\ {*}\ 图的邻接矩阵实现}\\
+\hllin{233\ }\hlcom{\ {*}\ M:Matrix}\\
+\hllin{234\ }\hlcom{\ {*}/}\hlstd{}\\
+\hllin{235\ }\hlstd{}\hlkwc{class\ }\hlstd{GraphM\ }\hlopt{:\ }\hlstd{}\hlkwc{public\ }\hlstd{Graph\ }\hlopt{\{}\\
+\hllin{236\ }\hlstd{}\hlkwc{public}\hlstd{}\hlopt{:}\\
+\hllin{237\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{explicit\ }\hlstd{}\hlkwd{GraphM}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{n}\hlopt{);}\\
+\hllin{238\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{explicit\ }\hlstd{}\hlkwd{GraphM}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{Graph\ }\hlopt{\&}\hlstd{rhs}\hlopt{);}\\
+\hllin{239\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{addEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{sink}\hlopt{)\ }\Righttorque\\
+\hllin{240\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override}\hlopt{;}\\
+\hllin{241\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{delEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{sink}\hlopt{)\ }\Righttorque\\
+\hllin{242\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override}\hlopt{;}\\
+\hllin{243\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{inline\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{vexCount}\hlstd{}\hlopt{()\ }\hlstd{}\hlkwb{const\ }\hlstd{override}\hlopt{;}\\
+\hllin{244\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{edgeCount}\hlstd{}\hlopt{()\ }\hlstd{}\hlkwb{const\ }\hlstd{override}\hlopt{;}\\
+\hllin{245\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{outDegree}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\Righttorque\\
+\hllin{246\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override}\hlopt{;}\\
+\hllin{247\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{inDegree}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\Righttorque\\
+\hllin{248\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override}\hlopt{;}\\
+\hllin{249\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{bool\ }\hlstd{}\hlkwd{hasEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{sink}\hlopt{)\ }\Righttorque\\
+\hllin{250\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{override}\hlopt{;}\\
+\hllin{251\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{foreach}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{bool}\hlstd{}\hlopt{(}\Righttorque\\
+\hllin{252\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{)$>$\ \&}\hlstd{func}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{override}\hlopt{;}\\
+\hllin{253\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{()\ }\hlstd{override}\hlopt{;}\\
+\hllin{254\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{vexNum}\hlopt{)\ }\hlstd{override}\hlopt{;}\\
+\hllin{255\ }\hlstd{}\hlkwc{private}\hlstd{}\hlopt{:}\\
+\hllin{256\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{()\ }\hlstd{override}\hlopt{;}\\
+\hllin{257\ }\hlstd{}\hlppc{\#ifdef\ USE\textunderscore BOOST\textunderscore LIB}\\
+\hllin{258\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{vector}\hlopt{$<$}\hlstd{}\hlkwc{boost}\hlstd{}\hlopt{::}\hlstd{dynamic\textunderscore bitset}\hlopt{$<$$>$$>$\ }\hlstd{vexes}\hlopt{;}\\
+\hllin{259\ }\hlstd{}\hlppc{\#else}\\
+\hllin{260\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{vector}\hlopt{$<$}\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{vector}\hlopt{$<$}\hlstd{}\hlkwb{bool}\hlstd{}\hlopt{$>$$>$\ }\hlstd{vexes}\hlopt{;}\\
+\hllin{261\ }\hlstd{}\hlppc{\#endif}\\
+\hllin{262\ }\hlstd{}\hlopt{\};}\\
+\hllin{263\ }\hlstd{}\\
+\hllin{264\ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{265\ }\hlcom{\ {*}\ 图的十字链表实现}\\
+\hllin{266\ }\hlcom{\ {*}\ L:List}\\
+\hllin{267\ }\hlcom{\ {*}/}\hlstd{}\\
+\hllin{268\ }\hlstd{}\hlkwc{class\ }\hlstd{GraphL\ }\hlopt{:\ }\hlstd{}\hlkwc{public\ }\hlstd{Graph\ }\hlopt{\{}\\
+\hllin{269\ }\hlstd{}\hlkwc{public}\hlstd{}\hlopt{:}\\
+\hllin{270\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{explicit\ }\hlstd{}\hlkwd{GraphL}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{n}\hlopt{);}\\
+\hllin{271\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{explicit\ }\hlstd{}\hlkwd{GraphL}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{Graph\ }\hlopt{\&}\hlstd{rhs}\hlopt{);}\\
+\hllin{272\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{$\sim$}\hlstd{}\hlkwd{GraphL}\hlstd{}\hlopt{()\ }\hlstd{override\ }\hlopt{\{\ }\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{();\ \};}\\
+\hllin{273\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{addEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{sink}\hlopt{)\ }\Righttorque\\
+\hllin{274\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override}\hlopt{;}\\
+\hllin{275\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{delEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{sink}\hlopt{)\ }\Righttorque\\
+\hllin{276\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override}\hlopt{;}\\
+\hllin{277\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{vexCount}\hlstd{}\hlopt{()\ }\hlstd{}\hlkwb{const\ }\hlstd{override}\hlopt{;}\\
+\hllin{278\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{edgeCount}\hlstd{}\hlopt{()\ }\hlstd{}\hlkwb{const\ }\hlstd{override}\hlopt{;}\\
+\hllin{279\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{outDegree}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\Righttorque\\
+\hllin{280\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override}\hlopt{;}\\
+\hllin{281\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{inDegree}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\Righttorque\\
+\hllin{282\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override}\hlopt{;}\\
+\hllin{283\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{bool\ }\hlstd{}\hlkwd{hasEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{sink}\hlopt{)\ }\Righttorque\\
+\hllin{284\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{override}\hlopt{;}\\
+\hllin{285\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{foreach}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{bool}\hlstd{}\hlopt{(}\Righttorque\\
+\hllin{286\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{)$>$\ \&}\hlstd{func}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{override}\hlopt{;}\\
+\hllin{287\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{foreachIn}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{dst}\hlopt{,\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{bool}\hlstd{}\hlopt{(}\Righttorque\\
+\hllin{288\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{)$>$\ \&}\hlstd{func}\hlopt{)\ }\hlstd{}\hlkwb{const}\hlstd{}\hlopt{;}\\
+\hllin{289\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{()\ }\hlstd{override}\hlopt{;}\\
+\hllin{290\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{vexNum}\hlopt{)\ }\hlstd{override}\hlopt{;}\\
+\hllin{291\ }\hlstd{}\hlkwc{private}\hlstd{}\hlopt{:}\\
+\hllin{292\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{typedef\ }\hlstd{}\hlkwb{struct\ }\hlstd{ArcBox\ }\hlopt{\{}\\
+\hllin{293\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{headVex}\hlopt{,\ }\hlstd{tailVex}\hlopt{;}\\
+\hllin{294\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{struct\ }\hlstd{ArcBox\ }\hlopt{{*}}\hlstd{hLink}\hlopt{,\ {*}}\hlstd{tLink}\hlopt{;}\\
+\hllin{295\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{ArcBox}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{head}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{tail}\hlopt{,\ }\Righttorque\\
+\hllin{296\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{ArcBox\ }\hlopt{{*}}\hlstd{headLink}\hlopt{,\ }\hlstd{ArcBox\ }\hlopt{{*}}\hlstd{tailLink}\hlopt{)\ :}\\
+\hllin{297\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{headVex}\hlstd{}\hlopt{(}\hlstd{head}\hlopt{),\ }\hlstd{}\hlkwd{tailVex}\hlstd{}\hlopt{(}\hlstd{tail}\hlopt{),\ }\hlstd{}\hlkwd{hLink}\hlstd{}\hlopt{(}\hlstd{headLink}\hlopt{),\ }\Righttorque\\
+\hllin{298\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{tLink}\hlstd{}\hlopt{(}\hlstd{tailLink}\hlopt{)\ \{\}}\\
+\hllin{299\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{ArcBox}\hlopt{;}\\
+\hllin{300\ }\hlstd{}\\
+\hllin{301\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{typedef\ }\hlstd{}\hlkwb{struct\ }\hlstd{VexNode\ }\hlopt{\{}\\
+\hllin{302\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{in}\hlopt{,\ }\hlstd{out}\hlopt{;}\\
+\hllin{303\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{ArcBox\ }\hlopt{{*}}\hlstd{firstIn}\hlopt{,\ {*}}\hlstd{firstOut}\hlopt{;}\\
+\hllin{304\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{VexNode}\hlstd{}\hlopt{()\ :\ }\hlstd{}\hlkwd{in}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{),\ }\hlstd{}\hlkwd{out}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{),\ }\hlstd{}\hlkwd{firstIn}\hlstd{}\hlopt{(}\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{),\ }\Righttorque\\
+\hllin{305\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{firstOut}\hlstd{}\hlopt{(}\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{\};}\\
+\hllin{306\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{VexNode}\hlopt{;}\\
+\hllin{307\ }\hlstd{}\\
+\hllin{308\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{()\ }\hlstd{override}\hlopt{;}\\
+\hllin{309\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{vector}\hlopt{$<$}\hlstd{VexNode}\hlopt{$>$\ }\hlstd{vexes}\hlopt{;}\\
+\hllin{310\ }\hlstd{}\hlopt{\};}\\
+\hllin{311\ }\hlstd{}\\
+\hllin{312\ }\hlstd{}\hlppc{\#endif\ }\hlslc{//PROJECT\textunderscore GRAPH\textunderscore H}\hlppc{}\hlstd{}\\
+\mbox{}
+\normalfont
+\normalsize
+\end {document}
+(* LaTeX generated by highlight 3.40, http://www.andre-simon.de/ *)

@@ -1,0 +1,684 @@
+\documentclass{ctexart}
+\usepackage{color}
+\usepackage{alltt}
+\usepackage[T1]{fontenc}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage{marvosym}
+
+% highlight theme: vim bclear
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.2,0.2,0.2}{#1}}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.06,0.58,0.63}{#1}}
+\newcommand{\hlesc}[1]{\textcolor[rgb]{0.86,0.41,0.09}{#1}}
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.06,0.58,0.63}{#1}}
+\newcommand{\hlpps}[1]{\textcolor[rgb]{0.06,0.58,0.63}{#1}}
+\newcommand{\hlslc}[1]{\textcolor[rgb]{0.59,0.59,0.59}{#1}}
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.59,0.59,0.59}{#1}}
+\newcommand{\hlppc}[1]{\textcolor[rgb]{0.41,0.78,0.23}{#1}}
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0.2,0.2,0.2}{#1}}
+\newcommand{\hlipl}[1]{\textcolor[rgb]{0.45,0.46,0.77}{#1}}
+\newcommand{\hllin}[1]{\textcolor[rgb]{0.59,0.59,0.59}{#1}}
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.23,0.42,0.78}{#1}}
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.63,0,0.31}{#1}}
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0,0.63,0.31}{#1}}
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.78,0.23,0.41}{#1}}
+\definecolor{bgcolor}{rgb}{1,1,1}
+
+\title{InfoGraph.h}
+\begin{document}
+\pagecolor{bgcolor}
+\noindent
+\ttfamily
+\hlstd{}\hllin{01\ }\hlstd{}\hlslc{//}\\
+\hllin{02\ }\hlstd{}\hlslc{//\ Created\ by\ along\ on\ 17{-}11{-}26.}\\
+\hllin{03\ }\hlstd{}\hlslc{//}\\
+\hllin{04\ }\hlstd{}\\
+\hllin{05\ }\hlstd{}\hlppc{\#ifndef\ PROJECT\textunderscore GRAPH\textunderscore H}\\
+\hllin{06\ }\hlstd{}\hlppc{\#define\ PROJECT\textunderscore GRAPH\textunderscore H}\\
+\hllin{07\ }\hlstd{}\\
+\hllin{08\ }\hlstd{}\hlppc{\#include\ $<$vector$>$}\\
+\hllin{09\ }\hlstd{}\hlppc{\#include\ $<$forward\textunderscore list$>$}\\
+\hllin{10\ }\hlstd{}\hlppc{\#include\ $<$functional$>$}\\
+\hllin{11\ }\hlstd{}\hlppc{\#include\ $<$stack$>$}\\
+\hllin{12\ }\hlstd{}\hlppc{\#include\ $<$queue$>$}\\
+\hllin{13\ }\hlstd{}\hlppc{\#include\ $<$iostream$>$}\\
+\hllin{14\ }\hlstd{}\\
+\hllin{15\ }\hlstd{}\hlkwc{template}\hlstd{}\hlopt{$<$}\hlstd{typename\ Info}\hlopt{$>$}\\
+\hllin{16\ }\hlstd{}\hlkwc{class\ }\hlstd{InfoGraph\ }\hlopt{\{}\\
+\hllin{17\ }\hlstd{}\hlkwc{public}\hlstd{}\hlopt{:}\\
+\hllin{18\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{19\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 产生一个顶点为0\ {-}{-}\ n{-}1的图}\\
+\hllin{20\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ n}\\
+\hllin{21\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{22\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{explicit\ }\hlstd{}\hlkwd{InfoGraph}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{n}\hlopt{)\ :\ }\hlstd{}\hlkwd{vexNum}\hlstd{}\hlopt{(}\hlstd{n}\hlopt{),\ }\hlstd{}\hlkwd{edgeNum}\hlstd{}\hlopt{(}\Righttorque\\
+\hllin{23\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{)\ \{\};}\\
+\hllin{24\ }\hlstd{}\\
+\hllin{25\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{26\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 使用已有的图构造一个新图}\\
+\hllin{27\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ rhs}\\
+\hllin{28\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{29\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{InfoGraph}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{InfoGraph\ }\hlopt{\&}\hlstd{rhs}\hlopt{)\ :\ }\hlstd{}\hlkwd{vexNum}\hlstd{}\hlopt{(}\hlstd{rhs}\hlopt{.}\hlstd{vexNum}\hlopt{),\ }\Righttorque\\
+\hllin{30\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{edgeNum}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{)\ \{}\\
+\hllin{31\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{this}\hlstd{}\hlopt{{-}$>$}\hlstd{}\hlkwd{clone}\hlstd{}\hlopt{(}\hlstd{rhs}\hlopt{);}\\
+\hllin{32\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{33\ }\hlstd{}\\
+\hllin{34\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{35\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 析构函数，避免内存泄漏}\\
+\hllin{36\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{37\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlopt{$\sim$}\hlstd{}\hlkwd{InfoGraph}\hlstd{}\hlopt{()\ \{\ }\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{();\ \};}\\
+\hllin{38\ }\hlstd{}\\
+\hllin{39\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{40\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 拷贝赋值函数}\\
+\hllin{41\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ rhs}\\
+\hllin{42\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @return}\\
+\hllin{43\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{44\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{InfoGraph\ }\hlopt{\&}\hlstd{}\hlkwc{operator}\hlstd{}\hlopt{=(}\hlstd{}\hlkwb{const\ }\hlstd{InfoGraph\ }\hlopt{\&}\hlstd{rhs}\hlopt{)\ \{}\\
+\hllin{45\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{this}\hlstd{}\hlopt{{-}$>$}\hlstd{}\hlkwd{clone}\hlstd{}\hlopt{(}\hlstd{rhs}\hlopt{);}\\
+\hllin{46\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{}\hlopt{{*}}\hlstd{}\hlkwa{this}\hlstd{}\hlopt{;}\\
+\hllin{47\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{48\ }\hlstd{}\\
+\hllin{49\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{50\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 添加一条边}\\
+\hllin{51\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ source}\\
+\hllin{52\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ sink}\\
+\hllin{53\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{54\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{addEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\Righttorque\\
+\hllin{55\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{sink}\hlopt{,\ }\hlstd{Info\ info}\hlopt{)\ \{\ ++}\hlstd{edgeNum}\hlopt{;\ \}}\\
+\hllin{56\ }\hlstd{}\\
+\hllin{57\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{58\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 删除一条边}\\
+\hllin{59\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ source}\\
+\hllin{60\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ sink}\\
+\hllin{61\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{62\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{delEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\Righttorque\\
+\hllin{63\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{sink}\hlopt{)\ \{\ {-}{-}}\hlstd{edgeNum}\hlopt{;\ \}}\\
+\hllin{64\ }\hlstd{}\\
+\hllin{65\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{66\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 返回顶点个数}\\
+\hllin{67\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @return}\\
+\hllin{68\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{69\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{vexCount}\hlstd{}\hlopt{()\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{\{\ }\hlstd{}\hlkwa{return\ }\hlstd{vexNum}\hlopt{;\ \}}\Righttorque\\
+\hllin{70\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{;}\\
+\hllin{71\ }\hlstd{}\\
+\hllin{72\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{73\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 边的个数}\\
+\hllin{74\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @return}\\
+\hllin{75\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{76\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{edgeCount}\hlstd{}\hlopt{()\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{\{\ }\hlstd{}\hlkwa{return\ }\hlstd{edgeNum}\hlopt{;}\Righttorque\\
+\hllin{77\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{78\ }\hlstd{}\\
+\hllin{79\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{80\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 顶点的出度}\\
+\hllin{81\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ source}\\
+\hllin{82\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @return}\\
+\hllin{83\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{84\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{outDegree}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{)\ }\Righttorque\\
+\hllin{85\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{\{}\\
+\hllin{86\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{outDegree\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;}\\
+\hllin{87\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{bool}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\Righttorque\\
+\hllin{88\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{Info}\hlopt{)$>$\ }\hlstd{func\ }\hlopt{=\ {[}\&{]}(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{src}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\Righttorque\\
+\hllin{89\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{dst}\hlopt{,\ }\hlstd{Info}\hlopt{)\ \{}\\
+\hllin{90\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{++}\hlstd{outDegree}\hlopt{;}\\
+\hllin{91\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ true}\hlstd{}\hlopt{;}\\
+\hllin{92\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{93\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{foreach}\hlstd{}\hlopt{(}\hlstd{source}\hlopt{,\ }\hlstd{func}\hlopt{);}\\
+\hllin{94\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{outDegree}\hlopt{;}\\
+\hllin{95\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{96\ }\hlstd{}\\
+\hllin{97\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{98\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 顶点的入度}\\
+\hllin{99\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ source}\\
+\hllin{100\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @return}\\
+\hllin{101\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{102\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{inDegree}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{)\ }\Righttorque\\
+\hllin{103\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{\{}\\
+\hllin{104\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{inDegree\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;}\\
+\hllin{105\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{bool}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\Righttorque\\
+\hllin{106\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{Info}\hlopt{)$>$\ }\hlstd{func\ }\hlopt{=\ {[}\&{]}(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{src}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\Righttorque\\
+\hllin{107\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{dst}\hlopt{,\ }\hlstd{Info}\hlopt{)\ \{}\\
+\hllin{108\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{dst\ }\hlopt{==\ }\hlstd{source}\hlopt{)}\\
+\hllin{109\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{++}\hlstd{inDegree}\hlopt{;}\\
+\hllin{110\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ true}\hlstd{}\hlopt{;}\\
+\hllin{111\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{112\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{i\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;\ }\hlstd{i\ }\hlopt{!=\ }\hlstd{vexNum}\hlopt{;\ ++}\hlstd{i}\hlopt{)}\\
+\hllin{113\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{foreach}\hlstd{}\hlopt{(}\hlstd{i}\hlopt{,\ }\hlstd{func}\hlopt{);}\\
+\hllin{114\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{inDegree}\hlopt{;}\\
+\hllin{115\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{116\ }\hlstd{}\\
+\hllin{117\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{118\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 两个顶点之间是否有边}\\
+\hllin{119\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ source}\\
+\hllin{120\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ sink}\\
+\hllin{121\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @return}\\
+\hllin{122\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{123\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{bool\ }\hlstd{}\hlkwd{hasEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\Righttorque\\
+\hllin{124\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{sink}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{\{}\\
+\hllin{125\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{bool\ }\hlstd{hasEdge\ }\hlopt{=\ }\hlstd{}\hlkwa{false}\hlstd{}\hlopt{;}\\
+\hllin{126\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{bool}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\Righttorque\\
+\hllin{127\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{Info\ info}\hlopt{)$>$}\\
+\hllin{128\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{func\ }\hlopt{=\ {[}\&{]}(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{src}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{dst}\hlopt{,\ }\Righttorque\\
+\hllin{129\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Info}\hlopt{)\ \{}\\
+\hllin{130\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{dst\ }\hlopt{==\ }\hlstd{sink}\hlopt{)\ \{}\\
+\hllin{131\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{hasEdge\ }\hlopt{=\ }\hlstd{}\hlkwa{true}\hlstd{}\hlopt{;}\\
+\hllin{132\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ false}\hlstd{}\hlopt{;}\\
+\hllin{133\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{134\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ true}\hlstd{}\hlopt{;}\\
+\hllin{135\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{136\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{foreach}\hlstd{}\hlopt{(}\hlstd{source}\hlopt{,\ }\hlstd{func}\hlopt{);}\\
+\hllin{137\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{hasEdge}\hlopt{;}\\
+\hllin{138\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{139\ }\hlstd{}\\
+\hllin{140\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{141\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 遍历与某个顶点相临接的所有顶点}\\
+\hllin{142\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 当func返回值为false的时候可以停止访问}\\
+\hllin{143\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ source}\\
+\hllin{144\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ func}\\
+\hllin{145\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{146\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{foreach}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\Righttorque\\
+\hllin{147\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{bool}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{Info}\hlopt{)$>$\ \&}\hlstd{func}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{=\ }\Righttorque\\
+\hllin{148\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;}\\
+\hllin{149\ }\hlstd{}\\
+\hllin{150\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{151\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 重置}\\
+\hllin{152\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{153\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{()\ \{}\\
+\hllin{154\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{(}\hlstd{vexNum}\hlopt{);}\\
+\hllin{155\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{156\ }\hlstd{}\\
+\hllin{157\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{158\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 重置}\\
+\hllin{159\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ vexNum}\\
+\hllin{160\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{161\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{vexNum}\hlopt{)\ \{}\\
+\hllin{162\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{();}\\
+\hllin{163\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{this}\hlstd{}\hlopt{{-}$>$}\hlstd{vexNum\ }\hlopt{=\ }\hlstd{vexNum}\hlopt{;}\\
+\hllin{164\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{edgeNum\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;}\\
+\hllin{165\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{166\ }\hlstd{}\\
+\hllin{167\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{168\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 将dot图打印到流}\\
+\hllin{169\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ out}\\
+\hllin{170\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{171\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{printDot}\hlstd{}\hlopt{(}\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{ostream\ }\hlopt{\&}\hlstd{out}\hlopt{)\ \{}\\
+\hllin{172\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{out\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"digraph\ mGraph\{"}\hlstd{\ }\hlopt{$<$$<$\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{endl}\hlopt{;}\\
+\hllin{173\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{i\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;\ }\hlstd{i\ }\hlopt{!=\ }\hlstd{vexNum}\hlopt{;\ ++}\hlstd{i}\hlopt{)}\\
+\hllin{174\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{out\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"Node"}\hlstd{\ }\hlopt{$<$$<$\ }\hlstd{i\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"{[}label\ =\ }\hlesc{$\backslash$"}\hlstr{"}\hlstd{\ }\hlopt{$<$$<$\ }\hlstd{i\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"}\hlesc{$\backslash$"}\hlstr{{]};}\Righttorque\\
+\hllin{175\ }\hlstr{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstr{"}\hlstd{\ }\hlopt{$<$$<$\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{endl}\hlopt{;}\\
+\hllin{176\ }\hlstd{}\\
+\hllin{177\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{bool}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\Righttorque\\
+\hllin{178\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{Info\ info}\hlopt{)$>$}\\
+\hllin{179\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{func\ }\hlopt{=\ {[}\&{]}(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{src}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{dst}\hlopt{,\ }\Righttorque\\
+\hllin{180\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Info\ info}\hlopt{)\ \{}\\
+\hllin{181\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{out\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"Node"}\hlstd{\ }\hlopt{$<$$<$\ }\hlstd{src\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"\ {-}$>$\ "}\hlstd{\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"Node"}\hlstd{\ }\hlopt{$<$$<$\ }\hlstd{dst\ }\hlopt{$<$}\Righttorque\\
+\hllin{182\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{$<$\ }\hlstd{}\hlstr{"{[}label="}\hlstd{\ }\hlopt{$<$$<$\ }\hlstd{info\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"{]};"}\hlstd{\ }\hlopt{$<$$<$\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{endl}\hlopt{;}\\
+\hllin{183\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ true}\hlstd{}\hlopt{;}\\
+\hllin{184\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{185\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{i\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;\ }\hlstd{i\ }\hlopt{!=\ }\hlstd{vexNum}\hlopt{;\ ++}\hlstd{i}\hlopt{)}\\
+\hllin{186\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{foreach}\hlstd{}\hlopt{(}\hlstd{i}\hlopt{,\ }\hlstd{func}\hlopt{);}\\
+\hllin{187\ }\hlstd{}\\
+\hllin{188\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{out\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"\}"}\hlstd{\ }\hlopt{$<$$<$\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{endl}\hlopt{;}\\
+\hllin{189\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{190\ }\hlstd{}\\
+\hllin{191\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{192\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 从文件构造一个图}\\
+\hllin{193\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ filename}\\
+\hllin{194\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{195\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{resetFromStream}\hlstd{}\hlopt{(}\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{istream\ }\hlopt{\&}\hlstd{theStream}\hlopt{)\ \{}\\
+\hllin{196\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{vexNum}\hlopt{;}\\
+\hllin{197\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{theStream\ }\hlopt{$>$$>$\ }\hlstd{vexNum}\hlopt{;}\\
+\hllin{198\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{(}\hlstd{vexNum}\hlopt{);}\\
+\hllin{199\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{Info\ info}\hlopt{;}\\
+\hllin{200\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{src}\hlopt{,\ }\hlstd{dst}\hlopt{;}\\
+\hllin{201\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(}\hlstd{theStream\ }\hlopt{$>$$>$\ }\hlstd{src\ }\hlopt{$>$$>$\ }\hlstd{dst\ }\hlopt{$>$$>$\ }\hlstd{info}\hlopt{)}\\
+\hllin{202\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{addEdge}\hlstd{}\hlopt{(}\hlstd{src}\hlopt{,\ }\hlstd{dst}\hlopt{,\ }\hlstd{info}\hlopt{);}\\
+\hllin{203\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{204\ }\hlstd{}\\
+\hllin{205\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{206\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 获取某个弧的信息}\\
+\hllin{207\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ src}\\
+\hllin{208\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ dst}\\
+\hllin{209\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @return}\\
+\hllin{210\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{211\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{Info\ }\hlkwd{getArcInfo}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ unsigned\ long\ }\hlstd{src}\hlopt{,\ }\hlstd{}\hlkwb{const\ }\Righttorque\\
+\hllin{212\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{dst}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{=}\hlstd{}\hlnum{0}\hlstd{}\hlopt{;}\\
+\hllin{213\ }\hlstd{}\\
+\hllin{214\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{215\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 用于修改相关的值}\\
+\hllin{216\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ src}\\
+\hllin{217\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ dst}\\
+\hllin{218\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @return}\\
+\hllin{219\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{220\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{Info\ }\hlopt{\&}\hlstd{}\hlkwc{operator}\hlstd{}\hlopt{()(}\hlstd{}\hlkwb{const\ unsigned\ long\ }\hlstd{src}\hlopt{,\ }\hlstd{}\hlkwb{const\ }\Righttorque\\
+\hllin{221\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{dst}\hlopt{)=}\hlstd{}\hlnum{0}\hlstd{}\hlopt{;}\\
+\hllin{222\ }\hlstd{}\hlkwc{protected}\hlstd{}\hlopt{:}\\
+\hllin{223\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{224\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 对数据进行清空}\\
+\hllin{225\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{226\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{virtual\ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{()\ \{}\\
+\hllin{227\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{vexNum\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;}\\
+\hllin{228\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{edgeNum\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;}\\
+\hllin{229\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{230\ }\hlstd{}\hlkwc{private}\hlstd{}\hlopt{:}\\
+\hllin{231\ }\hlstd{}\\
+\hllin{232\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{233\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ 克隆一个图}\\
+\hllin{234\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ @param\ graph}\\
+\hllin{235\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{236\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{clone}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{InfoGraph\ }\hlopt{\&}\hlstd{graph}\hlopt{)\ \{}\\
+\hllin{237\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{(}\hlstd{graph}\hlopt{.}\hlstd{}\hlkwd{vexCount}\hlstd{}\hlopt{());}\\
+\hllin{238\ }\hlstd{}\\
+\hllin{239\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{bool}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\Righttorque\\
+\hllin{240\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{Info}\hlopt{)$>$}\\
+\hllin{241\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{func\ }\hlopt{=\ {[}\&{]}(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\Righttorque\\
+\hllin{242\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{sink}\hlopt{,\ }\hlstd{Info\ info}\hlopt{)\ \{}\\
+\hllin{243\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{this}\hlstd{}\hlopt{{-}$>$}\hlstd{}\hlkwd{addEdge}\hlstd{}\hlopt{(}\hlstd{source}\hlopt{,\ }\hlstd{sink}\hlopt{,\ }\hlstd{info}\hlopt{);}\\
+\hllin{244\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ true}\hlstd{}\hlopt{;}\\
+\hllin{245\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{246\ }\hlstd{}\\
+\hllin{247\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{verNum\ }\hlopt{=\ }\hlstd{graph}\hlopt{.}\hlstd{}\hlkwd{vexCount}\hlstd{}\hlopt{();}\\
+\hllin{248\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{ver\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;\ }\hlstd{ver\ }\hlopt{!=\ }\hlstd{verNum}\hlopt{;\ ++}\hlstd{ver}\hlopt{)\ \{}\\
+\hllin{249\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{graph}\hlopt{.}\hlstd{}\hlkwd{foreach}\hlstd{}\hlopt{(}\hlstd{ver}\hlopt{,\ }\hlstd{func}\hlopt{);}\\
+\hllin{250\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{251\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{252\ }\hlstd{}\\
+\hllin{253\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{vexNum}\hlopt{;}\\
+\hllin{254\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{edgeNum}\hlopt{;}\\
+\hllin{255\ }\hlstd{}\hlopt{\};}\\
+\hllin{256\ }\hlstd{}\\
+\hllin{257\ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{258\ }\hlcom{\ {*}\ 图的邻接表实现}\\
+\hllin{259\ }\hlcom{\ {*}\ T:Table}\\
+\hllin{260\ }\hlcom{\ {*}/}\hlstd{}\\
+\hllin{261\ }\hlstd{}\hlkwc{template}\hlstd{}\hlopt{$<$}\hlstd{typename\ Info}\hlopt{$>$}\\
+\hllin{262\ }\hlstd{}\hlkwc{class\ }\hlstd{InfoGraphT\ }\hlopt{:\ }\hlstd{}\hlkwc{public\ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$\ \{}\\
+\hllin{263\ }\hlstd{}\hlkwc{public}\hlstd{}\hlopt{:}\\
+\hllin{264\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{explicit\ }\hlstd{}\hlkwd{InfoGraphT}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{n}\hlopt{)\ :\ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$(}\hlstd{n}\hlopt{)}\Righttorque\\
+\hllin{265\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\{}\\
+\hllin{266\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwb{int\ }\hlstd{i\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;\ }\hlstd{i\ }\hlopt{!=\ }\hlstd{n}\hlopt{;\ ++}\hlstd{i}\hlopt{)\ \{}\\
+\hllin{267\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{vexes}\hlopt{.}\hlstd{}\hlkwd{emplace\textunderscore back}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{);}\\
+\hllin{268\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{269\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{270\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{explicit\ }\hlstd{}\hlkwd{InfoGraphT}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$\ \&}\hlstd{rhs}\hlopt{)\ :\ }\Righttorque\\
+\hllin{271\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{)\ \{}\\
+\hllin{272\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{{*}(}\hlstd{}\hlkwa{dynamic\textunderscore cast}\hlstd{}\hlopt{$<$}\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$\ {*}$>$(}\hlstd{}\hlkwa{this}\hlstd{}\hlopt{))\ =\ }\hlstd{rhs}\hlopt{;}\\
+\hllin{273\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{274\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{addEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{sink}\hlopt{,\ }\Righttorque\\
+\hllin{275\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{Info\ info}\hlopt{)\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{276\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(!}\hlstd{}\hlkwd{hasEdge}\hlstd{}\hlopt{(}\hlstd{source}\hlopt{,\ }\hlstd{sink}\hlopt{))\ \{}\\
+\hllin{277\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{addEdge}\hlstd{}\hlopt{(}\hlstd{source}\hlopt{,\ }\hlstd{sink}\hlopt{,\ }\hlstd{info}\hlopt{);}\\
+\hllin{278\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{InfoGraphT}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{VexNode\ }\hlopt{\&}\hlstd{src\ }\hlopt{=\ }\hlstd{vexes}\hlopt{{[}}\hlstd{source}\hlopt{{]};}\\
+\hllin{279\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{InfoGraphT}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{VexNode\ }\hlopt{\&}\hlstd{dst\ }\hlopt{=\ }\hlstd{vexes}\hlopt{{[}}\hlstd{sink}\hlopt{{]};}\\
+\hllin{280\ }\hlstd{}\\
+\hllin{281\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{src}\hlopt{.}\hlstd{adjVex}\hlopt{.}\hlstd{}\hlkwd{emplace\textunderscore front}\hlstd{}\hlopt{(}\hlstd{sink}\hlopt{,\ }\hlstd{info}\hlopt{);}\\
+\hllin{282\ }\hlstd{}\\
+\hllin{283\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{++}\hlstd{src}\hlopt{.}\hlstd{out}\hlopt{;}\\
+\hllin{284\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{++}\hlstd{dst}\hlopt{.}\hlstd{in}\hlopt{;}\\
+\hllin{285\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{286\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{287\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{delEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{sink}\hlopt{)\ }\Righttorque\\
+\hllin{288\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{289\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwd{hasEdge}\hlstd{}\hlopt{(}\hlstd{source}\hlopt{,\ }\hlstd{sink}\hlopt{))\ \{}\\
+\hllin{290\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{delEdge}\hlstd{}\hlopt{(}\hlstd{source}\hlopt{,\ }\hlstd{sink}\hlopt{);}\\
+\hllin{291\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{InfoGraphT}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{VexNode\ }\hlopt{\&}\hlstd{src\ }\hlopt{=\ }\hlstd{vexes}\hlopt{{[}}\hlstd{source}\hlopt{{]};}\\
+\hllin{292\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{InfoGraphT}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{VexNode\ }\hlopt{\&}\hlstd{dst\ }\hlopt{=\ }\hlstd{vexes}\hlopt{{[}}\hlstd{sink}\hlopt{{]};}\\
+\hllin{293\ }\hlstd{}\\
+\hllin{294\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{src}\hlopt{.}\hlstd{adjVex}\hlopt{.}\hlstd{}\hlkwd{remove}\hlstd{}\hlopt{(\{}\hlstd{sink}\hlopt{,\ }\hlstd{}\hlkwd{Info}\hlstd{}\hlopt{()\});}\\
+\hllin{295\ }\hlstd{}\\
+\hllin{296\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{{-}{-}}\hlstd{src}\hlopt{.}\hlstd{out}\hlopt{;}\\
+\hllin{297\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{{-}{-}}\hlstd{dst}\hlopt{.}\hlstd{in}\hlopt{;}\\
+\hllin{298\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{299\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{300\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{inline\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{vexCount}\hlstd{}\hlopt{()\ }\hlstd{}\hlkwb{const\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{301\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{vexes}\hlopt{.}\hlstd{}\hlkwd{size}\hlstd{}\hlopt{();}\\
+\hllin{302\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{303\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{edgeCount}\hlstd{}\hlopt{()\ }\hlstd{}\hlkwb{const\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{304\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{edgeCount}\hlstd{}\hlopt{();}\\
+\hllin{305\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{306\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{outDegree}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\Righttorque\\
+\hllin{307\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{308\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{vexes}\hlopt{{[}}\hlstd{source}\hlopt{{]}.}\hlstd{out}\hlopt{;}\\
+\hllin{309\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{310\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{inDegree}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\Righttorque\\
+\hllin{311\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{312\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{vexes}\hlopt{{[}}\hlstd{source}\hlopt{{]}.}\hlstd{in}\hlopt{;}\\
+\hllin{313\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{314\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{bool\ }\hlstd{}\hlkwd{hasEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{sink}\hlopt{)\ }\Righttorque\\
+\hllin{315\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{316\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{Arc\ adjVex}\hlopt{:}\hlstd{vexes}\hlopt{{[}}\hlstd{source}\hlopt{{]}.}\hlstd{adjVex}\hlopt{)\ \{}\\
+\hllin{317\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{adjVex}\hlopt{.}\hlstd{vex\ }\hlopt{==\ }\hlstd{sink}\hlopt{)}\\
+\hllin{318\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ true}\hlstd{}\hlopt{;}\\
+\hllin{319\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{320\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ false}\hlstd{}\hlopt{;}\\
+\hllin{321\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{322\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{Info\ }\hlkwd{getArcInfo}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ unsigned\ long\ }\hlstd{src}\hlopt{,\ }\hlstd{}\hlkwb{const\ unsigned\ }\Righttorque\\
+\hllin{323\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{long\ }\hlstd{dst}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{324\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{Arc\ }\hlopt{\&}\hlstd{adjVex}\hlopt{:}\hlstd{vexes}\hlopt{{[}}\hlstd{src}\hlopt{{]}.}\hlstd{adjVex}\hlopt{)\ \{}\\
+\hllin{325\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{adjVex}\hlopt{.}\hlstd{vex\ }\hlopt{==\ }\hlstd{dst}\hlopt{)}\\
+\hllin{326\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{adjVex}\hlopt{.}\hlstd{info}\hlopt{;}\\
+\hllin{327\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{328\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{}\hlkwd{Info}\hlstd{}\hlopt{();}\\
+\hllin{329\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{330\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{foreach}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{bool}\hlstd{}\hlopt{(}\Righttorque\\
+\hllin{331\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{Info}\hlopt{)$>$\ \&}\hlstd{func}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\Righttorque\\
+\hllin{332\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{333\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{Arc\ sink}\hlopt{:}\hlstd{vexes}\hlopt{{[}}\hlstd{source}\hlopt{{]}.}\hlstd{adjVex}\hlopt{)\ \{}\\
+\hllin{334\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(!}\hlstd{}\hlkwd{func}\hlstd{}\hlopt{(}\hlstd{source}\hlopt{,\ }\hlstd{sink}\hlopt{.}\hlstd{vex}\hlopt{,\ }\hlstd{sink}\hlopt{.}\hlstd{info}\hlopt{))}\\
+\hllin{335\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{336\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{337\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{338\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{()\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{339\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{();}\\
+\hllin{340\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{341\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{vexNum}\hlopt{)\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{342\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{(}\hlstd{vexNum}\hlopt{);}\\
+\hllin{343\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwb{int\ }\hlstd{i\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;\ }\hlstd{i\ }\hlopt{!=\ }\hlstd{vexNum}\hlopt{;\ ++}\hlstd{i}\hlopt{)\ \{}\\
+\hllin{344\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{vexes}\hlopt{.}\hlstd{}\hlkwd{emplace\textunderscore back}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{);}\\
+\hllin{345\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{346\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{347\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{Info\ }\hlopt{\&}\hlstd{}\hlkwc{operator}\hlstd{}\hlopt{()(}\hlstd{}\hlkwb{const\ unsigned\ long\ }\hlstd{src}\hlopt{,\ }\hlstd{}\hlkwb{const\ unsigned\ }\Righttorque\\
+\hllin{348\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{long\ }\hlstd{dst}\hlopt{)\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{349\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{Arc\ }\hlopt{\&}\hlstd{adjVex}\hlopt{:}\hlstd{vexes}\hlopt{{[}}\hlstd{src}\hlopt{{]}.}\hlstd{adjVex}\hlopt{)\ \{}\\
+\hllin{350\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{adjVex}\hlopt{.}\hlstd{vex\ }\hlopt{==\ }\hlstd{dst}\hlopt{)}\\
+\hllin{351\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{adjVex}\hlopt{.}\hlstd{info}\hlopt{;}\\
+\hllin{352\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{353\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{354\ }\hlstd{}\hlkwc{private}\hlstd{}\hlopt{:}\\
+\hllin{355\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{()\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{356\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{();}\\
+\hllin{357\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{vexes}\hlopt{.}\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{();}\\
+\hllin{358\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{359\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 弧及其信息\ {*}/}\hlstd{}\\
+\hllin{360\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{typedef\ }\hlstd{}\hlkwb{struct\ }\hlstd{Arc\ }\hlopt{\{}\\
+\hllin{361\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{vex}\hlopt{;}\\
+\hllin{362\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{Info\ info}\hlopt{;}\\
+\hllin{363\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{Arc}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{vex}\hlopt{,\ }\hlstd{Info\ info}\hlopt{)\ :\ }\hlstd{}\hlkwd{vex}\hlstd{}\hlopt{(}\hlstd{vex}\hlopt{),\ }\hlstd{}\hlkwd{info}\hlstd{}\hlopt{(}\Righttorque\\
+\hllin{364\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{info}\hlopt{)\ \{\}}\\
+\hllin{365\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{bool\ }\hlstd{}\hlkwc{operator}\hlstd{}\hlopt{==(}\hlstd{}\hlkwb{const\ }\hlstd{Arc\ }\hlopt{\&}\hlstd{rhs}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{\{}\\
+\hllin{366\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{vex\ }\hlopt{==\ }\hlstd{rhs}\hlopt{.}\hlstd{vex}\hlopt{;}\\
+\hllin{367\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{368\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{Arc}\hlopt{;}\\
+\hllin{369\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 顶点表的数据结构\ {*}/}\hlstd{}\\
+\hllin{370\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{typedef\ }\hlstd{}\hlkwb{struct\ }\hlstd{VexNode\ }\hlopt{\{}\\
+\hllin{371\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{in}\hlopt{;}\\
+\hllin{372\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{out}\hlopt{;}\\
+\hllin{373\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{forward\textunderscore list}\hlopt{$<$}\hlstd{Arc}\hlopt{$>$\ }\hlstd{adjVex}\hlopt{;}\\
+\hllin{374\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{VexNode}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{in}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{out}\hlopt{,\ }\hlstd{}\hlkwb{const\ }\Righttorque\\
+\hllin{375\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{forward\textunderscore list}\hlopt{$<$}\hlstd{Arc}\hlopt{$>$\ \&}\hlstd{adjVex}\hlopt{)}\\
+\hllin{376\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{:\ }\hlstd{}\hlkwd{in}\hlstd{}\hlopt{(}\hlstd{in}\hlopt{),\ }\hlstd{}\hlkwd{out}\hlstd{}\hlopt{(}\hlstd{out}\hlopt{),\ }\hlstd{}\hlkwd{adjVex}\hlstd{}\hlopt{(}\hlstd{adjVex}\hlopt{)\ \{\}}\\
+\hllin{377\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{VexNode}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{in}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{out}\hlopt{)\ :\ }\hlstd{}\hlkwd{in}\hlstd{}\hlopt{(}\hlstd{in}\hlopt{)}\Righttorque\\
+\hllin{378\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{,\ }\hlstd{}\hlkwd{out}\hlstd{}\hlopt{(}\hlstd{out}\hlopt{)\ \{\}}\\
+\hllin{379\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{VexNode}\hlopt{;}\\
+\hllin{380\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 邻接表顶点\ {*}/}\hlstd{}\\
+\hllin{381\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{vector}\hlopt{$<$}\hlstd{VexNode}\hlopt{$>$\ }\hlstd{vexes}\hlopt{;}\\
+\hllin{382\ }\hlstd{}\hlopt{\};}\\
+\hllin{383\ }\hlstd{}\\
+\hllin{384\ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{385\ }\hlcom{\ {*}\ 图的邻接矩阵实现}\\
+\hllin{386\ }\hlcom{\ {*}\ M:Matrix}\\
+\hllin{387\ }\hlcom{\ {*}/}\hlstd{}\\
+\hllin{388\ }\hlstd{}\hlkwc{template}\hlstd{}\hlopt{$<$}\hlstd{typename\ Info}\hlopt{$>$}\\
+\hllin{389\ }\hlstd{}\hlkwc{class\ }\hlstd{InfoGraphM\ }\hlopt{:\ }\hlstd{}\hlkwc{public\ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$\ \{}\\
+\hllin{390\ }\hlstd{}\hlkwc{public}\hlstd{}\hlopt{:}\\
+\hllin{391\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{explicit\ }\hlstd{}\hlkwd{InfoGraphM}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{n}\hlopt{)\ :\ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$(}\hlstd{n}\hlopt{)}\Righttorque\\
+\hllin{392\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\{}\\
+\hllin{393\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{i\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;\ }\hlstd{i\ }\hlopt{!=\ }\hlstd{n}\hlopt{;\ ++}\hlstd{i}\hlopt{)\ \{}\\
+\hllin{394\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{vexes}\hlopt{.}\hlstd{}\hlkwd{emplace\textunderscore back}\hlstd{}\hlopt{(}\hlstd{n}\hlopt{,\ }\hlstd{}\hlkwa{false}\hlstd{}\hlopt{);}\\
+\hllin{395\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{396\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{397\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{explicit\ }\hlstd{}\hlkwd{InfoGraphM}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$\ \&}\hlstd{rhs}\hlopt{)\ :\ }\Righttorque\\
+\hllin{398\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{)\ \{}\\
+\hllin{399\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{{*}(}\hlstd{}\hlkwa{dynamic\textunderscore cast}\hlstd{}\hlopt{$<$}\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$\ {*}$>$(}\hlstd{}\hlkwa{this}\hlstd{}\hlopt{))\ =\ }\hlstd{rhs}\hlopt{;}\\
+\hllin{400\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{401\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{addEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{sink}\hlopt{,\ }\Righttorque\\
+\hllin{402\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{Info\ info}\hlopt{)\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{403\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{addEdge}\hlstd{}\hlopt{(}\hlstd{source}\hlopt{,\ }\hlstd{sink}\hlopt{,\ }\hlstd{info}\hlopt{);}\\
+\hllin{404\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{vexes}\hlopt{{[}}\hlstd{source}\hlopt{{]}{[}}\hlstd{sink}\hlopt{{]}.}\hlstd{link\ }\hlopt{=\ }\hlstd{}\hlkwa{true}\hlstd{}\hlopt{;}\\
+\hllin{405\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{vexes}\hlopt{{[}}\hlstd{source}\hlopt{{]}{[}}\hlstd{sink}\hlopt{{]}.}\hlstd{info\ }\hlopt{=\ }\hlstd{info}\hlopt{;}\\
+\hllin{406\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{407\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{delEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{sink}\hlopt{)\ }\Righttorque\\
+\hllin{408\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{409\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{delEdge}\hlstd{}\hlopt{(}\hlstd{source}\hlopt{,\ }\hlstd{sink}\hlopt{);}\\
+\hllin{410\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{vexes}\hlopt{{[}}\hlstd{source}\hlopt{{]}{[}}\hlstd{sink}\hlopt{{]}.}\hlstd{link\ }\hlopt{=\ }\hlstd{}\hlkwa{false}\hlstd{}\hlopt{;}\\
+\hllin{411\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{412\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{inline\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{vexCount}\hlstd{}\hlopt{()\ }\hlstd{}\hlkwb{const\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{413\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{vexCount}\hlstd{}\hlopt{();}\\
+\hllin{414\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{415\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{edgeCount}\hlstd{}\hlopt{()\ }\hlstd{}\hlkwb{const\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{416\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{edgeCount}\hlstd{}\hlopt{();}\\
+\hllin{417\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{418\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{outDegree}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\Righttorque\\
+\hllin{419\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{420\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{count\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;}\\
+\hllin{421\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{VexNode\ out}\hlopt{:}\hlstd{vexes}\hlopt{{[}}\hlstd{source}\hlopt{{]})}\\
+\hllin{422\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{count\ }\hlopt{+=\ }\hlstd{out}\hlopt{.}\hlstd{link}\hlopt{;}\\
+\hllin{423\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{count}\hlopt{;}\\
+\hllin{424\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{425\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{inDegree}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\Righttorque\\
+\hllin{426\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{427\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{count\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;}\\
+\hllin{428\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{i\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;\ }\hlstd{i\ }\hlopt{!=\ }\hlstd{}\hlkwd{vexCount}\hlstd{}\hlopt{();\ ++}\hlstd{i}\hlopt{)}\\
+\hllin{429\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{count\ }\hlopt{+=\ }\hlstd{vexes}\hlopt{{[}}\hlstd{i}\hlopt{{]}{[}}\hlstd{source}\hlopt{{]}.}\hlstd{link}\hlopt{;}\\
+\hllin{430\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{count}\hlopt{;}\\
+\hllin{431\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{432\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{bool\ }\hlstd{}\hlkwd{hasEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{sink}\hlopt{)\ }\Righttorque\\
+\hllin{433\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{434\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{vexes}\hlopt{{[}}\hlstd{source}\hlopt{{]}{[}}\hlstd{sink}\hlopt{{]}.}\hlstd{link}\hlopt{;}\\
+\hllin{435\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{436\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{Info\ }\hlkwd{getArcInfo}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ unsigned\ long\ }\hlstd{src}\hlopt{,\ }\hlstd{}\hlkwb{const\ unsigned\ }\Righttorque\\
+\hllin{437\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{long\ }\hlstd{dst}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{438\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{vexes}\hlopt{{[}}\hlstd{src}\hlopt{{]}{[}}\hlstd{dst}\hlopt{{]}.}\hlstd{info}\hlopt{;}\\
+\hllin{439\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{440\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{foreach}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{bool}\hlstd{}\hlopt{(}\Righttorque\\
+\hllin{441\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{Info}\hlopt{)$>$\ \&}\hlstd{func}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\Righttorque\\
+\hllin{442\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{443\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{adjVec\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;\ }\hlstd{adjVec\ }\hlopt{!=\ }\hlstd{}\hlkwd{vexCount}\hlstd{}\hlopt{();\ }\Righttorque\\
+\hllin{444\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{++}\hlstd{adjVec}\hlopt{)\ \{}\\
+\hllin{445\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{VexNode\ vex\ }\hlopt{=\ }\hlstd{vexes}\hlopt{{[}}\hlstd{source}\hlopt{{]}{[}}\hlstd{adjVec}\hlopt{{]};}\\
+\hllin{446\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{vex}\hlopt{.}\hlstd{link}\hlopt{)}\\
+\hllin{447\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{func}\hlstd{}\hlopt{(}\hlstd{source}\hlopt{,\ }\hlstd{adjVec}\hlopt{,\ }\hlstd{vex}\hlopt{.}\hlstd{info}\hlopt{);}\\
+\hllin{448\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{449\ }\hlstd{}\\
+\hllin{450\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{451\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{()\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{452\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{();}\\
+\hllin{453\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{454\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{vexNum}\hlopt{)\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{455\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{(}\hlstd{vexNum}\hlopt{);}\\
+\hllin{456\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{i\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;\ }\hlstd{i\ }\hlopt{!=\ }\hlstd{vexNum}\hlopt{;\ ++}\hlstd{i}\hlopt{)\ \{}\\
+\hllin{457\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{vexes}\hlopt{.}\hlstd{}\hlkwd{emplace\textunderscore back}\hlstd{}\hlopt{(}\hlstd{vexNum}\hlopt{,\ }\hlstd{}\hlkwa{false}\hlstd{}\hlopt{);}\\
+\hllin{458\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{459\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{460\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{Info\ }\hlopt{\&}\hlstd{}\hlkwc{operator}\hlstd{}\hlopt{()(}\hlstd{}\hlkwb{const\ unsigned\ long\ }\hlstd{src}\hlopt{,\ }\hlstd{}\hlkwb{const\ unsigned\ }\Righttorque\\
+\hllin{461\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{long\ }\hlstd{dst}\hlopt{)\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{462\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{vexes}\hlopt{{[}}\hlstd{src}\hlopt{{]}{[}}\hlstd{dst}\hlopt{{]}.}\hlstd{info}\hlopt{;}\\
+\hllin{463\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{464\ }\hlstd{}\hlkwc{private}\hlstd{}\hlopt{:}\\
+\hllin{465\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{()\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{466\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{();}\\
+\hllin{467\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{vexes}\hlopt{.}\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{();}\\
+\hllin{468\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{469\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{typedef\ }\hlstd{}\hlkwb{struct\ }\hlstd{VexNode\ }\hlopt{\{}\\
+\hllin{470\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{bool\ }\hlstd{link}\hlopt{;}\\
+\hllin{471\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{Info\ info}\hlopt{;}\\
+\hllin{472\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{VexNode}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{bool\ }\hlstd{link}\hlopt{)\ :\ }\hlstd{}\hlkwd{link}\hlstd{}\hlopt{(}\hlstd{link}\hlopt{),\ }\hlstd{}\hlkwd{info}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{Info}\hlstd{}\hlopt{())\ \{\}}\\
+\hllin{473\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{VexNode}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{bool\ }\hlstd{link}\hlopt{,\ }\hlstd{Info\ info}\hlopt{)\ :\ }\hlstd{}\hlkwd{link}\hlstd{}\hlopt{(}\hlstd{link}\hlopt{),\ }\hlstd{}\hlkwd{info}\hlstd{}\hlopt{(}\Righttorque\\
+\hllin{474\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{info}\hlopt{)\ \{\}}\\
+\hllin{475\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{VexNode}\hlopt{;}\\
+\hllin{476\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{vector}\hlopt{$<$}\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{vector}\hlopt{$<$}\hlstd{VexNode}\hlopt{$>$$>$\ }\hlstd{vexes}\hlopt{;}\\
+\hllin{477\ }\hlstd{}\hlopt{\};}\\
+\hllin{478\ }\hlstd{}\\
+\hllin{479\ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{480\ }\hlcom{\ {*}\ 图的十字链表实现}\\
+\hllin{481\ }\hlcom{\ {*}\ L:List}\\
+\hllin{482\ }\hlcom{\ {*}/}\hlstd{}\\
+\hllin{483\ }\hlstd{}\hlkwc{template}\hlstd{}\hlopt{$<$}\hlstd{typename\ Info}\hlopt{$>$}\\
+\hllin{484\ }\hlstd{}\hlkwc{class\ }\hlstd{InfoGraphL\ }\hlopt{:\ }\hlstd{}\hlkwc{public\ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$\ \{}\\
+\hllin{485\ }\hlstd{}\hlkwc{public}\hlstd{}\hlopt{:}\\
+\hllin{486\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{explicit\ }\hlstd{}\hlkwd{InfoGraphL}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{n}\hlopt{)\ :\ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$(}\hlstd{n}\hlopt{)}\Righttorque\\
+\hllin{487\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\{}\\
+\hllin{488\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{i\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;\ }\hlstd{i\ }\hlopt{!=\ }\hlstd{n}\hlopt{;\ ++}\hlstd{i}\hlopt{)}\\
+\hllin{489\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{vexes}\hlopt{.}\hlstd{}\hlkwd{emplace\textunderscore back}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{VexNode}\hlstd{}\hlopt{());}\\
+\hllin{490\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{491\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{explicit\ }\hlstd{}\hlkwd{InfoGraphL}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$\ \&}\hlstd{rhs}\hlopt{)\ :\ }\Righttorque\\
+\hllin{492\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{)\ \{}\\
+\hllin{493\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{{*}(}\hlstd{}\hlkwa{dynamic\textunderscore cast}\hlstd{}\hlopt{$<$}\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$\ {*}$>$(}\hlstd{}\hlkwa{this}\hlstd{}\hlopt{))\ =\ }\hlstd{rhs}\hlopt{;}\\
+\hllin{494\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{495\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{$\sim$}\hlstd{}\hlkwd{InfoGraphL}\hlstd{}\hlopt{()\ }\hlstd{override\ }\hlopt{\{\ }\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{();\ \};}\\
+\hllin{496\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{addEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{sink}\hlopt{,\ }\Righttorque\\
+\hllin{497\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{Info\ info}\hlopt{)\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{498\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(!}\hlstd{}\hlkwd{hasEdge}\hlstd{}\hlopt{(}\hlstd{source}\hlopt{,\ }\hlstd{sink}\hlopt{))\ \{}\\
+\hllin{499\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{addEdge}\hlstd{}\hlopt{(}\hlstd{source}\hlopt{,\ }\hlstd{sink}\hlopt{,\ }\hlstd{info}\hlopt{);}\\
+\hllin{500\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{auto\ }\hlstd{}\hlopt{\&}\hlstd{src\ }\hlopt{=\ }\hlstd{vexes}\hlopt{{[}}\hlstd{source}\hlopt{{]};}\\
+\hllin{501\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{auto\ }\hlstd{}\hlopt{\&}\hlstd{dst\ }\hlopt{=\ }\hlstd{vexes}\hlopt{{[}}\hlstd{sink}\hlopt{{]};}\\
+\hllin{502\ }\hlstd{}\\
+\hllin{503\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{++}\hlstd{src}\hlopt{.}\hlstd{out}\hlopt{;}\\
+\hllin{504\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{++}\hlstd{dst}\hlopt{.}\hlstd{in}\hlopt{;}\\
+\hllin{505\ }\hlstd{}\\
+\hllin{506\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{auto\ }\hlstd{}\hlopt{{*}}\hlstd{newArc\ }\hlopt{=\ }\hlstd{}\hlkwa{new\ }\hlstd{}\hlkwd{ArcBox}\hlstd{}\hlopt{(}\hlstd{source}\hlopt{,\ }\hlstd{sink}\hlopt{,\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{,\ }\Righttorque\\
+\hllin{507\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{,\ }\hlstd{info}\hlopt{);}\\
+\hllin{508\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{src}\hlopt{.}\hlstd{firstOut\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{509\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{src}\hlopt{.}\hlstd{firstOut\ }\hlopt{=\ }\hlstd{newArc}\hlopt{;}\\
+\hllin{510\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlopt{\{}\\
+\hllin{511\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{ArcBox\ }\hlopt{{*}{*}}\hlstd{findArc\ }\hlopt{=\ \&}\hlstd{src}\hlopt{.}\hlstd{firstOut}\hlopt{;}\\
+\hllin{512\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(({*}}\hlstd{findArc}\hlopt{)\ !=\ }\hlstd{}\hlkwc{nullptr\ }\hlstd{}\hlopt{\&\&\ ({*}}\hlstd{findArc}\hlopt{){-}$>$}\Righttorque\\
+\hllin{513\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{tailVex\ }\hlopt{$<$\ }\hlstd{sink}\hlopt{)}\\
+\hllin{514\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{findArc\ }\hlopt{=\ \&({*}}\hlstd{findArc}\hlopt{){-}$>$}\hlstd{hLink}\hlopt{;}\\
+\hllin{515\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{newArc}\hlopt{{-}$>$}\hlstd{hLink\ }\hlopt{=\ {*}}\hlstd{findArc}\hlopt{;}\\
+\hllin{516\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{{*}}\hlstd{findArc\ }\hlopt{=\ }\hlstd{newArc}\hlopt{;}\\
+\hllin{517\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{518\ }\hlstd{}\\
+\hllin{519\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{dst}\hlopt{.}\hlstd{firstIn\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{520\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{dst}\hlopt{.}\hlstd{firstIn\ }\hlopt{=\ }\hlstd{newArc}\hlopt{;}\\
+\hllin{521\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlopt{\{}\\
+\hllin{522\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{ArcBox\ }\hlopt{{*}{*}}\hlstd{findArc\ }\hlopt{=\ \&}\hlstd{dst}\hlopt{.}\hlstd{firstIn}\hlopt{;}\\
+\hllin{523\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(({*}}\hlstd{findArc}\hlopt{)\ !=\ }\hlstd{}\hlkwc{nullptr\ }\hlstd{}\hlopt{\&\&\ ({*}}\hlstd{findArc}\hlopt{){-}$>$}\Righttorque\\
+\hllin{524\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{headVex\ }\hlopt{$<$\ }\hlstd{source}\hlopt{)}\\
+\hllin{525\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{findArc\ }\hlopt{=\ \&({*}}\hlstd{findArc}\hlopt{){-}$>$}\hlstd{tLink}\hlopt{;}\\
+\hllin{526\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{newArc}\hlopt{{-}$>$}\hlstd{tLink\ }\hlopt{=\ {*}}\hlstd{findArc}\hlopt{;}\\
+\hllin{527\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{{*}}\hlstd{findArc\ }\hlopt{=\ }\hlstd{newArc}\hlopt{;}\\
+\hllin{528\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{529\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{530\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{531\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{delEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{sink}\hlopt{)\ }\Righttorque\\
+\hllin{532\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{533\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwd{hasEdge}\hlstd{}\hlopt{(}\hlstd{source}\hlopt{,\ }\hlstd{sink}\hlopt{))\ \{}\\
+\hllin{534\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{delEdge}\hlstd{}\hlopt{(}\hlstd{source}\hlopt{,\ }\hlstd{sink}\hlopt{);}\\
+\hllin{535\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{auto\ }\hlstd{}\hlopt{\&}\hlstd{src\ }\hlopt{=\ }\hlstd{vexes}\hlopt{{[}}\hlstd{source}\hlopt{{]};}\\
+\hllin{536\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{auto\ }\hlstd{}\hlopt{\&}\hlstd{dst\ }\hlopt{=\ }\hlstd{vexes}\hlopt{{[}}\hlstd{sink}\hlopt{{]};}\\
+\hllin{537\ }\hlstd{}\\
+\hllin{538\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{{-}{-}}\hlstd{src}\hlopt{.}\hlstd{out}\hlopt{;}\\
+\hllin{539\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{{-}{-}}\hlstd{dst}\hlopt{.}\hlstd{in}\hlopt{;}\\
+\hllin{540\ }\hlstd{}\\
+\hllin{541\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{ArcBox\ }\hlopt{{*}{*}}\hlstd{head\ }\hlopt{=\ \&}\hlstd{src}\hlopt{.}\hlstd{firstOut}\hlopt{,\ {*}{*}}\hlstd{tail\ }\hlopt{=\ \&}\hlstd{dst}\hlopt{.}\Righttorque\\
+\hllin{542\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{firstIn}\hlopt{;}\\
+\hllin{543\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(({*}}\hlstd{tail}\hlopt{){-}$>$}\hlstd{headVex\ }\hlopt{!=\ }\hlstd{source}\hlopt{)}\\
+\hllin{544\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{tail\ }\hlopt{=\ \&({*}}\hlstd{tail}\hlopt{){-}$>$}\hlstd{tLink}\hlopt{;}\\
+\hllin{545\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{{*}}\hlstd{tail\ }\hlopt{=\ ({*}}\hlstd{tail}\hlopt{){-}$>$}\hlstd{tLink}\hlopt{;}\\
+\hllin{546\ }\hlstd{}\\
+\hllin{547\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(({*}}\hlstd{head}\hlopt{){-}$>$}\hlstd{tailVex\ }\hlopt{!=\ }\hlstd{sink}\hlopt{)}\\
+\hllin{548\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{head\ }\hlopt{=\ \&({*}}\hlstd{head}\hlopt{){-}$>$}\hlstd{hLink}\hlopt{;}\\
+\hllin{549\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//\ }\Righttorque\\
+\hllin{550\ }\hlslc{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlslc{废物利用，暂时保存一下要释放的内�}\Righttorque\\
+\hllin{551\ }\hlslc{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlslc{��指针}\\
+\hllin{552\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{{*}}\hlstd{tail\ }\hlopt{=\ {*}}\hlstd{head}\hlopt{;}\\
+\hllin{553\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{{*}}\hlstd{head\ }\hlopt{=\ ({*}}\hlstd{head}\hlopt{){-}$>$}\hlstd{hLink}\hlopt{;}\\
+\hllin{554\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{delete\ }\hlstd{}\hlopt{{*}}\hlstd{tail}\hlopt{;}\\
+\hllin{555\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{556\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{557\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{vexCount}\hlstd{}\hlopt{()\ }\hlstd{}\hlkwb{const\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{558\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{vexCount}\hlstd{}\hlopt{();}\\
+\hllin{559\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{560\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{edgeCount}\hlstd{}\hlopt{()\ }\hlstd{}\hlkwb{const\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{561\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{edgeCount}\hlstd{}\hlopt{();}\\
+\hllin{562\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{563\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{outDegree}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\Righttorque\\
+\hllin{564\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{565\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{vexes}\hlopt{{[}}\hlstd{source}\hlopt{{]}.}\hlstd{out}\hlopt{;}\\
+\hllin{566\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{567\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{}\hlkwd{inDegree}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\Righttorque\\
+\hllin{568\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{569\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{vexes}\hlopt{{[}}\hlstd{source}\hlopt{{]}.}\hlstd{in}\hlopt{;}\\
+\hllin{570\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{571\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{bool\ }\hlstd{}\hlkwd{hasEdge}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{sink}\hlopt{)\ }\Righttorque\\
+\hllin{572\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{573\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{ArcBox\ }\hlopt{{*}}\hlstd{arc\ }\hlopt{=\ }\hlstd{vexes}\hlopt{{[}}\hlstd{source}\hlopt{{]}.}\hlstd{firstOut}\hlopt{;\ }\hlstd{arc\ }\hlopt{!=\ }\Righttorque\\
+\hllin{574\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;\ }\hlstd{arc\ }\hlopt{=\ }\hlstd{arc}\hlopt{{-}$>$}\hlstd{hLink}\hlopt{)}\\
+\hllin{575\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{arc}\hlopt{{-}$>$}\hlstd{tailVex\ }\hlopt{==\ }\hlstd{sink}\hlopt{)}\\
+\hllin{576\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ true}\hlstd{}\hlopt{;}\\
+\hllin{577\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ false}\hlstd{}\hlopt{;}\\
+\hllin{578\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{579\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{Info\ }\hlkwd{getArcInfo}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ unsigned\ long\ }\hlstd{src}\hlopt{,\ }\hlstd{}\hlkwb{const\ unsigned\ }\Righttorque\\
+\hllin{580\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{long\ }\hlstd{dst}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{581\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{ArcBox\ }\hlopt{{*}}\hlstd{arc\ }\hlopt{=\ }\hlstd{vexes}\hlopt{{[}}\hlstd{src}\hlopt{{]}.}\hlstd{firstOut}\hlopt{;\ }\hlstd{arc\ }\hlopt{!=\ }\Righttorque\\
+\hllin{582\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;\ }\hlstd{arc\ }\hlopt{=\ }\hlstd{arc}\hlopt{{-}$>$}\hlstd{hLink}\hlopt{)}\\
+\hllin{583\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{arc}\hlopt{{-}$>$}\hlstd{tailVex\ }\hlopt{==\ }\hlstd{dst}\hlopt{)}\\
+\hllin{584\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{arc}\hlopt{{-}$>$}\hlstd{info}\hlopt{;}\\
+\hllin{585\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{}\hlkwd{Info}\hlstd{}\hlopt{();}\\
+\hllin{586\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{587\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{foreach}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{source}\hlopt{,\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{bool}\hlstd{}\hlopt{(}\Righttorque\\
+\hllin{588\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{Info}\hlopt{)$>$\ \&}\hlstd{func}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\Righttorque\\
+\hllin{589\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{590\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{Info\ info}\hlopt{;}\\
+\hllin{591\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{ArcBox\ }\hlopt{{*}}\hlstd{arc\ }\hlopt{=\ }\hlstd{vexes}\hlopt{{[}}\hlstd{source}\hlopt{{]}.}\hlstd{firstOut}\hlopt{;\ }\hlstd{arc\ }\Righttorque\\
+\hllin{592\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;\ }\hlstd{arc\ }\hlopt{=\ }\hlstd{arc}\hlopt{{-}$>$}\hlstd{hLink}\hlopt{)}\\
+\hllin{593\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(!}\hlstd{}\hlkwd{func}\hlstd{}\hlopt{(}\hlstd{source}\hlopt{,\ }\hlstd{arc}\hlopt{{-}$>$}\hlstd{tailVex}\hlopt{,\ }\hlstd{info}\hlopt{))}\\
+\hllin{594\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{595\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{596\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{foreachIn}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{dst}\hlopt{,\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{bool}\hlstd{}\hlopt{(}\Righttorque\\
+\hllin{597\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long}\hlstd{}\hlopt{,\ }\hlstd{Info}\hlopt{)$>$\ \&}\hlstd{func}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{\{}\\
+\hllin{598\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{ArcBox\ }\hlopt{{*}}\hlstd{arc\ }\hlopt{=\ }\hlstd{vexes}\hlopt{{[}}\hlstd{dst}\hlopt{{]}.}\hlstd{firstIn}\hlopt{;\ }\hlstd{arc\ }\hlopt{!=\ }\Righttorque\\
+\hllin{599\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;\ }\hlstd{arc\ }\hlopt{=\ }\hlstd{arc}\hlopt{{-}$>$}\hlstd{tLink}\hlopt{)}\\
+\hllin{600\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(!}\hlstd{}\hlkwd{func}\hlstd{}\hlopt{(}\hlstd{arc}\hlopt{{-}$>$}\hlstd{headVex}\hlopt{,\ }\hlstd{dst}\hlopt{,\ }\hlstd{arc}\hlopt{{-}$>$}\hlstd{info}\hlopt{))}\\
+\hllin{601\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{602\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{603\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{()\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{604\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{();}\\
+\hllin{605\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{606\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{vexNum}\hlopt{)\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{607\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{reset}\hlstd{}\hlopt{(}\hlstd{vexNum}\hlopt{);}\\
+\hllin{608\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{i\ }\hlopt{=\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{;\ }\hlstd{i\ }\hlopt{!=\ }\hlstd{vexNum}\hlopt{;\ ++}\hlstd{i}\hlopt{)}\\
+\hllin{609\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{vexes}\hlopt{.}\hlstd{}\hlkwd{emplace\textunderscore back}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{VexNode}\hlstd{}\hlopt{());}\\
+\hllin{610\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{611\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{Info\ }\hlopt{\&}\hlstd{}\hlkwc{operator}\hlstd{}\hlopt{()(}\hlstd{}\hlkwb{const\ unsigned\ long\ }\hlstd{src}\hlopt{,\ }\hlstd{}\hlkwb{const\ unsigned\ }\Righttorque\\
+\hllin{612\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{long\ }\hlstd{dst}\hlopt{)\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{613\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{ArcBox\ }\hlopt{{*}}\hlstd{arc\ }\hlopt{=\ }\hlstd{vexes}\hlopt{{[}}\hlstd{src}\hlopt{{]}.}\hlstd{firstOut}\hlopt{;\ }\hlstd{arc\ }\hlopt{!=\ }\Righttorque\\
+\hllin{614\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;\ }\hlstd{arc\ }\hlopt{=\ }\hlstd{arc}\hlopt{{-}$>$}\hlstd{hLink}\hlopt{)}\\
+\hllin{615\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{arc}\hlopt{{-}$>$}\hlstd{tailVex\ }\hlopt{==\ }\hlstd{dst}\hlopt{)}\\
+\hllin{616\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{arc}\hlopt{{-}$>$}\hlstd{info}\hlopt{;}\\
+\hllin{617\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{618\ }\hlstd{}\hlkwc{private}\hlstd{}\hlopt{:}\\
+\hllin{619\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{typedef\ }\hlstd{}\hlkwb{struct\ }\hlstd{ArcBox\ }\hlopt{\{}\\
+\hllin{620\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{headVex}\hlopt{,\ }\hlstd{tailVex}\hlopt{;}\\
+\hllin{621\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{ArcBox\ }\hlopt{{*}}\hlstd{hLink}\hlopt{,\ {*}}\hlstd{tLink}\hlopt{;}\\
+\hllin{622\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{Info\ info}\hlopt{;}\\
+\hllin{623\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{ArcBox}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{head}\hlopt{,\ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{tail}\hlopt{,\ }\Righttorque\\
+\hllin{624\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{ArcBox\ }\hlopt{{*}}\hlstd{headLink}\hlopt{,\ }\hlstd{ArcBox\ }\hlopt{{*}}\hlstd{tailLink}\hlopt{,\ }\hlstd{Info\ theInfo}\hlopt{)\ :}\\
+\hllin{625\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{headVex}\hlstd{}\hlopt{(}\hlstd{head}\hlopt{),\ }\hlstd{}\hlkwd{tailVex}\hlstd{}\hlopt{(}\hlstd{tail}\hlopt{),\ }\hlstd{}\hlkwd{hLink}\hlstd{}\hlopt{(}\hlstd{headLink}\hlopt{),\ }\Righttorque\\
+\hllin{626\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{tLink}\hlstd{}\hlopt{(}\hlstd{tailLink}\hlopt{),\ }\hlstd{}\hlkwd{info}\hlstd{}\hlopt{(}\hlstd{theInfo}\hlopt{)\ \{\}}\\
+\hllin{627\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{ArcBox}\hlopt{;}\\
+\hllin{628\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{typedef\ }\hlstd{}\hlkwb{struct\ }\hlstd{VexNode\ }\hlopt{\{}\\
+\hllin{629\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{in}\hlopt{,\ }\hlstd{out}\hlopt{;}\\
+\hllin{630\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{ArcBox\ }\hlopt{{*}}\hlstd{firstIn}\hlopt{,\ {*}}\hlstd{firstOut}\hlopt{;}\\
+\hllin{631\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{VexNode}\hlstd{}\hlopt{()\ :\ }\hlstd{}\hlkwd{in}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{),\ }\hlstd{}\hlkwd{out}\hlstd{}\hlopt{(}\hlstd{}\hlnum{0}\hlstd{}\hlopt{),\ }\hlstd{}\hlkwd{firstIn}\hlstd{}\hlopt{(}\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{),\ }\Righttorque\\
+\hllin{632\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{firstOut}\hlstd{}\hlopt{(}\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{\};}\\
+\hllin{633\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{VexNode}\hlopt{;}\\
+\hllin{634\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{()\ }\hlstd{override\ }\hlopt{\{}\\
+\hllin{635\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{InfoGraph}\hlopt{$<$}\hlstd{Info}\hlopt{$>$::}\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{();}\\
+\hllin{636\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{VexNode\ }\hlopt{\&}\hlstd{vex}\hlopt{:}\hlstd{vexes}\hlopt{)\ \{}\\
+\hllin{637\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(}\hlstd{vex}\hlopt{.}\hlstd{firstOut\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{}\\
+\hllin{638\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{ArcBox\ }\hlopt{{*}}\hlstd{curr\ }\hlopt{=\ }\hlstd{vex}\hlopt{.}\hlstd{firstOut}\hlopt{;}\\
+\hllin{639\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{vex}\hlopt{.}\hlstd{firstOut\ }\hlopt{=\ }\hlstd{curr}\hlopt{{-}$>$}\hlstd{tLink}\hlopt{;}\\
+\hllin{640\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{delete\ }\hlstd{curr}\hlopt{;}\\
+\hllin{641\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{642\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{643\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{vexes}\hlopt{.}\hlstd{}\hlkwd{clear}\hlstd{}\hlopt{();}\\
+\hllin{644\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{645\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{vector}\hlopt{$<$}\hlstd{VexNode}\hlopt{$>$\ }\hlstd{vexes}\hlopt{;}\\
+\hllin{646\ }\hlstd{}\hlopt{\};}\\
+\hllin{647\ }\hlstd{}\\
+\hllin{648\ }\hlstd{}\hlppc{\#endif\ }\hlslc{//PROJECT\textunderscore GRAPH\textunderscore H}\hlppc{}\hlstd{}\\
+\mbox{}
+\normalfont
+\normalsize
+\end {document}
+(* LaTeX generated by highlight 3.40, http://www.andre-simon.de/ *)

@@ -1,0 +1,80 @@
+{% extends "shop/base.html" %}
+
+{% block title %}
+    Your shopping cart
+{% endblock %}
+
+{% block content %}
+    <h1>Order</h1>
+    <table class="cart">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Create Time</th>
+            <th>Total price</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Transport</th>
+            <th>Pay State</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.create_time|string }}</td>
+            <td class="num">${{ order.price|string }}</td>
+            <td>{{ order.name }}</td>
+            <td>{{ order.phone }}</td>
+            <td>{{ order.address }}</td>
+            <td>{{ order.trans_id }}</td>
+            <td>
+                {% if  order.state == 'u' %}
+                    <a href="{{ url_for('pay_for_order',order_id = order.id) }}">Pay it</a>
+                {% else %}
+                    Paid
+                {% endif %}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <h1>Items</h1>
+    <table class="cart">
+        <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Unit price</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in items %}
+            <tr>
+                <td>
+                    <a href="/{{ item.cate_id }}/{{ item.id }}">{{ item.name }}</a>
+                </td>
+                <td>{{ item.num }}</td>
+                <td class="num">${{ item.price }}</td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+    <p class="text-right">
+        <a href="{{ url_for("index") }}" class="button light">Continue shopping</a>
+    </p>
+    {% if current_user.is_admin %}
+        <form action="" method="post" class="order-form">
+            {{ form.hidden_tag() }}
+            <p>
+                {{ form.trans.label }}<br>
+                {{ form.trans(size=20) }}
+                {% for error in form.trans.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>{{ form.submit() }}</p>
+        </form>
+    {% endif %}
+{% endblock %}

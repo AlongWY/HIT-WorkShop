@@ -1,0 +1,19 @@
+digraph G{
+  rankdir = LR;
+  node[shape="box"];
+  while [label="查询子进程状态"];
+  exit [label="子进程正常退出"];
+  stop [label="子进程挂起"];
+  interupt [label="子进程异常终止"];
+  exitdelete [label="删除任务"];
+  intdelete [label="删除任务"];
+  stopprint [label="打印信息`"];
+  intprint [label="打印信息"];
+  nosig [label="子进程运行正常"];
+  return [label="返回"];
+  while -> exit -> exitdelete -> while;
+  while -> stop -> stopprint -> while;
+  while -> interupt -> intprint -> intdelete -> while;
+  while -> nosig -> return;
+} 
+

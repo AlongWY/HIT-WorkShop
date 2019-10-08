@@ -1,0 +1,18 @@
+// none
+/* none */
+#
+int hello = 0;
+real world = 1.0;
+
+if(hello==0||world >1){
+    dosome();
+}else{
+  while(hello!=0){
+      doother();
+      hello = hello -1;
+  }
+}
+
+/* 
+
+none

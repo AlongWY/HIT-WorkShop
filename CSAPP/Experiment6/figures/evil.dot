@@ -1,0 +1,14 @@
+digraph G{
+  rankdir = LR;
+  node [shape="box"];
+  parseline[label="解析命令"];
+  builtin_cmd[label="内置命令"];
+  fork[label="fork开启新线程"];
+  mask[label="阻塞信号"];
+  unmask[label="父进程取消阻塞"];
+  childunmask[label="子进程取消阻塞"];
+  dojob[label="对任务执行相应的操作"];
+  parseline -> builtin_cmd -> "执行内置命令";
+  parseline -> mask -> fork -> unmask -> dojob;
+  mask -> childunmask -> "执行exec" -> "终止";
+} 

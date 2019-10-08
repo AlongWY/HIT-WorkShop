@@ -1,0 +1,62 @@
+\section{C语言的位操作指令}
+\begin{center}
+    写出C语言例句
+\end{center}
+
+\subsection{逻辑操作（1分）}
+
+\begin{enumerate}
+    \item \&\& 逻辑与
+    \item ||   逻辑或
+    \item !    逻辑非
+\end{enumerate}
+
+\begin{minted}{c}
+    int a = 0;        // a = 0
+    int b = a || 1;   // b = 1
+    int c = a && b;   // c = 0
+    int d = !c;       // d = 1
+\end{minted}
+
+\subsection{无符号数位操作（2分）}
+
+\begin{enumerate}
+    \item \mintinline{c}|<<| 左移
+    \item \mintinline{c}|>>| 逻辑右移
+    \item \& 位与
+    \item | 位或
+    \item \mintinline{c}|~| 位取反
+    \item \mintinline{c}|^| 位异或
+\end{enumerate}
+
+\begin{minted}{c}
+    unsigned a = 1;        // a = 0x00
+    unsigned b = a << 3;   // b = 0x08
+    unsigned c = a & b;    // c = 0
+    unsigned d = ~c;       // d = 0xffffffff
+    unsigned e = b ^ d;    // e = 0xfffffff7
+    unsigned f = e >> 8;   // f = 0x00ffffff
+    unsigned g = a | b;    // g = 0x08
+\end{minted}
+
+\subsection{有符号数位操作（2分）}
+
+\begin{enumerate}
+    \item \mintinline{c}|<<| 左移
+    \item \mintinline{c}|>>| 算数右移
+    \item \& 位与
+    \item | 位或
+    \item \mintinline{c}|~| 位取反
+    \item \mintinline{c}|^| 位异或
+\end{enumerate}
+
+\begin{minted}{c}
+    int a = 1;        // a = 0x00
+    int b = a << 3;   // b = 0x08
+    int c = a & b;    // c = 0
+    int d = ~c;       // d = 0xffffffff
+    int e = b ^ d;    // e = 0xfffffff7
+    int f = e >> 8;   // f = 0xffffffff
+    int g = a | b;    // g = 0x08
+\end{minted}
+

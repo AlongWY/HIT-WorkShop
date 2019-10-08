@@ -1,0 +1,9 @@
+def main(argc, argv){
+    var test = "hello world";
+    print(test);
+
+    var test2 = 1;
+    print("Accept ${ test2 } hey");
+
+    return 0;
+}

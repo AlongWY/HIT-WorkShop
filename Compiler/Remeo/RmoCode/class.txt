@@ -1,0 +1,14 @@
+class human {
+    var id = 0;
+    def human(){
+        // do nothing
+    }
+    def Id(){
+        return id;
+    }
+}
+
+def main(argc, argv){
+    var man = human();
+    return man.Id();
+}

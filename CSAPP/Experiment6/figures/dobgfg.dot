@@ -1,0 +1,13 @@
+digraph G{
+  rankdir = LR;
+  node [shape="box"];
+  check[label="检查命令是否合法"];
+  bg[label="BG命令"];
+  fg[label="FG命令"];
+  bgChange[label="改变任务状态标签"];
+  fgChange[label="改变任务状态标签"];
+  waitfg[label="等待前台程序退出"];
+  return[label="返回"];
+  check -> bg -> bgChange -> return;
+  check -> fg -> fgChange -> waitfg -> return;
+} 

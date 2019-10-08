@@ -1,0 +1,8 @@
+*.zip
+*.rar
+face/
+venv/
+result/
+.idea/
+__pycache__
+model/

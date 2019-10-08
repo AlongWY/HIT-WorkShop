@@ -1,0 +1,105 @@
+\documentclass[11pt,a4paper]{ctexart}
+% 调整页面大小，默认页面与常用规格不符
+\usepackage[margin=1in,top=1.5in]{geometry}
+\pagestyle{headings}
+\usepackage[utf8]{inputenc}
+
+\usepackage{float}
+
+% 插入数学及电学符号
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+% 插入附件
+%\usepackage{navigator}
+
+% 引用链接可点击
+\usepackage{cite}
+\usepackage[colorlinks,linkcolor=black,anchorcolor=blue,citecolor=green]{hyperref}
+
+% 插入图片
+\usepackage{graphicx}
+
+% 绘制各种图形，包括电路图，函数图
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+\makeatletter
+\newcommand\dlmu[2][4cm]{\hskip1pt\underline{\hb@xt@ #1{\hss#2\hss}}\hskip3pt}
+\makeatother
+
+% 标题居左 显示成如下情况 一、标题
+\ctexset{
+	section={
+		name={第,章},
+		number=\arabic{section},
+		format=\Large\bfseries\raggedright\heiti
+	},
+}
+
+% 设置页眉
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{} % 清空当前的页眉页脚
+\fancyhead[C]{\heiti 计算机系统实验报告}
+
+% 用于插入C代码
+\usepackage{minted}
+
+\bibliographystyle{plain}
+\numberwithin{figure}{section}
+
+\begin{document}
+\heiti
+\begin{titlepage}
+	\centering
+	\rule[1.10cm]{\linewidth}{0cm}
+	
+	\includegraphics[width=0.4\linewidth]{../Banner}
+	
+	\vspace{0.5cm}
+	\textbf{\zihao{0} 实验报告}
+	
+	\vspace{1cm}
+	\textbf{{\Huge 实验(一)}}
+	
+	\begin{LARGE}
+		\vspace{2cm}
+		题\rule{38pt}{0pt}目 \dlmu[6cm]{Linux下C工具应用} \\ \vspace{4pt}
+		专\rule{38pt}{0pt}业 \dlmu[6cm]{计算机系} \\ \vspace{4pt}
+		学\rule{38pt}{0pt}号 \dlmu[6cm]{1160300202}\\ \vspace{4pt}
+		班\rule{38pt}{0pt}级 \dlmu[6cm]{1603002}\\ \vspace{4pt}
+		学\rule{38pt}{0pt}生 \dlmu[6cm]{冯云龙}\\ \vspace{4pt}
+		指导教师 \dlmu[6cm]{刘宏伟}\\ \vspace{4pt}
+		实验地点 \dlmu[6cm]{G712}\\ \vspace{4pt}
+		实验日期 \dlmu[6cm]{2017/10/10}\\ \vspace{4pt}
+	\end{LARGE}
+	
+	\vfill
+	{\huge \textbf{计算机科学与技术学院}}% 底部插入当日日期
+\end{titlepage}
+
+\tableofcontents
+\newpage
+\input{Chapter/第1章} %实验基本信息
+\input{Chapter/第2章} %实验环境建立
+\input{Chapter/第3章} %WINDOWS软硬件系统观察与分析
+\input{Chapter/第4章} %LINUX软硬件系统观察与分析
+\input{Chapter/第5-6章} %以16进制查看程序HELLO.C %程序的生成
+\input{Chapter/第7章} %计算机系统的基本信息获取编程
+\input{Chapter/第8章} %计算机数据类型的本质
+\input{Chapter/第9-10章} %程序运行分析 %总结
+
+\nocite{ref1}
+\nocite{ref2}
+\nocite{ref3}
+\nocite{ref4}
+\nocite{ref5}
+\nocite{ref6}
+\nocite{ref7}
+
+%参考文献
+\bibliography{Ref/参考文献}
+
+\end{document}

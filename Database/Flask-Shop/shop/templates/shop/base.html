@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8"/>
+    <title>{% block title %}My shop{% endblock %}</title>
+    <link href="{{ url_for('static', filename="css/base.css") }}" rel="stylesheet">
+</head>
+<div id="header">
+    <a href="{{ url_for('index') }}" class="logo">{% block header %}My shop{% endblock %}</a>
+    <div class="info">
+        {% if current_user.is_anonymous %}
+            <a href="{{ url_for('login') }}">Login</a>
+        {% else %}
+            <a href="{{ url_for('profile') }}">Profile</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% endif %}
+    </div>
+</div>
+<div id="subheader">
+    <div class="cart">
+        {% with total_items = cart|length %}
+            {% if total_items > 0 %}
+                Your cart:
+                <a href="{{ url_for("cart_detail") }}">
+                    {{ total_items }} items, ${{ cart.get_total_price }}
+                </a>
+            {% else %}
+                Your cart is empty.
+            {% endif %}
+        {% endwith %}
+    </div>
+</div>
+<div id="content">
+    {% block content %}
+    {% endblock %}
+</div>
+</body>
+</html>

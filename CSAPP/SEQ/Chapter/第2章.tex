@@ -1,0 +1,112 @@
+\section{预备知识}
+
+\subsection{给出ISA+的指令编码设计}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
+        \hline 
+        字节 & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 \\ 
+        \hline 
+        halt & 0|0 & \multicolumn{9}{c|}{} \\ 
+        \hline 
+        nop & 1|0 & \multicolumn{9}{c|}{} \\ 
+        \hline 
+        rrmovq rA,rB & 2|0 & rA|rB & \multicolumn{8}{c|}{} \\ 
+        \hline 
+        irmovq V,rB & 3|0 & F|rB & \multicolumn{8}{c|}{V} \\ 
+        \hline 
+        rmmovq rA,D(rB) & 4|0 & rA,rB & \multicolumn{8}{c|}{D} \\ 
+        \hline 
+        mrmovq D(rB),rA & 5|0 & rA,rB & \multicolumn{8}{c|}{D} \\ 
+        \hline 
+        OPq rA,rB & 6|fn & rA,rB & \multicolumn{8}{c|}{} \\ 
+        \hline 
+        jXX Dest & 7|fn & \multicolumn{8}{c|}{Dest} &  \\ 
+        \hline 
+        cmovXX rA,rB & 2|fn & rA,rB & \multicolumn{8}{c|}{} \\ 
+        \hline 
+        call Dest & 8|0 & \multicolumn{8}{c|}{Dest} &  \\ 
+        \hline 
+        ret & 9|0 & \multicolumn{9}{c|}{}  \\ 
+        \hline 
+        pushq rA & A|0 & rA|F & \multicolumn{8}{c|}{} \\ 
+        \hline 
+        popq rA & B|0 & rA|F & \multicolumn{8}{c|}{} \\ 
+        \hline 
+        iaddq V,rB & C|0 & F|rB & \multicolumn{8}{c|}{V} \\ 
+        \hline 
+    \end{tabular} 
+    \caption{ISA+指令集}
+\end{table}
+
+\begin{table}[H]
+    \centering
+   \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+       \hline 
+       \multicolumn{2}{|c|}{整数操作指令} & \multicolumn{4}{|c|}{分支命令} & \multicolumn{4}{|c|}{传送指令} \\ 
+       \hline 
+       addq & 6|0 & jmp & 7|0 & jne & 7|4 & rrmovq & 2|0 & cmovne & 2|4 \\ 
+       \hline 
+       subq & 6|1 & jle & 7|1 & jge & 7|5 & cmovle & 2|1 & cmovge & 2|5 \\ 
+       \hline 
+       andq & 6|2 & jl & 7|2 & jg & 7|6 & cmovl & 2|2 & cmovq & 2|6 \\ 
+       \hline 
+       xorq & 6|3 & je & 7|3 &  &  & cmove & 2|3 &  &  \\ 
+       \hline 
+   \end{tabular} 
+   \caption{ISA+指令集功能码}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+        \hline 
+        数字 & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7  \\ 
+        \hline 
+        寄存器名字 & \%rax & \%rcx & \%rdx & \%rbx & \%rsp & \%rbp & \%rsi & \%rdi  \\ 
+        \hline 
+        数字 & 8 & 9 & A & B & C & D & E & F \\
+        \hline
+        寄存器名字 & \%r8 & \%r9 & \%r10 & \%r11 & \%r12 & \%r13 & \%r14 & 无寄存器 \\
+        \hline
+    \end{tabular} 
+    \caption{ISA+寄存器标识符}
+\end{table}
+
+\subsection{写出指令iaddq在SEQ中的计算过程}
+
+\begin{enumerate}
+    \item 取指令(Fetch)
+    \subitem icode:ifun = M1[PC]
+    \subitem rA:rB=M1[PC+1]
+    \subitem valC=M8[PC+2]
+    \subitem valP=PC+10
+    \item 译码(Decode)
+    \subitem valB=R[rB]
+    \item 执行(Excute)
+    \subitem valE=valB + valC
+    \subitem set CC
+    \item 写回(Memory)
+    \item 更新PC(Write)
+    \subitem R[rB]=valE
+\end{enumerate}
+
+\subsection{使用iaddq指令重写教材图4-6中的sum函数}
+
+\begin{minted}{gas}
+sum:
+    xorq   %rax,%rax
+    andq   %rsi,%rsi
+    jmp    test
+loop:
+    mrmovq (%rdi),%r10
+    addq   %r10,%rax
+    iaddq  $8,%rdi
+    iaddq  $-1,%rsi
+test:
+    jne loop
+    ret
+\end{minted}
+
+

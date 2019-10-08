@@ -1,0 +1,16 @@
+[server]
+port = 10240
+
+[root]
+pwd = "root"
+mode = 1 # 0是允许访问/1是拒绝访问
+
+host = [
+    "baidu.com",
+    "www.baidu.com",
+]
+
+[[root.map]]
+src = "www.runoob.com"
+dst = "www.yiibai.com"
+

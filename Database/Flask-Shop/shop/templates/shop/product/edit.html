@@ -1,0 +1,49 @@
+{% extends "shop/base.html" %}
+{% block content %}
+    {% if current_user.is_admin %}
+        <div id="admin">
+            <h1>Change Form</h1>
+        </div>
+        <div>
+            <form action="" method="post" class="order-form">
+                {{ product_form.hidden_tag() }}
+                <p>
+                    {{ product_form.cate.label }}<br>
+                    {{ product_form.cate }}
+                    {% for error in product_form.cate.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ product_form.name.label }}<br>
+                    {{ product_form.name }}
+                    {% for error in product_form.name.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ product_form.price.label }}<br>
+                    {{ product_form.price }}
+                    {% for error in product_form.price.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ product_form.image.label }}<br>
+                    {{ product_form.image }}
+                    {% for error in product_form.image.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ product_form.description.label }}<br>
+                    {{ product_form.description }}
+                    {% for error in product_form.description.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </p>
+                <p>{{ product_form.submit() }}</p>
+            </form>
+        </div>
+    {% endif %}
+{% endblock %}

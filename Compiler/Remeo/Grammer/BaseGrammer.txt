@@ -1,0 +1,56 @@
+<Program>
+<Program> -> <Declares>{Accept}
+<Declares> -> <Declare><Declares'>
+<Declares'> -> <Declare><Declares'> | <EPS>
+
+<TYPE>    -> [INT] | [REAL] | [STRING] | [BOOL]
+<Declare> -> [IMPORT][UNIT][SEMICOLON]
+
+// 函数定义
+<Declare> -> [DEF]{Skip}[UNIT][LEFT_PARAN]{Skip}<Args>[RIGHT_PARAN]{Skip}[COLON]{Skip}<TYPE>{Skip}{Def}<Body>
+
+// 全局变量声明
+<Declare> -> <TYPE>[UNIT][SEMICOLON]
+<Declare> -> <TYPE>[UNIT][ASSIGN]<Expression>{Assign}[SEMICOLON]
+
+<Args>  -> <TYPE>[UNIT]<Args'> | <EPS>
+<Args'> -> [COMMA]<TYPE>[UNIT]<Args'> | <EPS>
+
+<Body>   -> [LEFT_BRACE] <Statement> <Body'>
+<Body'>  -> <Statement> <Body'> | [RIGHT_BRACE]{Skip}{Skip}
+
+<Statement>         -> <Expression>[SEMICOLON]{Skip}
+<Statement>         -> <TYPE>[UNIT][ASSIGN]<Expression>{Assign}[SEMICOLON]{Skip}
+<Statement>         -> <If> | <While> | <Return>
+
+<If> -> [IF][LEFT_PARAN]<Expression>[RIGHT_PARAN]<Body><Else>{Skip}{Skip}{Skip}
+<Else> -> [ELSE]<Body>{Skip} | <EPS>
+
+<While> -> [WHILE][LEFT_PARAN]<Expression>[RIGHT_PARAN]<Body>
+
+<Return> -> [RETURN]<Expression>[SEMICOLON]{Skip}{UnaryOp}
+
+<FuncCall> -> [UNIT][LEFT_PARAN]{Skip}<CallArgs>[RIGHT_PARAN]{Skip}{Call}
+<ArrayCall> -> [UNIT][LEFT_BRACKET]{Skip}<CallArgs>[RIGHT_BRACKET]{Skip}{Call}
+
+<CallArgs>  -> <Expression><CallArgs'> | <EPS>
+<CallArgs'> -> [COMMA]<Expression><CallArgs'> | <EPS>
+
+<Expression>        -> <Expression_Or>
+<Expression_Or>     -> <Expression_And>   | <Expression_Or>[LOGIC_OR]<Expression_And>{BinOp}
+<Expression_And>    -> <Expression_BitOr> | <Expression_And>[LOGIC_AND]<Expression_BitOr>{BinOp}
+<Expression_BitOr>  -> <Expression_BitXor>| <Expression_BitOr>[BIT_OR]<Expression_BitXor>{BinOp}
+<Expression_BitXor> -> <Expression_BitAnd>| <Expression_BitXor>[BIT_XOR]<Expression_BitAnd>{BinOp}
+<Expression_BitAnd> -> <Expression_Eq>    | <Expression_BitAnd>[BIT_AND]<Expression_Eq>{BinOp}
+<Expression_Eq>     -> <Expression_Cmp>   | <Expression_Eq>[EQUAL]<Expression_Cmp>{BinOp} | <Expression_Eq>[NOT_EQUAL]<Expression_Cmp>{BinOp}
+<Expression_Cmp>    -> <Expression_Shift> | <Expression_Cmp>[LESS]<Expression_Shift>{BinOp} | <Expression_Cmp>[LESS_EQUAL]<Expression_Shift>{BinOp} | <Expression_Cmp>[GRATE]<Expression_Shift>{BinOp} | <Expression_Cmp>[GRATE_EQUAL]<Expression_Shift>{BinOp}
+<Expression_Shift>  -> <Expression_Add>   | <Expression_Shift>[BIT_SHIFT_LEFT]<Expression_Add>{BinOp} | <Expression_Shift>[BIT_SHIFT_RIGHT]<Expression_Add>{BinOp}
+<Expression_Add>    -> <Expression_Term>  | <Expression_Add>[ADD]<Expression_Term>{BinOp} | <Expression_Add>[SUB]<Expression_Term>{BinOp}
+<Expression_Term>   -> <Expression_Factor>| <Expression_Term>[DIV]<Expression_Factor>{BinOp} | <Expression_Term>[MUL]<Expression_Factor>{BinOp} | <Expression_Term>[MOD]<Expression_Factor>{BinOp}
+<Expression_Factor> -> <Expression_Value> | [LEFT_PARAN]{Skip}<Expression>[RIGHT_PARAN]{Skip}
+<Expression_Value>  -> [STRING_VAL]{IdVal} |  [INT_VAL]{IntVal}| [REAL_VAL]{RealVal} | [TRUE]{IdVal} | [FALSE]{IdVal}
+<Expression_Value>  -> [LOGIC_NOT]<Expression_Factor>{UnaryOp} | [ADD]<Expression_Factor>{UnaryOp} | [SUB]<Expression_Factor>{UnaryOp}
+// 变量、数组、函数调用
+<Expression_Value>  -> [UNIT]{UnitVal} | <FuncCall> | <ArrayCall>
+
+

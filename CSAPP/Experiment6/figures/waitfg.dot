@@ -1,0 +1,7 @@
+digraph G{
+  rankdir = LR;
+  node [shape="box"];
+  "PID == FGPID?" -> "挂起"[label="是"];
+  "PID == FGPID?" -> "返回"[label="否"];
+  "挂起" -> "PID == FGPID?";
+} 

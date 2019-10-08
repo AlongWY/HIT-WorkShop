@@ -1,0 +1,73 @@
+<Program>
+
+// 全局外部定义
+<Program>           -> <OutDecl>
+<OutDecl>           -> <ModuleDecl> <OutDecl'> | <VarDecl> <OutDecl'> | <ClassDecl> <OutDecl'> | <FuncDecl> <OutDecl'>
+<OutDecl'>          -> <ModuleDecl> <OutDecl'> | <VarDecl> <OutDecl'> | <ClassDecl> <OutDecl'> | <FuncDecl> <OutDecl'> | [~]
+
+// 非函数 暂时无效
+<ModuleDecl>        -> [TOKEN_IMPORT][TOKEN_IDENTIFIER][TOKEN_SEMICOLON]
+<VarDecl>           -> [TOKEN_VAR][TOKEN_IDENTIFIER]<AssignCall>[TOKEN_SEMICOLON]
+
+// 类型定义
+<ClassDecl>         -> [TOKEN_CLASS] [TOKEN_IDENTIFIER][TOKEN_LEFT_BRACE]<ClassBody>[TOKEN_RIGHT_BRACE]
+<ClassBody>         -> <VarDecl> <ClassBody> | <FuncDecl> <ClassBody> | [~]
+
+// 函数定义区
+<Args>              -> [TOKEN_IDENTIFIER]<Args'> | [~]
+<Args'>             -> [TOKEN_COMMA][TOKEN_IDENTIFIER]<Args'> | [~]
+<Return>            -> [TOKEN_RETURN]<Expression>[TOKEN_SEMICOLON]
+<FuncDecl>          -> [TOKEN_DEF]  [TOKEN_IDENTIFIER] [TOKEN_LEFT_PARAN] <Args> [TOKEN_RIGHT_PARAN] <Body>
+
+// 各种与ID有关的
+<IdCall>             -> [TOKEN_IDENTIFIER] <IdCall'>
+<IdCall'>            -> [~] | <FuncCall> | <DotCall> | <ArrayCall> | <AssignCall>
+
+// 函数调用
+<FuncCall>          -> [TOKEN_LEFT_PARAN] <CallArgs> [TOKEN_RIGHT_PARAN]
+<CallArgs>          -> <Expression> <CallArgs'> | [~]
+<CallArgs'>         -> [TOKEN_COMMA]<Expression> <CallArgs'> | [~]
+
+// 赋值语句
+<AssignCall>        -> [TOKEN_ASSIGN] <Expression>
+
+// 类型子元素/函数调用
+<DotCall>           -> [TOKEN_DOT][TOKEN_IDENTIFIER]<DotCall'>
+<DotCall'>          -> <ArrayCall> | <FuncCall> | <DotCall> | [~]
+
+// 数组访问
+<ArrayCall>         -> [TOKEN_LEFT_BRACKET] <Expression> [TOKEN_RIGHT_BRACKET]
+
+// 函数体等
+<Body>              -> [TOKEN_LEFT_BRACE]<InnerExpressions>[TOKEN_RIGHT_BRACE]
+
+// 循环语句推导
+<InnerExpressions>  -> <InnerExpression> <InnerExpressions'> | [~]
+<InnerExpressions'> -> <InnerExpression> <InnerExpressions'> | [~]
+
+// 内部语句
+<InnerExpression>   -> <If> | <While> | <VarDecl> | <Return> | <IdCall> [TOKEN_SEMICOLON]
+
+// 表达式计算 暂不支持单目运算符和比较运算符
+// 运算优先级从低到高
+<Expression>        -> <Expression_And>
+<Expression_And>    -> <Expression_BitOr> | <Expression_And>[TOKEN_LOGIC_AND]<Expression_BitOr>
+<Expression_BitOr>  -> <Expression_BitXor>| <Expression_BitOr>[TOKEN_BIT_OR]<Expression_BitXor>
+<Expression_BitXor> -> <Expression_BitAnd>| <Expression_BitXor>[TOKEN_BIT_XOR]<Expression_BitAnd>
+<Expression_BitAnd> -> <Expression_Eq>    | <Expression_BitAnd>[TOKEN_BIT_AND]<Expression_Eq>
+<Expression_Eq>     -> <Expression_Cmp>   | <Expression_Eq>[TOKEN_EQUAL]<Expression_Cmp> | <Expression_Eq>[TOKEN_NOT_EQUAL]<Expression_Cmp>
+<Expression_Cmp>    -> <Expression_Shift> | <Expression_Cmp>[TOKEN_LESS]<Expression_Shift> | <Expression_Cmp>[TOKEN_LESS_EQUAL]<Expression_Shift> | <Expression_Cmp>[TOKEN_GRATE]<Expression_Shift> | <Expression_Cmp>[TOKEN_GRATE_EQUAL]<Expression_Shift>
+<Expression_Shift>  -> <Expression_Add>   | <Expression_Shift>[TOKEN_BIT_SHIFT_LEFT]<Expression_Add> | <Expression_Shift>[TOKEN_BIT_SHIFT_RIGHT]<Expression_Add>
+<Expression_Add>    -> <Expression_Term>  | <Expression_Add>[TOKEN_ADD]<Expression_Term> | <Expression_Add>[TOKEN_SUB]<Expression_Term>
+<Expression_Term>   -> <Expression_Final> | <Expression_Term>[TOKEN_MUL]<Expression_Final> | <Expression_Term>[TOKEN_DIV]<Expression_Final> | <Expression_Term>[TOKEN_MOD]<Expression_Final>
+<Expression_Final>  -> [TOKEN_LEFT_PARAN]<Expression>[TOKEN_RIGHT_PARAN] | <Expression_Value>
+<Expression_Single> -> [TOKEN_LOGIC_NOT]<Expression> | [TOKEN_NOT_EQUAL]<Expression>
+<Expression_Value>  -> [TOKEN_NUM] | [TOKEN_NONE] | [TOKEN_STRING] | <Expression_Id>
+<Expression_Id>     -> [TOKEN_IDENTIFIER] <Expression_Id'>
+<Expression_Id'>    -> [~] | <FuncCall> | <DotCall> | <ArrayCall>
+
+// 控制流
+<If>                -> [TOKEN_IF][TOKEN_LEFT_PARAN]<Expression>[TOKEN_RIGHT_PARAN]<Body><Else>
+<Else>              -> [TOKEN_ELSE]<Body> | [~]
+
+<While>             -> [TOKEN_WHILE][TOKEN_LEFT_PARAN]<Expression>[TOKEN_RIGHT_PARAN]<Body>

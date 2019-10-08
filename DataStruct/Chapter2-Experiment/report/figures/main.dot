@@ -1,0 +1,45 @@
+digraph main{
+//    rankdir = LR;
+    init [label = "初始化"];
+    haveArgs [label = "是否带有参数"];
+    readArgs [label = "读取参数"];
+    IsOutput [label = "-o filename"];
+    InputPoly [label = "-poly \"poly a\" \"poly b\""];
+    GetOp [label = "-p add/sub/mult/div"];
+    FileInput [label = "-i filename"];
+    Caclu [label = "-x num"];
+    FileRead [label = "读取文件"];
+    ReadPoly [label = "读入两个多项式"];
+    ReadPoly2 [label = "读入两个多项式"];
+    IsOver [label = "参数是否读取完毕"];
+    OutputHelp [label = "输出帮助信息"];
+    PrintPoly [label = "打印多项式A,B"];
+    Operation [label = "操作两个多项式进行加减乘除"];
+    PrintPoly2 [label = "打印操作结果"];
+    OutputToFile [label = "输出到文件"];
+    End [label = "终止"];
+    
+    init -> haveArgs;
+    haveArgs -> readArgs[label = "有参数"];
+    haveArgs -> OutputHelp[label = "无参数"];
+    OutputHelp -> End;
+    readArgs -> IsOutput;
+    readArgs -> InputPoly;
+    readArgs -> FileInput;
+    readArgs -> GetOp;
+    readArgs -> Caclu;
+    InputPoly -> ReadPoly;
+    FileInput -> FileRead;
+    FileRead -> ReadPoly2;
+    IsOutput -> IsOver;
+    GetOp -> IsOver;
+    Caclu -> IsOver;
+    ReadPoly -> IsOver;
+    ReadPoly2 -> IsOver;
+    IsOver -> readArgs[label = "参数未读取完毕"];
+    IsOver -> PrintPoly[label = "参数读取完毕"];
+    PrintPoly -> Operation;
+    Operation -> PrintPoly2;
+    PrintPoly2 -> OutputToFile;
+    OutputToFile -> End;
+}

@@ -1,0 +1,68 @@
+<Declares>
+<Declares> -> <Declare><Declares> | <EPS>
+
+<TYPE>    -> [INT]{Type} | [REAL]{Type} | [STRING]{Type} | [BOOL]{Type}
+<Declare> -> [IMPORT][UNIT][SEMICOLON]{Import}
+
+// 变量声明
+<VarDecl>     -> <TYPE>[UNIT]{VarDeclare}
+<ArrayDecl>   -> <VarDecl>[LEFT_BRACKET][INT_VAL]<ArrayDefine>{ArrayDeclare}
+<ArrayDefine> -> [RIGHT_BRACKET][LEFT_BRACKET][INT_VAL]<ArrayDefine>{ArrayExpend} | [RIGHT_BRACKET]{ArrayExpendEnd}
+<FuncMark>    -> [DEF][UNIT][LEFT_PARAN]{FuncDeclMark}
+<FuncDecl>    -> <FuncMark><Args>[RIGHT_PARAN][COLON]<TYPE>{FuncDeclare}
+
+// 函数定义
+<Declare>    -> <FuncDecl><Body>{FuncDefine}
+<Args>       -> <VarDecl><ArgsExtra>{FuncArgsLeft} | <EPS>
+<ArgsExtra>  -> [COMMA]<VarDecl><ArgsExtra>{FuncArgsRight} | <EPS>
+<Body>       -> <BlockLeft> <Statement> <BodyExtra> | <BlockLeft> <BlockRight>
+<BodyExtra>  -> <Statement> <BodyExtra> | <BlockRight>
+<BlockLeft>  -> [LEFT_BRACE]{BlockStart}
+<BlockRight> -> [RIGHT_BRACE]{BlockEnd}
+
+// 全局变量声明
+<Declare> -> <VarDecl>[SEMICOLON]{PopVarDecl}
+<Declare> -> <ArrayDecl>[SEMICOLON]{PopVarDecl}
+<Declare> -> <VarDecl>[ASSIGN]<Expression>[SEMICOLON]{Assign}
+
+// 函数调用/数组调用
+<FunctionCall>  -> [UNIT][LEFT_PARAN]<CallArgs>[RIGHT_PARAN]
+<ArrayUse>      -> [UNIT][LEFT_BRACKET]<CallArgs>[RIGHT_BRACKET]
+<CallArgs>      -> <Expression><CallArgsExtra> | <EPS>
+<CallArgsExtra> -> [COMMA]<Expression><CallArgsExtra> | <EPS>
+
+<Statement>  -> <FunctionCall>[SEMICOLON]
+<Statement>  -> <VarDecl>[SEMICOLON]{PopVarDecl}
+<Statement>  -> <ArrayDecl>[SEMICOLON]{PopVarDecl}
+<Statement>  -> <VarDecl>[ASSIGN]<Expression>[SEMICOLON]{Assign}
+<Statement>  -> [UNIT][ASSIGN]<Expression>[SEMICOLON]{Assign}
+<Statement>  -> <If> | <While> | <Return>
+
+// 控制流语句
+<SkipRight>  -> [RIGHT_PARAN]{CtrlOver}
+<IFMark>     -> [IF][LEFT_PARAN]{IfMark}
+<If>         -> <IFMark><Expression><SkipRight><Body><Else>{IfStatement}
+<ELSEMark>   -> [ELSE]{ElseMark}
+<Else>       -> <ELSEMark><Body>{ElseStatement} | <EPS>
+<WHILEMark>  -> [WHILE][LEFT_PARAN]{WhileMark}
+<While>      -> <WHILEMark><Expression><SkipRight><Body>{WhileStatement}
+<Return>     -> [RETURN]<Expression>[SEMICOLON]
+
+<Expression>        -> <Expression_Or>
+<Expression_Or>     -> <Expression_And>   | <Expression_Or>[LOGIC_OR]<Expression_And>{BinOp}
+<Expression_And>    -> <Expression_BitOr> | <Expression_And>[LOGIC_AND]<Expression_BitOr>{BinOp}
+<Expression_BitOr>  -> <Expression_BitXor>| <Expression_BitOr>[BIT_OR]<Expression_BitXor>{BinOp}
+<Expression_BitXor> -> <Expression_BitAnd>| <Expression_BitXor>[BIT_XOR]<Expression_BitAnd>{BinOp}
+<Expression_BitAnd> -> <Expression_Eq>    | <Expression_BitAnd>[BIT_AND]<Expression_Eq>{BinOp}
+<Expression_Eq>     -> <Expression_Cmp>   | <Expression_Eq>[EQUAL]<Expression_Cmp>{BinOp} | <Expression_Eq>[NOT_EQUAL]<Expression_Cmp>{BinOp}
+<Expression_Cmp>    -> <Expression_Shift> | <Expression_Cmp>[LESS]<Expression_Shift>{BinOp} | <Expression_Cmp>[LESS_EQUAL]<Expression_Shift>{BinOp} | <Expression_Cmp>[GRATE]<Expression_Shift>{BinOp} | <Expression_Cmp>[GRATE_EQUAL]<Expression_Shift>{BinOp}
+<Expression_Shift>  -> <Expression_Add>   | <Expression_Shift>[BIT_SHIFT_LEFT]<Expression_Add>{BinOp} | <Expression_Shift>[BIT_SHIFT_RIGHT]<Expression_Add>{BinOp}
+<Expression_Add>    -> <Expression_Term>  | <Expression_Add>[ADD]<Expression_Term>{BinOp} | <Expression_Add>[SUB]<Expression_Term>{BinOp}
+<Expression_Term>   -> <Expression_Factor>| <Expression_Term>[DIV]<Expression_Factor>{BinOp} | <Expression_Term>[MUL]<Expression_Factor>{BinOp} | <Expression_Term>[MOD]<Expression_Factor>{BinOp}
+<Expression_Factor> -> <Expression_Value> | [LEFT_PARAN]<Expression>[RIGHT_PARAN]{Skip2}
+<Expression_Value>  -> [STRING_VAL]{StringVal} | [INT_VAL]{IntVal} | [REAL_VAL]{RealVal} | [TRUE]{BoolVal} | [FALSE]{BoolVal}
+<Expression_Value>  -> [LOGIC_NOT]<Expression_Factor>{UnaryOp} | [ADD]<Expression_Factor>{UnaryOp} | [SUB]<Expression_Factor>{UnaryOp}
+// 变量、数组、函数调用
+<Expression_Value>  -> [UNIT]{UnitVal} | <FunctionCall> | <ArrayUse>
+
+

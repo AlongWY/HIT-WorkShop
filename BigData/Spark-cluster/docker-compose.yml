@@ -1,0 +1,145 @@
+version: '2'
+services:
+  spark-master:
+    image: alongwy/spark-master:2.4.0-hadoop2.7
+    container_name: spark-master
+    links:
+      - namenode
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+    environment:
+      - INIT_DAEMON_STEP=setup_spark
+  spark-worker-1:
+    image: alongwy/spark-worker:2.4.0-hadoop2.7
+    container_name: spark-worker-1
+    links:
+      - namenode
+    depends_on:
+      - spark-master
+    ports:
+      - "8081:8081"
+    environment:
+      - "SPARK_MASTER=spark://spark-master:7077"
+  spark-worker-2:
+    image: alongwy/spark-worker:2.4.0-hadoop2.7
+    container_name: spark-worker-2
+    links:
+      - namenode
+    depends_on:
+      - spark-master
+    ports:
+      - "8082:8082"
+    environment:
+      - "SPARK_MASTER=spark://spark-master:7077"
+
+  namenode:
+    image: bde2020/hadoop-namenode:1.1.0-hadoop2.7.1-java8
+    container_name: namenode
+    ports:
+      - "50070:50070"
+      - "8020:8020"
+    volumes:
+      - hadoop_namenode:/hadoop/dfs/name
+      - files:/files
+    environment:
+      - CLUSTER_NAME=test
+    env_file:
+      - ./hadoop.env
+
+  resourcemanager:
+    image: bde2020/hadoop-resourcemanager:1.1.0-hadoop2.7.1-java8
+    container_name: resourcemanager
+    ports:
+      - "8088:8088"
+    depends_on:
+      - namenode
+      - datanode1
+      - datanode2
+    env_file:
+      - ./hadoop.env
+
+  historyserver:
+    image: bde2020/hadoop-historyserver:1.1.0-hadoop2.7.1-java8
+    container_name: historyserver
+    ports:
+      - "8188:8188"
+    depends_on:
+      - namenode
+      - datanode1
+      - datanode2
+    volumes:
+      - hadoop_historyserver:/hadoop/yarn/timeline
+    env_file:
+      - ./hadoop.env
+
+  nodemanager1:
+    image: bde2020/hadoop-nodemanager:1.1.0-hadoop2.7.1-java8
+    container_name: nodemanager1
+    ports:
+      - "8042:8042"
+    depends_on:
+      - namenode
+      - datanode1
+      - datanode2
+    env_file:
+      - ./hadoop.env
+
+  datanode1:
+    image: bde2020/hadoop-datanode:1.1.0-hadoop2.7.1-java8
+    container_name: datanode1
+    depends_on:
+      - namenode
+    volumes:
+      - hadoop_datanode1:/hadoop/dfs/data
+    env_file:
+      - ./hadoop.env
+
+  datanode2:
+    image: bde2020/hadoop-datanode:1.1.0-hadoop2.7.1-java8
+    container_name: datanode2
+    depends_on:
+      - namenode
+    volumes:
+      - hadoop_datanode2:/hadoop/dfs/data
+    env_file:
+      - ./hadoop.env
+
+  pyspark:
+    image: alongwy/pyspark:v1
+    container_name: pyspark
+    depends_on:
+      - resourcemanager
+      - historyserver
+    links:
+      - spark-master
+      - namenode
+      - spark-worker-1
+      - spark-worker-2
+
+volumes:
+  files:
+    driver_opts:
+      type: nfs
+      device: /path/to/files
+      o: bind
+  hadoop_namenode:
+    driver_opts:
+      type: nfs
+      device: /path/to/namenode
+      o: bind
+  hadoop_datanode1:
+    driver_opts:
+      type: nfs
+      device: /path/to/datanode1
+      o: bind
+  hadoop_datanode2:
+    driver_opts:
+      type: nfs
+      device: /path/to/datanode2
+      o: bind
+  hadoop_historyserver:
+    driver_opts:
+      type: nfs
+      device: /path/to/history
+      o: bind

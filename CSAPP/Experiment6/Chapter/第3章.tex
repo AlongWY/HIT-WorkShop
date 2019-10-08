@@ -1,0 +1,64 @@
+\section{TinyShell的设计与实现}
+\begin{center}
+    总分45分
+\end{center}
+
+\subsection{设计}
+
+\subsubsection{void eval(char *cmdline)函数(10分)}
+
+\paragraph{函数功能：}执行命令行输入的命令，解析以空格分割的命令行参数，并构造最终会传递给execve的argv参数
+\paragraph{参   数：}用户的命令行输入的命令
+\paragraph{处理流程：}如下图所示:
+\begin{figure}[H]
+    \centering 
+    \includegraphics[width=0.9\linewidth]{figures/evil}
+\end{figure}
+\paragraph{要点分析：}特别要注意的就是线程同步问题，无论如何必须保证删除任务在添加任务之后完成，使用相应的MASK保证线程的同步。
+
+\subsubsection{int builtin\_cmd(char **argv)函数（5分）}
+
+\paragraph{函数功能：}检查第一个命令是不是内置的外壳命令。这里所谓的内置外壳命令是quit，jobs，bg，fg。如果第一个不是内置命令，则返回0，否则执行内置命令，返回1
+\paragraph{参   数：}Shell命令参数列表
+\paragraph{处理流程：}如下图所示:
+\begin{figure}[H]
+  \centering 
+  \includegraphics[width=0.3\linewidth]{figures/builtin}
+\end{figure}
+\paragraph{要点分析：}本函数比较简单，只要记得是内置命令的时候返回1即可。
+
+\subsubsection{void do\_bgfg(char **argv) 函数（5分）}
+
+\paragraph{函数功能：}执行内置的fg,bg命令
+\paragraph{参   数：}Shell命令参数列表
+\paragraph{处理流程：}如下图所示:
+\begin{figure}[H]
+    \centering 
+    \includegraphics[width=0.9\linewidth]{figures/dobgfg}
+\end{figure}
+\paragraph{要点分析：}重点是对命令的合法性进行判断，判断是否是一个数字，并判断jobid的合法性，而后在对jobid进行操作。
+
+\subsubsection{void waitfg(pid\_t pid) 函数（5分）}
+
+\paragraph{函数功能：}等待处理PID，在此处是等待前台程序退出
+\paragraph{参   数：}需要等待退出的子进程PID
+\paragraph{处理流程：}如下图所示:
+\begin{figure}[H]
+    \centering 
+    \includegraphics[width=0.5\linewidth]{figures/waitfg}
+\end{figure}
+\paragraph{要点分析：}这里值得注意的是要注意在前台程序挂掉之前不能退出本函数，这里我使用了suspend函数用来进行线程同步。
+
+\subsubsection{void sigchld\_handler(int sig) 函数（10分）}
+
+\paragraph{函数功能：}处理SIGCHLD信号，这个信号处理程序回收子进程，如果子进程是僵尸进程，或者收到stop之类的信号时，进行调用
+\paragraph{参   数：}被捕获到的信号值
+\paragraph{处理流程：}如下图所示:
+\begin{figure}[H]
+    \centering 
+    \includegraphics[width=0.8\linewidth]{figures/sigchld_handler}
+\end{figure}
+\paragraph{要点分析：}这里值得注意的问题就是要捕获子进程的信号是子进程产生的，可能会有未处理的SIGINT或SIGSTOP信号，这个时候就需要调用相应的Handler进行一下处理。
+
+\subsection{程序实现(tsh.c的全部内容)(10分)}
+\inputminted{c}{../../../Experiment6/tsh.c}

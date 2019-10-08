@@ -1,0 +1,25 @@
+{% extends "shop/base.html" %}
+{% block title %}
+    {{ product.name }}
+{% endblock %}
+{% block content %}
+    <div class="product-detail">
+        <img src="{% if product.image %}{{ product.image }}{% else %}
+             {{ url_for('static', filename="img/no_image.png") }}{% endif %}">
+
+        {% if current_user.is_admin %}
+            <h1><a href="{{ url_for("product_edit",id = product.id) }}">{{ product.name }}</a></h1>
+        {% else %}
+            <h1>{{ product.name }}</h1>
+        {% endif %}
+
+        <h2><a href="../{{ category.id }}">{{ category.name }}</a></h2>
+        <p class="price">${{ product.price }}</p>
+        <form action="{{ product.id }}/cart_add" method="post">
+            {% for field in form %}
+                {{ field }}
+            {% endfor %}
+        </form>
+        {{ product.description }}
+    </div>
+{% endblock %}

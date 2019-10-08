@@ -1,0 +1,84 @@
+\section{实验预习}
+\subsection{画出存储器层级结构，标识容量价格速度等指标变化（5分）}
+
+\begin{tikzpicture}
+    \draw (0,0) -- (3.5,7) -- (7,0) -- (0,0);
+    \draw (0.5,1) -- (6.5,1);
+    \draw (1.0,2) -- (6.0,2);
+    \draw (1.5,3) -- (5.5,3);
+    \draw (2.0,4) -- (5.0,4);
+    \draw (2.5,5) -- (4.5,5);
+    \draw (3.0,6) -- (4.0,6);
+    \draw (3.5,0.5) node {远程二级存储};
+    \draw (3.5,1.5) node {本地二级存储};
+    \draw (3.5,2.5) node {主存(DRAM)};
+    \draw (3.5,3.5) node {L3};
+    \draw (3.5,4.5) node {L2};
+    \draw (3.5,5.5) node {L1};
+    \draw (3.5,6.2) node {Reg};
+    \draw [->] (-3.0, 0) -- (-3.0,7);
+    \draw (-2.0, 5) node {更小};
+    \draw (-2.0, 4) node {更快};
+    \draw (-2.0, 3) node {更贵};
+\end{tikzpicture}
+
+\subsection{用CPUZ等查看你的计算机Cache各参数，写出各级Cache的C S E B s e b（5分）}
+
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+    \hline 
+    & C & S & E & B & s & e & b \\ 
+    \hline 
+    一级数据缓存 & 32kb & 64 & 8 & 64 & 6 & 3 & 6 \\ 
+    \hline 
+    一级指令缓存 & 32kb & 64 & 8 & 64 & 6 & 3 & 6 \\ 
+    \hline 
+    二级缓存 & 256kb & 64 & 64 & 512 & 6 & 2 & 9 \\ 
+    \hline 
+    三级缓存 & 6144kb & 64 & 64 & 3072 & 6 & $2+\log_23$ & $10+\log_23$ \\ 
+    \hline 
+\end{tabular} 
+
+\subsection{写出各类Cache的读策略与写策略（5分）}
+
+\emph{Cache读策略}
+
+\begin{enumerate}
+    \item 命中，则从cache中读相应数据到CPU或上一级cache中。
+    \item 失败，则从主存或下一级cache中读取数据，并替换出一行数据，通常采用LRU算法。
+\end{enumerate}
+
+\emph{Cache写策略}
+
+\begin{enumerate}
+    \item 命中，又分两种策略
+    \subitem 写回法：只写本级cache，暂时不写数据到主存或下一级cache，等到该行被替换出去时，才将数据写回到主存或下一级cache。
+    \subitem 写直达：写本级cache，同时写数据到主存或下一级cache，等到该行被替换出去时，就不用写回数据了。
+    \item 失败，又分两种策略
+    \subitem 按写分配，又分两种：
+    \begin{enumerate}
+        \item 先写数据到主存或下一级cache，并从主存或下一级cache读取刚才修改过的数据，即：先写数据，再为所写数据分配cache line；
+        \item 先分配cache line给所写数据，即：从主存中读取一行数据到cache，然后直接对cache进行修改，并不把数据到写到主存或下一级cache，一直等到该行被替换出去，才写数据到主存或下一级cache。
+    \end{enumerate}
+    \subitem 写不分配：直接写数据到主存或下一级cache，并且不从主存或下一级cache中读取被改写的数据，即：不分配cache line给被修改的数据。
+\end{enumerate}
+
+
+\subsection{写出用gprof进行性能分析的方法（5分）}
+
+\begin{enumerate}
+    \item 在编译和链接时 加上-pg选项。一般我们可以加在 makefile 中。
+    \item 执行编译的二进制程序。执行参数和方式同以前。
+    \item 在程序运行目录下生成 gmon.out 文件。如果原来有 gmon.out 文件，将会被重写。
+    \item 结束进程。这时 gmon.out 会再次被刷新。
+    \item 用 gprof 工具分析 gmon.out 文件。
+\end{enumerate}
+
+\subsection{写出用Valgrind进行性能分析的方法（5分）}
+
+\begin{enumerate}
+    \item 在编译和链接时 加上-g选项。一般我们可以加在 makefile 中。
+    \item valgrind --leak-check=full --log-file=test\_valgrind.log --num-callers=30 ./test
+    \subitem --log-file 后面的test\_valgrind.log是指定生成的日志文件名称。
+    \subitem --num-callers 后面的60是生成的每个错误记录的追踪行数。
+    \subitem --leak-check=full 表示开启详细的内存泄露检测器。
+\end{enumerate}

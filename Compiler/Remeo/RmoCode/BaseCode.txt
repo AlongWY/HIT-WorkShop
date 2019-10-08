@@ -1,0 +1,14 @@
+def main(int a,int b):int {
+    int hello = 0.1;
+    real world = 1.0;
+
+    if(hello == 0 || world > 1) {
+        world = world + 1;
+    } else {
+      while(hello < 10){
+          hello = hello + 1;
+      }
+    }
+
+    bool test =  -4 * -2 + true; // pig
+}

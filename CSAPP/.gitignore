@@ -1,0 +1,67 @@
+# Created by .ignore support plugin (hsz.mobi)
+### C++ template
+# Prerequisites
+*.d
+*.i
+
+# Compiled Object files
+*.s
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+out
+gen
+
+# Latex中间文件
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.pdf
+*.toc
+*.xdv
+
+# Chapter4 Sim
+*.ys
+*.yo
+
+bin
+tags
+cmake-build-*
+
+!Banner.pdf
+!Chapter4/y86-code/*.ys
+!Chapter4/answer-code/*.ys
+

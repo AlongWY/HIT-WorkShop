@@ -1,0 +1,84 @@
+\documentclass[11pt,a4paper]{ctexart}
+\usepackage[margin=1in,top=1.5in]{geometry}
+\pagestyle{headings}
+\usepackage[utf8]{inputenc}
+
+\usepackage{float}
+
+% 插入数学及电学符号
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+% 设置页眉
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{} % 清空当前的页眉页脚
+\fancyhead[C]{\heiti CSAPP第二章作业}
+
+% 用于插入C代码
+\usepackage{minted}
+
+% 引用链接可点击
+\usepackage{cite}
+\usepackage[colorlinks,linkcolor=black,anchorcolor=blue,citecolor=green]{hyperref}
+
+\title{CSAPP第二章作业}
+\author{冯云龙}
+
+\begin{document}
+
+\maketitle
+
+\section{showbytes}
+\inputminted{c}{src/2.56.c}
+
+\section{replace\_byte}
+\inputminted{c}{src/2.60.c}
+
+\section{any\_odd\_one}
+\inputminted{c}{src/2.64.c}
+
+\section{lower\_one\_mask}
+\inputminted{c}{src/2.68.c}
+
+\section{copy\_int}
+\inputminted{c}{src/2.72.c}
+
+\section{calloc}
+\inputminted{c}{src/2.76.c}
+
+\section{threefourths}
+\inputminted{c}{src/2.80.c}
+
+\section{float\_le}
+\inputminted{c}{src/2.84.c}
+
+\section{不同编码转换}
+\begin{tabular}{|c|c|c|c|}
+	\hline 
+	\multicolumn{2}{|c|}{格式A} & \multicolumn{2}{|c|}{格式B} \\ 
+	\hline 
+	位 & 值 & 位 & 值 \\ 
+	\hline 
+	1 01110 001 & $\dfrac{-9}{16}$ & 1 0110 0010 & $\dfrac{-9}{16}$ \\ 
+	\hline 
+	0 10110 101 & 208 & 0 1010 1010 & 208 \\ 
+	\hline 
+	1 00111 110 & $\dfrac{-7}{1024}$ & 1 0001 0110 & $\dfrac{-7}{1024}$ \\ 
+	\hline 
+	0 00000 101 & $\dfrac{5}{8}$ & 0 0000 1010 & $\dfrac{5}{8}$ \\ 
+	\hline 
+	1 11011 000 & -4096 & 1 1111 0000 & $-\infty $ \\ 
+	\hline 
+	0 11000 100 & 768 & 0 1110 0110 & 768 \\ 
+	\hline 
+\end{tabular} 
+
+\section{float\_negate}
+\inputminted{c}{src/2.92.c}
+
+\section{float\_f2i}
+\inputminted{c}{src/2.96.c}
+
+\end{document}

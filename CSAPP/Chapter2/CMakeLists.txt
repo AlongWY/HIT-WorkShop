@@ -1,0 +1,16 @@
+cmake_minimum_required(VERSION 3.8)
+project(CSCPP C)
+
+set(CMAKE_C_STANDARD 99)
+
+add_executable(2.56 src/2.56.c)
+add_executable(2.60 src/2.60.c)
+add_executable(2.64 src/2.64.c)
+add_executable(2.68 src/2.68.c)
+add_executable(2.72 src/2.72.c)
+add_executable(2.76 src/2.76.c)
+add_executable(2.80 src/2.80.c)
+add_executable(2.84 src/2.84.c)
+add_executable(2.88 src/2.88.c)
+add_executable(2.92 src/2.92.c)
+add_executable(2.96 src/2.96.c)

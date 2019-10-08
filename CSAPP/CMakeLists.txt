@@ -1,0 +1,28 @@
+cmake_minimum_required(VERSION 3.8)
+project(CSCPP C)
+
+set(CMAKE_C_STANDARD 99)
+
+set(CMAKE_BINARY_DIR bin)
+
+set(CHAPTER ON)
+set(EXPERIMENT ON)
+
+if (${CHAPTER} STREQUAL ON)
+    add_subdirectory(Chapter2)
+    add_subdirectory(Chapter3)
+    add_subdirectory(Chapter4)
+    add_subdirectory(Chapter5)
+    add_subdirectory(Chapter6)
+    add_subdirectory(Chapter7)
+    add_subdirectory(Chapter8)
+    add_subdirectory(Chapter9)
+endif ()
+if (${EXPERIMENT} STREQUAL ON)
+    add_subdirectory(Experiment1)
+    add_subdirectory(Experiment2)
+    add_subdirectory(Experiment3)
+    add_subdirectory(Experiment5)
+    add_subdirectory(Experiment6)
+    add_subdirectory(Experiment7)
+endif ()

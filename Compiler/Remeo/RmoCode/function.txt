@@ -1,0 +1,8 @@
+def calc(x) {
+    return x + 1;
+}
+
+def main(argc, argv){
+    var world = 2;
+    return world + calc(world);
+}

@@ -1,0 +1,11 @@
+digraph G {
+edge [fontname="Microsoft YaHei"];
+node [shape=box,fontname="Microsoft YaHei" size="20,20"];
+WGraph[shape=record,label="<n> int\n顶点个数|<m> 边个数|
+{<vec_0> Pointer\n顶点0|<vec_1> Pointer\n顶点1| ... |<vec_n> Pointer\n顶点n-1}"];
+
+Sussessors[shape=record,label="<d> int\n邻接点个数|<len> 目前最大\n邻接个数|<is_sorted> int\n是否有序|
+{ <link_list_0> int--邻接顶点0\nint--边权|<link_list_1> int--邻接顶点1\nint--边权| ... |<link_list_n> int--邻接顶点n\nint--边权}"];
+
+WGraph:vec_0 -> Sussessors:d;
+}

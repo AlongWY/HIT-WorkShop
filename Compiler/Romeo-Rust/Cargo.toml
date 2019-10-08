@@ -1,0 +1,7 @@
+[package]
+name = "romeo"
+version = "0.1.0"
+authors = ["along <15939423778@163.com>"]
+edition = "2018"
+
+[dependencies]

@@ -1,0 +1,32 @@
+\section{以16进制查看程序HELLO.C}
+\subsection{请查看HELLOWIN.C与HELLOLINUX.C的编码(3分)}
+
+HelloWin.c采用\dlmu[2cm]{GBK}编码，HelloLinux.c 采用\dlmu{UTF-8}编码，你的姓名\dlmu[2cm]{冯云龙}分别编码为：\dlmu[7cm]{B7\ EB\ D4\ C6\ C1\ FA}\\
+与\dlmu[7cm]{E5\ 86\ AF\ E4\ BA\ 91\ E9\ BE\ 99\ 0A}。
+
+HelloWin.c在Linux下用gcc缺省模式编译后运行结果为：\dlmu[5cm]{Hello\ 1160300202\ ??????}。
+
+\subsection{请查看HELLOWIN.C与HELLOLINUX.C的回车(3分)} 
+
+Windows下的回车编码为：\dlmu[2cm]{0D\ 0A}，Linux下的回车编码为：\dlmu[2cm]{0A 0A}。
+交叉打开文件的效果是\dlmu[6cm]{hellolinux.c全部变成一行},
+\dlmu[6cm]{hellowin.c 后面多了一个 $\hat{ } M$ 符号}。
+
+\section{程序的生成CPP、GCC、AS、LD}
+
+%\subsection{请提交每步生成的文件(4分)}
+%\embeddedfile[Source file]{hellolinux.c}{src/hello.c}
+%\embeddedfile[Preprocess file]{hellolinux.i}{src/hello.o}
+%\embeddedfile[Assemble file]{hellolinux.o}{src/hello.c}
+%\embeddedfile[Object file]{hellolinux.out}{src/hello.out}
+
+\begin{enumerate}
+	\item 预处理，生成预编译文件（.i文件）：\mintinline{sh}|Gcc –E hello.c –o hello.i|
+	\item 编译，生成汇编代码（.s文件）：\mintinline{sh}|Gcc –S hello.i –o hello.s|
+	\item 汇编，生成目标文件（.o文件）：\mintinline{sh}|Gcc –c hello.s –o hello.o|
+	\item 链接，生成可执行文件：\mintinline{sh}|Gcc hello.o –o hello.out|
+\end{enumerate}
+
+\inputminted{c}{src/hello.c}
+
+%需要提交的文件在PDF附件当中。

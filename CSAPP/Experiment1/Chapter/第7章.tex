@@ -1,0 +1,33 @@
+\section{计算机系统的基本信息获取编程}
+\subsection{CPUID信息}
+CPUID指令是intel IA32架构下获得CPU信息的汇编指令，可以得到CPU类型，型号，制造商信息，商标信息，序列号，缓存等一系列CPU相关的东西。
+cpuid使用eax作为输入参数，eax，ebx，ecx，edx作为输出参数。
+
+把eax = 0作为输入参数，cpuid指令执行以后，会返回一个12字符的制造商信息，前四个字符的ASCI码按低位到高位放在ebx，中间四个放在edx，最后四个字符放在ecx。
+把eax = 1作为输入参数，cpuid指令执行以后，会返回CPU的版本、架构和签名，签名信息放在eax，特性放在edx和ecx，附加特性放在ebx。
+
+\subsection{获取MAC}
+使用\mintinline{c}|ioctl|和\mintinline{c}|socket|函数获取网卡MAC地址。
+
+socket函数用于创建套接字，之后我们使用这个套接字来获取网卡的MAC地址，I/O控制函数ioctl用于对文件进行底层控制，这里的文件包含网卡、终端、磁带机、套接口等软硬件设施，实际的操作来自各个设备自己提供的ioctl接口。
+
+\mintinline{c}|int socket(int domain,int type, int protocol);|
+\begin{itemize}
+	\item domain参数：表示所使用的协议族(取值AF\_INET，表示采用internet协议族)
+	\item type参数：表示套接口的类型(SOCK\_DGRAM，表示采用数据报类型套接口)
+	\item protocol参数：表示所使用的协议族中某个特定的协议(自动选择,用0填充)
+\end{itemize}
+
+如果函数调用成功，套接口的描述符（非负整数）就作为函数的返回值，假如返回值为-1，就表明有错误发生。
+
+\mintinline{c}|int ioctl(int fd,int request,…)|。
+\begin{itemize}
+	\item fd参数：文件描述符(取套接口的描述符)
+	\item request参数：指定信息获取码(SIONGIFHWADDR表示取硬件地址)
+	\item 其后的request参数用于为实现I/O控制所必须传入或传出的参数
+\end{itemize}
+
+本实验需要用ifr结构传入网卡设备名，并传出6B的MAC地址。
+
+\subsection{请提交源程序文件(10分)} 
+\inputminted{c}{src/sysinfo.c}

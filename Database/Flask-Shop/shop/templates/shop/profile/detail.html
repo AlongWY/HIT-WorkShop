@@ -1,0 +1,62 @@
+{% extends "shop/base.html" %}
+
+{% block content %}
+    {% if not current_user.is_admin %}
+        <h1>{{ user.username }}</h1>
+        <table>
+            <tr valign="top">
+                <td>
+                    {% if user.info.name %}<h1>{{ user.info.name }}</h1>{% endif %}
+                    {% if user.info.sex == 'M' %}
+                        <p>Sex: Male</p>
+                    {% else %}
+                        <p>Sex: Female</p>
+                    {% endif %}
+                    {% if user.info.phone %}<p>Phone: {{ user.info.phone }}</p>{% endif %}
+                </td>
+            </tr>
+        </table>
+        {% if user == current_user %}
+            <p><a href="{{ url_for('edit_profile') }}">Edit your profile</a></p>
+        {% endif %}
+    {% endif %}
+    <h1>Orders</h1>
+    <table>
+        <table class="cart">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th>Create Time</th>
+                <th>Total price</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Address</th>
+                <th>Transport</th>
+                <th>Pay State</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for order in orders %}
+                <tr>
+                    <td>
+                        <a href="{{ url_for('order_detail',id = order.id) }}"> {{ order.id }}</a>
+                    </td>
+                    <td>{{ order.create_time|string }}</td>
+                    <td class="num">${{ order.price|string }}</td>
+                    <td>{{ order.name }}</td>
+                    <td>{{ order.phone }}</td>
+                    <td>{{ order.address }}</td>
+                    <td>{{ order.trans_id }}</td>
+                    <td>
+                        {% if  order.state == 'u' %}
+                            <a href="{{ url_for('pay_for_order',order_id = order.id) }}">Pay it</a>
+                        {% else %}
+                            Paid
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </table>
+{% endblock %}

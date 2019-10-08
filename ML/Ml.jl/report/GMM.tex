@@ -1,0 +1,206 @@
+\documentclass{ML}
+\usepackage{amsthm}
+\usepackage{fontspec}
+\usepackage[ruled,linesnumbered]{algorithm2e}
+
+\setmonofont{Iosevka Nerd Font Mono}
+
+\newtheorem{theorem}{定理}
+% \newtheorem{proof}{证明}
+
+% 姓名，学号
+\infoauthor{冯云龙}{1160300202}
+
+% 课程类型，实验名称
+\infoexp{选修}{GMM模型}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{实验目的}
+
+\begin{enumerate}
+	\item 理解GMM模型
+	\item 掌握K-Means算法
+	\item 掌握EM算法
+\end{enumerate}
+
+\section{实验要求及实验环境}
+
+\subsection{实验要求}
+
+\begin{enumerate}
+	\item 实现一个K-Means算法和混合高斯模型，并且用EM算法估计模型中的参数
+	\item 使用K-Means算法聚类，测试效果
+	\item 使用EM算法估计参数，观察似然值变化，看是否能产生正确的结果
+	\item 使用UCI数据集进行测试
+\end{enumerate}
+
+\subsection{实验环境}
+
+\begin{itemize}
+	\item 操作系统：Manjaro Linux x64
+	\item 编程语言：Julia
+	\item 绘图工具包：Plots.jl
+	\item IDE：Atom (Juno)
+\end{itemize}
+
+\section{设计思想}
+
+混合模型是一个可以用来表示在总体分布（distribution）中含有 K 个子分布的概率模型，换句话说，混合模型表示了观测数据在总体中的概率分布，它是一个由 K 个子分布组成的混合分布。
+混合模型不要求观测数据提供关于子分布的信息，来计算观测数据在总体分布中的概率。
+
+\subsection{GMM模型}
+接下来看下严格的高斯公式定义，高斯分布的概率密度函数公式如下：
+
+$$f(x|\mu,\sigma^2) = \frac{1}{\sqrt{2 \pi \sigma^2}}e^{-\frac{(x- \mu )^2}{2 \sigma^2}}$$
+
+高斯混合模型可以看作是由 K 个单高斯模型组合而成的模型，这 K 个子模型是混合模型的隐变量（Hidden variable）。一般来说，一个混合模型可以使用任何概率分布，这里使用高斯混合模型是因为高斯分布具备很好的数学性质以及良好的计算性能。
+
+$$p(x) = \sum^k_{i=1}\varphi_i\frac{1}{\sqrt{w \pi \sigma_i^2}}e^{-\frac{(x- \mu_i)^2}{2 \sigma_i^2}}$$
+
+向量化之后我们得到的公式如下：
+
+$$p(x) = \frac{1}{(2\pi)^{\frac{D}{2}}|\Sigma|^\frac{1}{2}}e^{-\frac{\mathbf{(X-\mu)^T}\Sigma^{-1}(\mathbf{X}-\mu)}{2}}$$
+
+其中，$\mu$为数据均值（期望），$\Sigma$为协方差（Covariance），D为数据维度。
+
+对于GMM模型，我们首先定义如下信息：
+
+\begin{itemize}
+	\item $x_{j}$ 表示第 $j$ 个观测数据， $j = 1,2,...,N$
+	\item $K$ 是混合模型中子高斯模型的数量， $k = 1,2,...,K$
+	\item $\alpha_{k}$ 是观测数据属于第 $k$ 个子模型的概率， $\alpha_{k} \geq 0$ ， $\sum_{k=1}^{K}{\alpha_{k}} = 1$
+	\item $\phi(x|\theta_{k})$ 是第 $k$ 个子模型的高斯分布密度函数， $\theta_{k} = (\mu_{k}$, $\Sigma_{k}^{2})$ 。其展开形式与上面介绍的单高斯模型相同
+	\item $\gamma_{jk}$ 表示第 $j$ 个观测数据属于第 $k$ 个子模型的概率
+\end{itemize}
+
+高斯混合模型的概率分布为：
+$$P(x|\theta) = \sum_{k=1}^{K}{\alpha_{k}\phi(x|\theta_{k})}$$
+
+对于这个模型而言，参数 $\theta = (\tilde{\mu_{k}}$, $\tilde{\Sigma_{k}}$, $\tilde{\alpha_{k}})$ ，也就是每个子模型的期望、方差（或协方差）、在混合模型中发生的概率。
+
+\subsection{EM算法}
+
+\subsubsection{算法思想}
+
+对于单高斯模型，我们可以用最大似然法（Maximum likelihood）估算参数 $\theta$ 的值，
+
+$$\theta = arg \max_{\theta} L(\theta)$$
+
+这里我们假设了每个数据点都是独立的（Independent），似然函数由概率密度函数（PDF）给出。
+
+$$L(\theta) = \prod_{j=1}^{N}P(x_{j}|\theta)$$
+
+由于每个点发生的概率都很小，乘积会变得极其小，不利于计算和观察，因此通常我们用 Maximum Log-Likelihood 来计算（因为 Log 函数具备单调性，不会改变极值的位置，同时在 0-1 之间输入值很小的变化可以引起输出值相对较大的变动）：
+
+$$logL(\theta) = \sum_{j=1}^{N}{logP(x_{j}|\theta)}$$
+
+对于高斯混合模型，Log-Likelihood 函数是：
+
+$$logL(\theta) = \sum_{j=1}^{N}{logP(x_{j}|\theta)} = \sum_{j=1}^{N}{log(\sum_{k=1}^{K}{\alpha_{k}\phi(x|\theta_{k})})}$$
+
+如何计算高斯混合模型的参数呢？这里我们无法像单高斯模型那样使用最大似然法来求导求得使 likelihood 最大的参数，因为对于每个观测数据点来说，事先并不知道它是属于哪个子分布的（hidden variable），因此 $log$ 里面还有求和， $K$ 个高斯模型的和不是一个高斯模型，对于每个子模型都有未知的 $\alpha_{k}$, $\mu_{k}$, $\sigma_{k}$ ，直接求导无法计算。需要通过迭代的方法求解。
+
+\subsubsection{算法实现}
+
+EM 算法是一种迭代算法，1977 年由 Dempster 等人总结提出，用于含有隐变量（Hidden variable）的概率模型参数的最大似然估计。
+
+每次迭代包含两个步骤：
+
+\begin{enumerate}
+	\item E-step：求期望 $\begin{array}{ll} E(\gamma_{jk} | X, \theta) & j = 1,2,...,N \end{array}$
+	\item M-step：求极大，计算新一轮迭代的模型参数
+\end{enumerate}
+
+这里不具体介绍一般性的 EM 算法（通过 Jensen 不等式得出似然函数的下界 Lower bound，通过极大化下界做到极大化似然函数），只介绍怎么在高斯混合模型里应用从来推算出模型参数。
+
+通过 EM 迭代更新高斯混合模型参数的方法（我们有样本数据 $x_{1}, x_{2}, ...,x_{N}$ 和一个有 $K$ 个子模型的高斯混合模型，想要推算出这个高斯混合模型的最佳参数）：
+
+首先初始化参数
+
+\begin{enumerate}
+	\item E-step：依据当前参数，计算每个数据 j 来自子模型 k 的可能性
+	      \subitem $\gamma_{jk} = \frac{\alpha_{k}\phi(x_{j}|\theta_{k})}{\sum_{k=1}^{K}{\alpha_{k}\phi(x_{j}|\theta_{k})}}, j = 1,2,...,N; k = 1,2,...,K$
+	\item M-step：计算新一轮迭代的模型参数
+	      \subitem $\mu_{k} = \frac{\sum_{j}^{N}{(\gamma_{jk}}x_{j})}{\sum_{j}^{N}{\gamma_{jk}}}, k=1,2,...,K$
+	      \subitem $\Sigma_{k} = \frac{\sum_{j}^{N}{\gamma_{jk}}(x_{j}-\mu_{k})(x_{j}-\mu_{k})^{T}}{\sum_{j}^{N}{\gamma_{jk}}}, k = 1,2,...,K$ （用这一轮更新后的 $\mu_{k}$ ）
+	      \subitem $\alpha_{k} = \frac{\sum_{j=1}^{N}{\gamma_{jk}}}{N}, k=1,2,...,K$
+\end{enumerate}
+
+
+重复计算 E-step 和 M-step 直至收敛 （ $||\theta_{i+1} - \theta_{i}|| < \varepsilon$ , $\varepsilon$ 是一个很小的正数，表示经过一次迭代之后参数变化非常小）
+
+至此，我们就找到了高斯混合模型的参数。需要注意的是，EM 算法具备收敛性，但并不保证找到全局最大值，有可能找到局部最大值。解决方法是初始化几次不同的参数进行迭代，取结果最好的那次。
+
+\subsection{K-Means算法}
+
+$k-$平均聚类的目的是：把$n$个点（可以是样本的一次观察或一个实例）划分到k个聚类中，使得每个点都属于离他最近的均值（此即聚类中心）对应的聚类，以之作为聚类的标准。
+
+\subsubsection{算法思想}
+
+已知观测集 $(x_{1},x_{2},...,x_{n})$，其中每个观测都是一个 $d-$维实向量，$k-$平均聚类要把这$n$个观测划分到k个集合中$(k ≤ n)$,使得组内平方和（WCSS within-cluster sum of squares）最小。
+
+换句话说，它的目标是找到使得下式满足的聚类 $S_{i}$，$${\underset  {{\mathbf  {S}}}{\operatorname {arg\,min}}}\sum _{{i=1}}^{{k}}\sum _{{{\mathbf  x}\in S_{i}}}\left\|{\mathbf  x}-{\boldsymbol  \mu }_{i}\right\|^{2}$$
+其中 $\mu_{i}$ 是 $S_{i}$ 中所有点的均值。
+
+\subsubsection{算法实现}
+已知初始的k个均值点$m_{1}^{{(1)}},...,m_{k}^{{(1)}}$,算法的按照下面两个步骤交替进行：
+
+\begin{enumerate}
+	\item 分配(Assignment)：将每个观测分配到聚类中，使得组内平方和达到最小。因为这一平方和就是平方后的欧氏距离，所以很直观地把观测分配到离它最近得均值点即可$$S_{i}^{{(t)}}=\left\{x_{p}:\left\|x_{p}-m_{i}^{{(t)}}\right\|^{2}\leq \left\|x_{p}-m_{j}^{{(t)}}\right\|^{2}\forall j,1\leq j\leq k\right\}$$其中每个 $x_{p}$ 都只被分配到一个确定的聚类 $S^{{t}}$ 中，尽管在理论上它可能被分配到2个或者更多的聚类。
+	\item 更新(Update)：对于上一步得到的每一个聚类，以聚类中观测值的图心，作为新的均值点。$$m_{i}^{{(t+1)}}={\frac{1}{\left|S_{i}^{{(t)}}\right|}}\sum _{{x_{j}\in S_{i}^{{(t)}}}}x_{j}$$因为算术平均是最小二乘估计，所以这一步同样减小了目标函数组内平方和的值。
+\end{enumerate}
+
+这一算法将在对于观测的分配不再变化时收敛。由于交替进行的两个步骤都会减小目标函数WCSS的值，并且分配方案只有有限种，所以算法一定会收敛于某一（局部）最优解。
+注意：使用这一算法无法保证得到全局最优解。
+
+\section{实验结果与分析}
+
+\begin{figure}[H]
+	\begin{minipage}[c]{0.5\linewidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{media/GMM/em}
+		\caption{中心为(5,5),(10,10),(15,15)的GMM模型数据以及EM算法估计结果}
+		\label{fig:gmm-em}
+	\end{minipage}
+	\begin{minipage}[c]{0.5\linewidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{media/GMM/loss}
+		\caption{EM算法对数似然：由于都是负数，我这里取了绝对值}
+		\label{fig:gmm-em-loss}
+	\end{minipage}
+\end{figure}
+
+\begin{figure}[H]
+	\begin{minipage}[c]{0.5\linewidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{media/GMM/iris}
+		\caption{鸢尾花数据集以及EM算法估计结果}
+		\label{fig:iris-em}
+	\end{minipage}
+	\begin{minipage}[c]{0.5\linewidth}
+		\centering
+		\includegraphics[width=0.9\linewidth]{media/GMM/iris-loss}
+		\caption{鸢尾花数据集EM算法对数似然}
+		\label{fig:iris-em-loss}
+	\end{minipage}
+\end{figure}
+
+\section{结论}
+
+当函数$Q$连续时，EM算法收敛到似然函数$P(Y|h´)$的一个不动点。若此似然函数有单个的最大值时，EM算法可以收敛到这个对$h´$的全局的极大似然估计。
+否则，它只保证收敛到一个局部最大值。因此，EM与其他最优化方法有同样的局限性，如之前讨论的梯度下降，线性搜索和变形梯度等。
+
+总结来说，EM算法就是通过迭代地最大化完整数据的对数似然函数的期望，来最大化不完整数据的对数似然函数。
+
+\appendix
+
+\section{源代码}
+
+\inputminted[breaklines=true,frame=lines,mathescape=true]{julia}{../GMM.jl}
+
+\end{document}

@@ -1,0 +1,734 @@
+\documentclass[11pt,a4paper]{ctexart}
+% 调整页面大小，默认页面与常用规格不符
+\usepackage[margin=1in,top=1.5in]{geometry}
+\usepackage{color}
+\usepackage{alltt}
+\usepackage[T1]{fontenc}
+\usepackage{ucs}
+\usepackage[utf8x]{inputenc}
+\usepackage{marvosym}
+
+% highlight theme: vim bclear
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.2,0.2,0.2}{#1}}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.06,0.58,0.63}{#1}}
+\newcommand{\hlesc}[1]{\textcolor[rgb]{0.86,0.41,0.09}{#1}}
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.06,0.58,0.63}{#1}}
+\newcommand{\hlpps}[1]{\textcolor[rgb]{0.06,0.58,0.63}{#1}}
+\newcommand{\hlslc}[1]{\textcolor[rgb]{0.59,0.59,0.59}{#1}}
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.59,0.59,0.59}{#1}}
+\newcommand{\hlppc}[1]{\textcolor[rgb]{0.41,0.78,0.23}{#1}}
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0.2,0.2,0.2}{#1}}
+\newcommand{\hlipl}[1]{\textcolor[rgb]{0.45,0.46,0.77}{#1}}
+\newcommand{\hllin}[1]{\textcolor[rgb]{0.59,0.59,0.59}{#1}}
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.23,0.42,0.78}{#1}}
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.63,0,0.31}{#1}}
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0,0.63,0.31}{#1}}
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.78,0.23,0.41}{#1}}
+\definecolor{bgcolor}{rgb}{1,1,1}
+
+\title{BitTree.h}
+\begin{document}
+\pagecolor{bgcolor}
+\noindent
+\ttfamily
+\hlstd{}\hllin{01\ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{02\ }\hlcom{\ {*}\ 二叉树的模板实现}\\
+\hllin{03\ }\hlcom{\ {*}/}\hlstd{}\\
+\hllin{04\ }\hlstd{}\\
+\hllin{05\ }\hlstd{}\hlppc{\#ifndef\ PROJECT\textunderscore BITTREE\textunderscore H}\\
+\hllin{06\ }\hlstd{}\hlppc{\#define\ PROJECT\textunderscore BITTREE\textunderscore H}\\
+\hllin{07\ }\hlstd{}\\
+\hllin{08\ }\hlstd{}\hlppc{\#include\ $<$utility$>$}\\
+\hllin{09\ }\hlstd{}\hlppc{\#include\ $<$iostream$>$}\\
+\hllin{10\ }\hlstd{}\hlppc{\#include\ $<$vector$>$}\\
+\hllin{11\ }\hlstd{}\hlppc{\#include\ $<$stack$>$}\\
+\hllin{12\ }\hlstd{}\hlppc{\#include\ $<$queue$>$}\\
+\hllin{13\ }\hlstd{}\hlppc{\#include\ $<$functional$>$}\\
+\hllin{14\ }\hlstd{}\\
+\hllin{15\ }\hlstd{}\hlkwc{template}\hlstd{}\hlopt{$<$}\hlstd{typename\ Comparable}\hlopt{$>$}\\
+\hllin{16\ }\hlstd{}\hlkwc{class\ }\hlstd{BitTree\ }\hlopt{\{}\\
+\hllin{17\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{struct\ }\hlstd{BitNode}\hlopt{;}\\
+\hllin{18\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwa{using\ }\hlstd{BitNodePtr\ }\hlopt{=\ }\hlstd{BitNode\ }\hlopt{{*};}\\
+\hllin{19\ }\hlstd{}\\
+\hllin{20\ }\hlstd{}\hlppc{\#define\ EASY\textunderscore VISIT\textunderscore LAMBDA\ {[}{]}(const\ BitNode\ {*}node)\ \{std::cout\ }\Righttorque\\
+\hllin{21\ }\hlppc{$<$$<$\ node{-}$>$data\ $<$$<$\ }\hlpps{"\ "}\hlppc{\ $<$$<$std::flush;\ \}}\\
+\hllin{22\ }\hlstd{}\\
+\hllin{23\ }\hlstd{}\hlkwc{public}\hlstd{}\hlopt{:}\\
+\hllin{24\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{BitTree}\hlstd{}\hlopt{()\ :\ }\hlstd{}\hlkwd{root}\hlstd{}\hlopt{(}\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{),\ }\hlstd{}\hlkwd{header}\hlstd{}\hlopt{(}\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{\};}\\
+\hllin{25\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{BitTree}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{BitTree\ }\hlopt{\&}\hlstd{rhs}\hlopt{)\ :\ }\hlstd{}\hlkwd{header}\hlstd{}\hlopt{(}\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{\ }\hlstd{root\ }\hlopt{=\ }\Righttorque\\
+\hllin{26\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{clone}\hlstd{}\hlopt{(}\hlstd{rhs}\hlopt{.}\hlstd{root}\hlopt{);\ \}}\\
+\hllin{27\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwd{BitTree}\hlstd{}\hlopt{(}\hlstd{BitTree\ }\hlopt{\&\&}\hlstd{rhs}\hlopt{)\ }\hlstd{noexcept}\hlopt{:\ }\hlstd{}\hlkwd{root}\hlstd{}\hlopt{(}\hlstd{rhs}\hlopt{.}\hlstd{root}\hlopt{),\ }\hlstd{}\hlkwd{header}\hlstd{}\hlopt{(}\Righttorque\\
+\hllin{28\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{\ }\hlstd{rhs}\hlopt{.}\hlstd{root\ }\hlopt{=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;\ \}}\\
+\hllin{29\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{$\sim$}\hlstd{}\hlkwd{BitTree}\hlstd{}\hlopt{()\ \{}\\
+\hllin{30\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{makeEmpty}\hlstd{}\hlopt{();}\\
+\hllin{31\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{32\ }\hlstd{}\\
+\hllin{33\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 判断树是否为空{*}/}\hlstd{}\\
+\hllin{34\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{bool\ }\hlstd{}\hlkwd{isEmpty}\hlstd{}\hlopt{()\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{\{}\\
+\hllin{35\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{root\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;}\\
+\hllin{36\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{37\ }\hlstd{}\\
+\hllin{38\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 将树清空\ {*}/}\hlstd{}\\
+\hllin{39\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{makeEmpty}\hlstd{}\hlopt{()\ \{}\\
+\hllin{40\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{makeEmpty}\hlstd{}\hlopt{(}\hlstd{root}\hlopt{);}\\
+\hllin{41\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{header\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{42\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{delete\ }\hlstd{header}\hlopt{;}\\
+\hllin{43\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{44\ }\hlstd{}\\
+\hllin{45\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 以dot格式打印图的内容\ {*}/}\hlstd{}\\
+\hllin{46\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{printGraph}\hlstd{}\hlopt{(}\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{ostream\ }\hlopt{\&}\hlstd{out\ }\hlopt{=\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{cout}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{\{}\\
+\hllin{47\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{queue}\hlopt{$<$}\hlstd{BitNode\ }\hlopt{{*}$>$\ }\hlstd{nodeQueue}\hlopt{;}\\
+\hllin{48\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{node\ }\hlopt{=\ }\hlstd{root}\hlopt{;}\\
+\hllin{49\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{out\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"digraph\ tree\{"}\hlstd{\ }\hlopt{$<$$<$\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{endl}\hlopt{;}\\
+\hllin{50\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{header\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{}\\
+\hllin{51\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{header}\hlopt{{-}$>$}\hlstd{left\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{52\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{out\ }\hlopt{$<$$<$\ }\hlstd{R}\hlstr{"(}\hlstd{\ \ }\hlstr{"}\hlstd{header}\hlstr{"\ {-}$>$\ "}\hlstd{}\hlopt{)}\hlstd{}\hlstr{"\ $<$$<$\ header{-}$>$left{-}$>$}\Righttorque\\
+\hllin{53\ }\hlstr{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstr{data}\\
+\hllin{54\ }\hlstr{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstr{$<$$<$\ R"}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"{[}label\ =\ "}\hlstd{left}\hlstr{"{]};)"}\hlstd{\ }\hlopt{$<$$<$\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{endl}\hlopt{;}\\
+\hllin{55\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{header}\hlopt{{-}$>$}\hlstd{right\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{56\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{out\ }\hlopt{$<$$<$\ }\hlstd{R}\hlstr{"(}\hlstd{\ \ }\hlstr{"}\hlstd{header}\hlstr{"\ {-}$>$\ "}\hlstd{}\hlopt{)}\hlstd{}\hlstr{"\ $<$$<$\ header{-}$>$right{-}}\Righttorque\\
+\hllin{57\ }\hlstr{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstr{$>$data}\\
+\hllin{58\ }\hlstr{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstr{$<$$<$\ R"}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"{[}label\ =\ "}\hlstd{right}\hlstr{"{]};)"}\hlstd{\ }\hlopt{$<$$<$\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{endl}\hlopt{;}\\
+\hllin{59\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{60\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{visitTreeCover}\hlstd{}\hlopt{({[}\&{]}(}\hlstd{BitNode\ }\hlopt{{*}}\hlstd{bitNode}\hlopt{)\ \{}\\
+\hllin{61\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{bitNode}\hlopt{{-}$>$}\hlstd{left\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr\ }\hlstd{}\hlopt{\&\&\ }\hlstd{bitNode}\hlopt{{-}$>$}\hlstd{left\ }\hlopt{!=\ }\Righttorque\\
+\hllin{62\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{header}\hlopt{)}\\
+\hllin{63\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{out\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"}\hlstd{\ \ }\hlstr{}\hlesc{$\backslash$"}\hlstr{"}\hlstd{\ }\hlopt{$<$$<$\ }\hlstd{bitNode}\hlopt{{-}$>$}\hlstd{data\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"}\hlesc{$\backslash$"\ }\hlstr{{-}$>$\ }\hlesc{$\backslash$"}\hlstr{"}\hlstd{\ }\Righttorque\\
+\hllin{64\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{$<$$<$\ }\hlstd{bitNode}\hlopt{{-}$>$}\hlstd{left}\hlopt{{-}$>$}\hlstd{data\ }\hlopt{$<$$<$\ }\hlstd{R}\hlstr{"("}\hlstd{}\hlopt{{[}}\hlstd{label\ }\hlopt{=\ }\Righttorque\\
+\hllin{65\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlstr{"left"}\hlstd{}\hlopt{{]};)}\hlstd{}\hlstr{"}\\
+\hllin{66\ }\hlstr{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstr{$<$$<$\ std::endl;}\\
+\hllin{67\ }\hlstr{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstr{else\ if\ (bitNode{-}$>$left\ !=\ nullptr)}\\
+\hllin{68\ }\hlstr{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstr{out\ $<$$<$\ "}\hlstd{}\hlstd{\ \ }\hlstd{}\hlesc{$\backslash$"}\hlstd{}\hlstr{"\ $<$$<$\ bitNode{-}$>$data\ $<$$<$\ R"}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"\ {-}$>$\ }\Righttorque\\
+\hllin{69\ }\hlstr{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstr{"}\hlstd{header}\hlstr{"{[}label\ =\ "}\hlstd{left}\hlstr{"{]};)"}\hlstd{\ }\hlopt{$<$$<$\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{endl}\hlopt{;}\\
+\hllin{70\ }\hlstd{}\\
+\hllin{71\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{bitNode}\hlopt{{-}$>$}\hlstd{right\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr\ }\hlstd{}\hlopt{\&\&\ }\hlstd{bitNode}\hlopt{{-}$>$}\hlstd{right\ }\Righttorque\\
+\hllin{72\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{!=\ }\hlstd{header}\hlopt{)}\\
+\hllin{73\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{out\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"}\hlstd{\ \ }\hlstr{}\hlesc{$\backslash$"}\hlstr{"}\hlstd{\ }\hlopt{$<$$<$\ }\hlstd{bitNode}\hlopt{{-}$>$}\hlstd{data\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"}\hlesc{$\backslash$"\ }\hlstr{{-}$>$\ }\hlesc{$\backslash$"}\hlstr{"}\hlstd{\ }\Righttorque\\
+\hllin{74\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{$<$$<$\ }\hlstd{bitNode}\hlopt{{-}$>$}\hlstd{right}\hlopt{{-}$>$}\hlstd{data\ }\hlopt{$<$$<$\ }\hlstd{R}\hlstr{"("}\hlstd{}\hlopt{{[}}\hlstd{label\ }\hlopt{=\ }\Righttorque\\
+\hllin{75\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlstr{"right"}\hlstd{}\hlopt{{]};)}\hlstd{}\hlstr{"}\\
+\hllin{76\ }\hlstr{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstr{$<$$<$\ std::endl;}\\
+\hllin{77\ }\hlstr{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstr{else\ if\ (bitNode{-}$>$right\ !=\ nullptr)}\\
+\hllin{78\ }\hlstr{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstr{out\ $<$$<$\ "}\hlstd{}\hlstd{\ \ }\hlstd{}\hlesc{$\backslash$"}\hlstd{}\hlstr{"\ $<$$<$\ bitNode{-}$>$data\ $<$$<$\ R"}\hlstd{}\hlopt{(}\hlstd{}\hlstr{"\ {-}$>$\ }\Righttorque\\
+\hllin{79\ }\hlstr{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstr{"}\hlstd{header}\hlstr{"{[}label\ =\ "}\hlstd{right}\hlstr{"{]};)"}\hlstd{\ }\hlopt{$<$$<$\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{endl}\hlopt{;}\\
+\hllin{80\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\});}\\
+\hllin{81\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{out\ }\hlopt{$<$$<$\ }\hlstd{}\hlstr{"\}"}\hlstd{\ }\hlopt{$<$$<$\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{endl}\hlopt{;}\\
+\hllin{82\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{83\ }\hlstd{}\\
+\hllin{84\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{85\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ L:left}\\
+\hllin{86\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ D:data}\\
+\hllin{87\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}\ R:right}\\
+\hllin{88\ }\hlcom{}\hlstd{\ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{89\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{enum\ }\hlstd{Mode\ }\hlopt{\{\ }\hlstd{DLR}\hlopt{,\ }\hlstd{LDR}\hlopt{,\ }\hlstd{LRD\ }\hlopt{\};}\\
+\hllin{90\ }\hlstd{}\\
+\hllin{91\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 迭代器\ {*}/}\hlstd{}\\
+\hllin{92\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{class\ }\hlstd{Iterator\ }\hlopt{\{}\\
+\hllin{93\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{public}\hlstd{}\hlopt{:}\\
+\hllin{94\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{Iterator}\hlstd{}\hlopt{(}\hlstd{BitNode\ }\hlopt{{*}}\hlstd{Root}\hlopt{,\ }\hlstd{Mode\ theMode}\hlopt{)\ :\ }\hlstd{}\hlkwd{header}\hlstd{}\hlopt{(}\hlstd{Root}\hlopt{),}\Righttorque\\
+\hllin{95\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{mode}\hlstd{}\hlopt{(}\hlstd{theMode}\hlopt{),\ }\hlstd{}\hlkwd{isEnd}\hlstd{}\hlopt{(}\hlstd{header\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{}\\
+\hllin{96\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{switch\ }\hlstd{}\hlopt{(}\hlstd{mode}\hlopt{)\ \{}\\
+\hllin{97\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{default}\hlstd{}\hlopt{:}\\
+\hllin{98\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{DLR}\hlopt{:}\hlstd{curr\ }\hlopt{=\ }\hlstd{header}\hlopt{{-}$>$}\hlstd{left}\hlopt{;}\\
+\hllin{99\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{100\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{LDR}\hlopt{:}\\
+\hllin{101\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{LRD}\hlopt{:}\hlstd{curr\ }\hlopt{=\ }\hlstd{header}\hlopt{{-}$>$}\hlstd{left}\hlopt{;}\\
+\hllin{102\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{{-}$>$}\hlstd{lTag\ }\hlopt{\&\&\ }\hlstd{curr\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{103\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{curr}\hlopt{{-}$>$}\hlstd{left}\hlopt{;}\\
+\hllin{104\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{105\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{isEnd\ }\hlopt{=\ }\hlstd{curr\ }\hlopt{==\ }\hlstd{header}\hlopt{;}\\
+\hllin{106\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{107\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{}\hlkwc{operator}\hlstd{}\hlopt{{*}()\ \{}\\
+\hllin{108\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{curr}\hlopt{;}\\
+\hllin{109\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{110\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwc{operator}\hlstd{}\hlopt{++(}\hlstd{}\hlkwb{int}\hlstd{}\hlopt{)\ \{}\\
+\hllin{111\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{switch\ }\hlstd{}\hlopt{(}\hlstd{mode}\hlopt{)\ \{}\\
+\hllin{112\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{default}\hlstd{}\hlopt{:}\\
+\hllin{113\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{DLR}\hlopt{:}\hlstd{}\hlkwd{preNext}\hlstd{}\hlopt{();}\\
+\hllin{114\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{isEnd\ }\hlopt{=\ (}\hlstd{curr\ }\hlopt{==\ }\hlstd{header}\hlopt{);}\\
+\hllin{115\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{116\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{LDR}\hlopt{:}\hlstd{}\hlkwd{inNext}\hlstd{}\hlopt{();}\\
+\hllin{117\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{isEnd\ }\hlopt{=\ (}\hlstd{curr\ }\hlopt{==\ }\hlstd{header}\hlopt{);}\\
+\hllin{118\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{119\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{LRD}\hlopt{:}\hlstd{}\hlkwd{postNext}\hlstd{}\hlopt{();}\\
+\hllin{120\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{isEnd\ }\hlopt{=\ (}\hlstd{curr\ }\hlopt{==\ }\hlstd{header}\hlopt{);}\\
+\hllin{121\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{122\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{123\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{124\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{const\ bool\ }\hlstd{}\hlopt{\&}\hlstd{}\hlkwd{IsEnd}\hlstd{}\hlopt{()\ \{\ }\hlstd{}\hlkwa{return\ }\hlstd{isEnd}\hlopt{;\ \}}\\
+\hllin{125\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwc{private}\hlstd{}\hlopt{:}\\
+\hllin{126\ }\hlstd{}\\
+\hllin{127\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{BitNodePtr\ header}\hlopt{;}\\
+\hllin{128\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{Mode\ mode}\hlopt{;}\\
+\hllin{129\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{curr}\hlopt{;}\\
+\hllin{130\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{bool\ }\hlstd{isEnd}\hlopt{;}\\
+\hllin{131\ }\hlstd{}\\
+\hllin{132\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{133\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{{*}\ 前序遍历的后继结点：}\\
+\hllin{134\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{{*}\ (1)}\Righttorque\\
+\hllin{135\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{P的左子树不为空，此时P的后继结点就��}\Righttorque\\
+\hllin{136\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{�P的左儿子；}\\
+\hllin{137\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{{*}\ (2)}\Righttorque\\
+\hllin{138\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{P的左子树为空但右子树不为空，此时P��}\Righttorque\\
+\hllin{139\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{�后继结点就是P的右儿子；}\\
+\hllin{140\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{{*}\ (3)}\Righttorque\\
+\hllin{141\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{P的左右子树均为空，此时在从P开始的��}\Righttorque\\
+\hllin{142\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{�线索序列中，第一个有右儿子的节点的}\Righttorque\\
+\hllin{143\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{右儿子或者头结点就是P的后继结点。}\\
+\hllin{144\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{145\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{preNext}\hlstd{}\hlopt{()\ \{}\\
+\hllin{146\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{{-}$>$}\hlstd{lTag}\hlopt{)}\\
+\hllin{147\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{curr}\hlopt{{-}$>$}\hlstd{left}\hlopt{;}\\
+\hllin{148\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlopt{\{}\\
+\hllin{149\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(!}\hlstd{curr}\hlopt{{-}$>$}\hlstd{rTag}\hlopt{)\ \{}\\
+\hllin{150\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{curr}\hlopt{{-}$>$}\hlstd{right}\hlopt{;}\\
+\hllin{151\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{curr\ }\hlopt{==\ }\hlstd{header}\hlopt{)}\\
+\hllin{152\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{153\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{154\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{curr}\hlopt{{-}$>$}\hlstd{right}\hlopt{;}\\
+\hllin{155\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{156\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{157\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{158\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{{*}\ 中序遍历的后继结点：}\\
+\hllin{159\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{{*}\ (1)}\Righttorque\\
+\hllin{160\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{若一个节点的右子树为空，此时右线索�}\Righttorque\\
+\hllin{161\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{��指节点即为所求；}\\
+\hllin{162\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{{*}\ (2)}\Righttorque\\
+\hllin{163\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{若这个节点的右子树不为空，此时它的�}\Righttorque\\
+\hllin{164\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{��继结点是其右子树的最左节点。}\\
+\hllin{165\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{166\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{inNext}\hlstd{}\hlopt{()\ \{}\\
+\hllin{167\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(!}\hlstd{curr}\hlopt{{-}$>$}\hlstd{rTag}\hlopt{)}\\
+\hllin{168\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{curr}\hlopt{{-}$>$}\hlstd{right}\hlopt{;}\\
+\hllin{169\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlopt{\{}\\
+\hllin{170\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{curr}\hlopt{{-}$>$}\hlstd{right}\hlopt{;}\\
+\hllin{171\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{{-}$>$}\hlstd{lTag}\hlopt{)}\\
+\hllin{172\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{curr}\hlopt{{-}$>$}\hlstd{left}\hlopt{;}\\
+\hllin{173\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{174\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{175\ }\hlstd{}\\
+\hllin{176\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{177\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{{*}}\hlstd{\ \ }\hlcom{后序遍历的后继结点：}\\
+\hllin{178\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{{*}}\hlstd{\ \ }\hlcom{(1)}\Righttorque\\
+\hllin{179\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{当一个节点是它的双亲节点的右孩子时�}\Righttorque\\
+\hllin{180\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{��它的后序遍历的后继就是父节点。}\\
+\hllin{181\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{{*}}\hlstd{\ \ }\hlcom{(2)}\Righttorque\\
+\hllin{182\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{当它是父节点的左孩子，且父节点没有�}\Righttorque\\
+\hllin{183\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{��子树时，它的后序遍历的后继也是父��}\Righttorque\\
+\hllin{184\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{�点。}\\
+\hllin{185\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{{*}}\hlstd{\ \ }\hlcom{(3)}\Righttorque\\
+\hllin{186\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{当它是父节点的左孩子，且父节点有右�}\Righttorque\\
+\hllin{187\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{��树时，它的后序遍历的后继是父节点��}\Righttorque\\
+\hllin{188\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{�子树中的最左节点（如果左子树为空，}\Righttorque\\
+\hllin{189\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{右子树不空，则为右子树的最左节点）}\\
+\hllin{190\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{191\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{postNext}\hlstd{}\hlopt{()\ \{}\\
+\hllin{192\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{father\ }\hlopt{=\ }\hlstd{}\hlkwd{findFather}\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{);}\\
+\hllin{193\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{father}\hlopt{{-}$>$}\hlstd{right\ }\hlopt{==\ }\hlstd{curr\ }\hlopt{\textbar \textbar \ (}\hlstd{father}\hlopt{{-}$>$}\hlstd{left\ }\hlopt{==\ }\Righttorque\\
+\hllin{194\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{\&\&\ (!}\hlstd{father}\hlopt{{-}$>$}\hlstd{rTag\ }\hlopt{\textbar \textbar \ }\hlstd{father}\hlopt{{-}$>$}\hlstd{right\ }\hlopt{==\ }\Righttorque\\
+\hllin{195\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)))}\\
+\hllin{196\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{father}\hlopt{;}\\
+\hllin{197\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else\ if\ }\hlstd{}\hlopt{(}\hlstd{father}\hlopt{{-}$>$}\hlstd{left\ }\hlopt{==\ }\hlstd{curr\ }\hlopt{\&\&\ }\hlstd{father}\hlopt{{-}$>$}\hlstd{rTag}\hlopt{)\ \{}\\
+\hllin{198\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{father}\hlopt{{-}$>$}\hlstd{right}\hlopt{;}\\
+\hllin{199\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{do\ }\hlstd{}\hlopt{\{}\\
+\hllin{200\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{{-}$>$}\hlstd{lTag}\hlopt{)\ \{}\\
+\hllin{201\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{curr}\hlopt{{-}$>$}\hlstd{left}\hlopt{;}\\
+\hllin{202\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{203\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{{-}$>$}\hlstd{rTag}\hlopt{)}\\
+\hllin{204\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{curr}\hlopt{{-}$>$}\hlstd{right}\hlopt{;}\\
+\hllin{205\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{{-}$>$}\hlstd{lTag}\hlopt{);}\\
+\hllin{206\ }\hlstd{}\\
+\hllin{207\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{208\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{209\ }\hlstd{}\\
+\hllin{210\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlcom{/{*}{*}}\\
+\hllin{211\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{{*}\ 查找一个节点的父节点}\\
+\hllin{212\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{{*}\ @param\ child}\\
+\hllin{213\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{{*}\ @return}\\
+\hllin{214\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{{*}\ @details}\\
+\hllin{215\ }\hlcom{}\hlstd{\ \ \ \ \ \ \ \ \ }\hlcom{{*}/}\hlstd{}\\
+\hllin{216\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{}\hlkwd{findFather}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{child}\hlopt{)\ \{}\\
+\hllin{217\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{father\ }\hlopt{=\ }\hlstd{child}\hlopt{;}\\
+\hllin{218\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(}\hlstd{father}\hlopt{{-}$>$}\hlstd{rTag}\hlopt{)}\\
+\hllin{219\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{father\ }\hlopt{=\ }\hlstd{father}\hlopt{{-}$>$}\hlstd{right}\hlopt{;}\\
+\hllin{220\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{lFather\ }\hlopt{=\ }\hlstd{father}\hlopt{{-}$>$}\hlstd{left}\hlopt{;}\\
+\hllin{221\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{lFather}\hlopt{{-}$>$}\hlstd{right\ }\hlopt{==\ }\hlstd{child\ }\hlopt{\&\&\ }\hlstd{lFather}\hlopt{{-}$>$}\hlstd{rTag}\hlopt{)}\\
+\hllin{222\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{lFather}\hlopt{;}\\
+\hllin{223\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{rFather\ }\hlopt{=\ }\hlstd{father}\hlopt{{-}$>$}\hlstd{right}\hlopt{;}\\
+\hllin{224\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{rFather}\hlopt{{-}$>$}\hlstd{left\ }\hlopt{==\ }\hlstd{child\ }\hlopt{\&\&\ }\hlstd{rFather}\hlopt{{-}$>$}\hlstd{lTag}\hlopt{)}\\
+\hllin{225\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{rFather}\hlopt{;}\\
+\hllin{226\ }\hlstd{}\\
+\hllin{227\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{father\ }\hlopt{=\ }\hlstd{child}\hlopt{;}\\
+\hllin{228\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(}\hlstd{father}\hlopt{{-}$>$}\hlstd{lTag}\hlopt{)}\\
+\hllin{229\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{father\ }\hlopt{=\ }\hlstd{father}\hlopt{{-}$>$}\hlstd{left}\hlopt{;}\\
+\hllin{230\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{lFather\ }\hlopt{=\ }\hlstd{father}\hlopt{{-}$>$}\hlstd{left}\hlopt{;}\\
+\hllin{231\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{lFather}\hlopt{{-}$>$}\hlstd{right\ }\hlopt{==\ }\hlstd{child\ }\hlopt{\&\&\ }\hlstd{lFather}\hlopt{{-}$>$}\hlstd{rTag}\hlopt{)}\\
+\hllin{232\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{lFather}\hlopt{;}\\
+\hllin{233\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{rFather\ }\hlopt{=\ }\hlstd{father}\hlopt{{-}$>$}\hlstd{right}\hlopt{;}\\
+\hllin{234\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{rFather}\hlopt{{-}$>$}\hlstd{left\ }\hlopt{==\ }\hlstd{child\ }\hlopt{\&\&\ }\hlstd{rFather}\hlopt{{-}$>$}\hlstd{lTag}\hlopt{)}\\
+\hllin{235\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{rFather}\hlopt{;}\\
+\hllin{236\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{237\ }\hlstd{}\\
+\hllin{238\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{239\ }\hlstd{}\\
+\hllin{240\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 层序建树\ {*}/}\hlstd{}\\
+\hllin{241\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{static\ }\hlstd{BitTree\ }\hlkwd{CreateBitTree}\hlstd{}\hlopt{(}\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{vector}\hlopt{$<$}\hlstd{Comparable}\hlopt{$>$\ }\hlstd{vec}\hlopt{,}\Righttorque\\
+\hllin{242\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{bool\ }\hlstd{skip\ }\hlopt{=\ }\hlstd{}\hlkwa{false}\hlstd{}\hlopt{,\ }\hlstd{Comparable\ END\ }\hlopt{=\ }\hlstd{}\hlkwd{Comparable}\hlstd{}\hlopt{())\ \{}\\
+\hllin{243\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{BitTree}\hlopt{$<$}\hlstd{Comparable}\hlopt{$>$\ }\hlstd{bitTree}\hlopt{;}\\
+\hllin{244\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{queue}\hlopt{$<$}\hlstd{}\hlkwc{BitTree}\hlstd{}\hlopt{::}\hlstd{BitNode\ }\hlopt{{*}{*}$>$\ }\hlstd{nodeQueue}\hlopt{;}\\
+\hllin{245\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{nodeQueue}\hlopt{.}\hlstd{}\hlkwd{push}\hlstd{}\hlopt{(\&}\hlstd{bitTree}\hlopt{.}\hlstd{root}\hlopt{);}\\
+\hllin{246\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{}\hlkwc{auto\ }\hlstd{}\hlopt{\&}\hlstd{data}\hlopt{:}\hlstd{vec}\hlopt{)\ \{}\\
+\hllin{247\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{BitTree}\hlstd{}\hlopt{::}\hlstd{BitNode\ }\hlopt{{*}{*}}\hlstd{node\ }\hlopt{=\ }\hlstd{nodeQueue}\hlopt{.}\hlstd{}\hlkwd{front}\hlstd{}\hlopt{();}\\
+\hllin{248\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{nodeQueue}\hlopt{.}\hlstd{}\hlkwd{pop}\hlstd{}\hlopt{();}\\
+\hllin{249\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{skip\ }\hlopt{\&\&\ }\hlstd{data\ }\hlopt{==\ }\hlstd{END}\hlopt{)\ \{}\\
+\hllin{250\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{continue}\hlstd{}\hlopt{;}\\
+\hllin{251\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{252\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{{*}}\hlstd{node\ }\hlopt{=\ }\hlstd{}\hlkwa{new\ }\hlstd{}\hlkwd{BitNode}\hlstd{}\hlopt{(}\hlstd{data}\hlopt{,\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{);}\\
+\hllin{253\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{nodeQueue}\hlopt{.}\hlstd{}\hlkwd{push}\hlstd{}\hlopt{(\&({*}}\hlstd{node}\hlopt{){-}$>$}\hlstd{left}\hlopt{);}\\
+\hllin{254\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{nodeQueue}\hlopt{.}\hlstd{}\hlkwd{push}\hlstd{}\hlopt{(\&({*}}\hlstd{node}\hlopt{){-}$>$}\hlstd{right}\hlopt{);}\\
+\hllin{255\ }\hlstd{}\\
+\hllin{256\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{257\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{bitTree}\hlopt{;}\\
+\hllin{258\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{259\ }\hlstd{}\\
+\hllin{260\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 先序+中序建树\ 中序+后序建树\ {*}/}\hlstd{}\\
+\hllin{261\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{static\ }\hlstd{BitTree\ }\hlkwd{CreateBitTree}\hlstd{}\hlopt{(}\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{vector}\hlopt{$<$}\hlstd{Comparable}\hlopt{$>$\ }\Righttorque\\
+\hllin{262\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{vecA}\hlopt{,}\\
+\hllin{263\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{vector}\hlopt{$<$}\hlstd{Comparable}\hlopt{$>$\ }\Righttorque\\
+\hllin{264\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{vecB}\hlopt{,}\\
+\hllin{265\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Mode\ mode\ }\hlopt{=\ }\hlstd{DLR}\hlopt{)\ \{}\\
+\hllin{266\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{BitTree}\hlopt{$<$}\hlstd{Comparable}\hlopt{$>$\ }\hlstd{bitTree}\hlopt{;}\\
+\hllin{267\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{vecA}\hlopt{.}\hlstd{}\hlkwd{size}\hlstd{}\hlopt{()\ ==\ }\hlstd{}\hlnum{0\ }\hlstd{}\hlopt{\textbar \textbar \ }\hlstd{vecA}\hlopt{.}\hlstd{}\hlkwd{size}\hlstd{}\hlopt{()\ !=\ }\hlstd{vecB}\hlopt{.}\hlstd{}\hlkwd{size}\hlstd{}\hlopt{())}\\
+\hllin{268\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{bitTree}\hlopt{.}\hlstd{root\ }\hlopt{=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;}\\
+\hllin{269\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else\ if\ }\hlstd{}\hlopt{(}\hlstd{mode\ }\hlopt{==\ }\hlstd{DLR}\hlopt{)}\\
+\hllin{270\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{bitTree}\hlopt{.}\hlstd{root\ }\hlopt{=\ }\hlstd{}\hlkwd{CreateNodePreMiddle}\hlstd{}\hlopt{(}\hlstd{vecA}\hlopt{,\ }\hlstd{vecB}\hlopt{,\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{,}\Righttorque\\
+\hllin{271\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{vecA}\hlopt{.}\hlstd{}\hlkwd{size}\hlstd{}\hlopt{()\ {-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{,\ }\hlstd{vecB}\hlopt{.}\hlstd{}\hlkwd{size}\hlstd{}\hlopt{()\ {-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{);}\\
+\hllin{272\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else}\\
+\hllin{273\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{bitTree}\hlopt{.}\hlstd{root\ }\hlopt{=\ }\hlstd{}\hlkwd{CreateNodeMiddlePost}\hlstd{}\hlopt{(}\hlstd{vecA}\hlopt{,\ }\hlstd{vecB}\hlopt{,\ }\Righttorque\\
+\hllin{274\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{,\ }\hlstd{vecA}\hlopt{.}\hlstd{}\hlkwd{size}\hlstd{}\hlopt{()\ {-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{}\hlnum{0}\hlstd{}\hlopt{,\ }\hlstd{vecB}\hlopt{.}\hlstd{}\hlkwd{size}\hlstd{}\hlopt{()\ {-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{);}\\
+\hllin{275\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{bitTree}\hlopt{;}\\
+\hllin{276\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{277\ }\hlstd{}\\
+\hllin{278\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 将二叉树线索化\ {*}/}\hlstd{}\\
+\hllin{279\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{static\ void\ }\hlstd{}\hlkwd{BitTreeThreading}\hlstd{}\hlopt{(}\hlstd{BitTree\ }\hlopt{\&}\hlstd{tree}\hlopt{)\ \{}\\
+\hllin{280\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{tree}\hlopt{.}\hlstd{header\ }\hlopt{=\ }\hlstd{}\hlkwa{new\ }\hlstd{}\hlkwd{BitNode}\hlstd{}\hlopt{(}\hlstd{}\hlkwd{Comparable}\hlstd{}\hlopt{(),\ }\hlstd{tree}\hlopt{.}\hlstd{root}\hlopt{,\ }\Righttorque\\
+\hllin{281\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{);}\\
+\hllin{282\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{tree}\hlopt{.}\hlstd{header}\hlopt{{-}$>$}\hlstd{right\ }\hlopt{=\ }\hlstd{tree}\hlopt{.}\hlstd{header}\hlopt{;}\\
+\hllin{283\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{tree}\hlopt{.}\hlstd{header}\hlopt{{-}$>$}\hlstd{rTag\ }\hlopt{=\ }\hlstd{}\hlkwa{false}\hlstd{}\hlopt{;}\\
+\hllin{284\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{BitNodePtr\ }\hlopt{{*}}\hlstd{curr\ }\hlopt{=\ \&}\hlstd{tree}\hlopt{.}\hlstd{root}\hlopt{;}\\
+\hllin{285\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{BitNodePtr\ }\hlopt{{*}}\hlstd{pre\ }\hlopt{=\ \&}\hlstd{tree}\hlopt{.}\hlstd{header}\hlopt{;}\\
+\hllin{286\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{({*}}\hlstd{curr\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{287\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{288\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{stack}\hlopt{$<$}\hlstd{BitNodePtr\ }\hlopt{{*}$>$\ }\hlstd{nodeStack}\hlopt{;}\\
+\hllin{289\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{({*}}\hlstd{curr\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr\ }\hlstd{}\hlopt{\textbar \textbar \ !}\hlstd{nodeStack}\hlopt{.}\hlstd{}\hlkwd{empty}\hlstd{}\hlopt{())\ \{}\\
+\hllin{290\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{({*}}\hlstd{curr\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{}\\
+\hllin{291\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//中序遍历，将左子树入栈}\\
+\hllin{292\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{nodeStack}\hlopt{.}\hlstd{}\hlkwd{push}\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{);}\\
+\hllin{293\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ \&({*}}\hlstd{curr}\hlopt{){-}$>$}\hlstd{left}\hlopt{;}\\
+\hllin{294\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{295\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(!}\hlstd{nodeStack}\hlopt{.}\hlstd{}\hlkwd{empty}\hlstd{}\hlopt{())\ \{}\\
+\hllin{296\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//当前栈顶是最左子树}\\
+\hllin{297\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{nodeStack}\hlopt{.}\hlstd{}\hlkwd{top}\hlstd{}\hlopt{();}\\
+\hllin{298\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//访问左子树，而后出栈，访问栈�}\Righttorque\\
+\hllin{299\ }\hlslc{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlslc{��的右子树}\\
+\hllin{300\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{({*}}\hlstd{curr}\hlopt{){-}$>$}\hlstd{lTag\ }\hlopt{=\ ({*}}\hlstd{curr}\hlopt{){-}$>$}\hlstd{left\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;}\\
+\hllin{301\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{({*}}\hlstd{curr}\hlopt{){-}$>$}\hlstd{rTag\ }\hlopt{=\ ({*}}\hlstd{curr}\hlopt{){-}$>$}\hlstd{right\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;}\\
+\hllin{302\ }\hlstd{}\\
+\hllin{303\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(!({*}}\hlstd{curr}\hlopt{){-}$>$}\hlstd{lTag}\hlopt{)\ \{}\\
+\hllin{304\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{({*}}\hlstd{curr}\hlopt{){-}$>$}\hlstd{left\ }\hlopt{=\ {*}}\hlstd{pre}\hlopt{;}\\
+\hllin{305\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{306\ }\hlstd{}\\
+\hllin{307\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(({*}}\hlstd{pre}\hlopt{){-}$>$}\hlstd{right\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{}\\
+\hllin{308\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{({*}}\hlstd{pre}\hlopt{){-}$>$}\hlstd{rTag\ }\hlopt{=\ }\hlstd{}\hlkwa{false}\hlstd{}\hlopt{;}\\
+\hllin{309\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{({*}}\hlstd{pre}\hlopt{){-}$>$}\hlstd{right\ }\hlopt{=\ {*}}\hlstd{curr}\hlopt{;}\\
+\hllin{310\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{311\ }\hlstd{}\\
+\hllin{312\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{pre\ }\hlopt{=\ }\hlstd{curr}\hlopt{;}\\
+\hllin{313\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{nodeStack}\hlopt{.}\hlstd{}\hlkwd{pop}\hlstd{}\hlopt{();}\\
+\hllin{314\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ \&({*}}\hlstd{curr}\hlopt{){-}$>$}\hlstd{right}\hlopt{;}\\
+\hllin{315\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{316\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{317\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{({*}}\hlstd{pre}\hlopt{){-}$>$}\hlstd{right\ }\hlopt{=\ }\hlstd{tree}\hlopt{.}\hlstd{header}\hlopt{;}\\
+\hllin{318\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{tree}\hlopt{.}\hlstd{header}\hlopt{{-}$>$}\hlstd{right\ }\hlopt{=\ {*}}\hlstd{pre}\hlopt{;}\\
+\hllin{319\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{320\ }\hlstd{}\\
+\hllin{321\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 获取不同访问模式的迭代器\ {*}/}\hlstd{}\\
+\hllin{322\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{Iterator\ }\hlkwd{getIterator}\hlstd{}\hlopt{(}\hlstd{Mode\ mode\ }\hlopt{=\ }\hlstd{}\hlkwc{Mode}\hlstd{}\hlopt{::}\hlstd{DLR}\hlopt{)\ \{}\\
+\hllin{323\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{header\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{324\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{BitTreeThreading}\hlstd{}\hlopt{({*}}\hlstd{}\hlkwa{this}\hlstd{}\hlopt{);}\\
+\hllin{325\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{}\hlkwd{Iterator}\hlstd{}\hlopt{(}\hlstd{header}\hlopt{,\ }\hlstd{mode}\hlopt{);}\\
+\hllin{326\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{327\ }\hlstd{}\\
+\hllin{328\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 线索遍历各节点，可更改模式\ {*}/}\hlstd{}\\
+\hllin{329\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{threadVisit}\hlstd{}\hlopt{(}\hlstd{Mode\ mode\ }\hlopt{=\ }\hlstd{DLR}\hlopt{,\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\Righttorque\\
+\hllin{330\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{BitNode\ }\hlopt{{*})$>$\ \&}\hlstd{visit\ }\hlopt{=\ }\hlstd{EASY\textunderscore VISIT\textunderscore LAMBDA}\hlopt{)\ \{}\\
+\hllin{331\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{Iterator\ iter\ }\hlopt{=\ }\hlstd{}\hlkwd{getIterator}\hlstd{}\hlopt{(}\hlstd{mode}\hlopt{);}\\
+\hllin{332\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(!}\hlstd{iter}\hlopt{.}\hlstd{}\hlkwd{IsEnd}\hlstd{}\hlopt{())\ \{}\\
+\hllin{333\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{visit}\hlstd{}\hlopt{({*}}\hlstd{iter}\hlopt{);}\\
+\hllin{334\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{iter}\hlopt{++;}\\
+\hllin{335\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{336\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{337\ }\hlstd{}\\
+\hllin{338\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 选用不同模式进行遍历，递归式\ {*}/}\hlstd{}\\
+\hllin{339\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{visitTreeR}\hlstd{}\hlopt{(}\hlstd{Mode\ mode\ }\hlopt{=\ }\hlstd{DLR}\hlopt{,\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\Righttorque\\
+\hllin{340\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void}\hlstd{}\hlopt{(}\hlstd{BitNode\ }\hlopt{{*})$>$\ \&}\hlstd{visit\ }\hlopt{=\ }\hlstd{EASY\textunderscore VISIT\textunderscore LAMBDA}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{\{}\\
+\hllin{341\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{switch\ }\hlstd{}\hlopt{(}\hlstd{mode}\hlopt{)\ \{}\\
+\hllin{342\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{default}\hlstd{}\hlopt{:}\\
+\hllin{343\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{DLR}\hlopt{:}\hlstd{}\hlkwd{visitTreeR}\hlstd{}\hlopt{(}\hlstd{root}\hlopt{,\ }\hlstd{visit}\hlopt{);}\\
+\hllin{344\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{345\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{LDR}\hlopt{:}\hlstd{}\hlkwd{visitTreeMR}\hlstd{}\hlopt{(}\hlstd{root}\hlopt{,\ }\hlstd{visit}\hlopt{);}\\
+\hllin{346\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{347\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{LRD}\hlopt{:}\hlstd{}\hlkwd{visitTreeBR}\hlstd{}\hlopt{(}\hlstd{root}\hlopt{,\ }\hlstd{visit}\hlopt{);}\\
+\hllin{348\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{349\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{350\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{351\ }\hlstd{}\\
+\hllin{352\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 选用不同模式进行遍历，非递归式\ {*}/}\hlstd{}\\
+\hllin{353\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{visitTree}\hlstd{}\hlopt{(}\hlstd{Mode\ mode\ }\hlopt{=\ }\hlstd{DLR}\hlopt{,\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{void}\hlstd{}\hlopt{(}\Righttorque\\
+\hllin{354\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{BitNode\ }\hlopt{{*})$>$\ \&}\hlstd{visit\ }\hlopt{=\ }\hlstd{EASY\textunderscore VISIT\textunderscore LAMBDA}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{\{}\\
+\hllin{355\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{switch\ }\hlstd{}\hlopt{(}\hlstd{mode}\hlopt{)\ \{}\\
+\hllin{356\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{default}\hlstd{}\hlopt{:}\\
+\hllin{357\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{DLR}\hlopt{:}\hlstd{}\hlkwd{visitTree}\hlstd{}\hlopt{(}\hlstd{root}\hlopt{,\ }\hlstd{visit}\hlopt{);}\\
+\hllin{358\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{359\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{LDR}\hlopt{:}\hlstd{}\hlkwd{visitTreeM}\hlstd{}\hlopt{(}\hlstd{root}\hlopt{,\ }\hlstd{visit}\hlopt{);}\\
+\hllin{360\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{361\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{case\ }\hlstd{LRD}\hlopt{:}\hlstd{}\hlkwd{visitTreeB}\hlstd{}\hlopt{(}\hlstd{root}\hlopt{,\ }\hlstd{visit}\hlopt{);}\\
+\hllin{362\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{363\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{364\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{365\ }\hlstd{}\\
+\hllin{366\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 层序便利各节点\ {*}/}\hlstd{}\\
+\hllin{367\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{visitTreeCover}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{void}\hlstd{}\hlopt{(}\hlstd{BitNode\ }\hlopt{{*})$>$\ }\Righttorque\\
+\hllin{368\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\&}\hlstd{visit\ }\hlopt{=\ }\hlstd{EASY\textunderscore VISIT\textunderscore LAMBDA}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{\{}\\
+\hllin{369\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{queue}\hlopt{$<$}\hlstd{BitNode\ }\hlopt{{*}$>$\ }\hlstd{nodeQueue}\hlopt{;}\\
+\hllin{370\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{node\ }\hlopt{=\ }\hlstd{root}\hlopt{;}\\
+\hllin{371\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(}\hlstd{node\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{}\\
+\hllin{372\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{node}\hlopt{{-}$>$}\hlstd{left\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr\ }\hlstd{}\hlopt{\&\&\ }\hlstd{node}\hlopt{{-}$>$}\hlstd{lTag}\hlopt{)}\\
+\hllin{373\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{nodeQueue}\hlopt{.}\hlstd{}\hlkwd{push}\hlstd{}\hlopt{(}\hlstd{node}\hlopt{{-}$>$}\hlstd{left}\hlopt{);}\\
+\hllin{374\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{node}\hlopt{{-}$>$}\hlstd{right\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr\ }\hlstd{}\hlopt{\&\&\ }\hlstd{node}\hlopt{{-}$>$}\hlstd{rTag}\hlopt{)}\\
+\hllin{375\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{nodeQueue}\hlopt{.}\hlstd{}\hlkwd{push}\hlstd{}\hlopt{(}\hlstd{node}\hlopt{{-}$>$}\hlstd{right}\hlopt{);}\\
+\hllin{376\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{visit}\hlstd{}\hlopt{(}\hlstd{node}\hlopt{);}\\
+\hllin{377\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(!}\hlstd{nodeQueue}\hlopt{.}\hlstd{}\hlkwd{empty}\hlstd{}\hlopt{())\ \{}\\
+\hllin{378\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{node\ }\hlopt{=\ }\hlstd{nodeQueue}\hlopt{.}\hlstd{}\hlkwd{front}\hlstd{}\hlopt{();}\\
+\hllin{379\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{nodeQueue}\hlopt{.}\hlstd{}\hlkwd{pop}\hlstd{}\hlopt{();}\\
+\hllin{380\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{}\hlkwa{else}\\
+\hllin{381\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{node\ }\hlopt{=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;}\\
+\hllin{382\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{383\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{384\ }\hlstd{}\\
+\hllin{385\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 将x插入树中，忽略重复项\ {*}/}\hlstd{}\\
+\hllin{386\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{insertR}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{Comparable\ }\hlopt{\&}\hlstd{x}\hlopt{)\ \{}\\
+\hllin{387\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{insertR}\hlstd{}\hlopt{(}\hlstd{x}\hlopt{,\ }\hlstd{root}\hlopt{);}\\
+\hllin{388\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{389\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{insert}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{Comparable\ }\hlopt{\&}\hlstd{x}\hlopt{)\ \{}\\
+\hllin{390\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{insert}\hlstd{}\hlopt{(}\hlstd{x}\hlopt{,\ }\hlstd{root}\hlopt{);}\\
+\hllin{391\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{392\ }\hlstd{}\\
+\hllin{393\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 拷贝赋值\ {*}/}\hlstd{}\\
+\hllin{394\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{BitTree\ }\hlopt{\&}\hlstd{}\hlkwc{operator}\hlstd{}\hlopt{=(}\hlstd{}\hlkwb{const\ }\hlstd{BitTree\ }\hlopt{\&}\hlstd{rhs}\hlopt{)\ \{}\\
+\hllin{395\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{makeEmpty}\hlstd{}\hlopt{();}\\
+\hllin{396\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{root\ }\hlopt{=\ }\hlstd{}\hlkwd{clone}\hlstd{}\hlopt{(}\hlstd{rhs}\hlopt{.}\hlstd{root}\hlopt{);}\\
+\hllin{397\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{}\hlopt{{*}}\hlstd{}\hlkwa{this}\hlstd{}\hlopt{;}\\
+\hllin{398\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{399\ }\hlstd{}\\
+\hllin{400\ }\hlstd{}\hlkwc{private}\hlstd{}\hlopt{:}\\
+\hllin{401\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{struct\ }\hlstd{BitNode\ }\hlopt{\{}\\
+\hllin{402\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//\ 约定lTag为true时，left或right是有效值}\\
+\hllin{403\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{Comparable\ data}\hlopt{;}\\
+\hllin{404\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{bool\ }\hlstd{lTag}\hlopt{;}\\
+\hllin{405\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{bool\ }\hlstd{rTag}\hlopt{;}\\
+\hllin{406\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{left}\hlopt{;}\\
+\hllin{407\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{right}\hlopt{;}\\
+\hllin{408\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{BitNode}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{Comparable\ }\hlopt{\&}\hlstd{theData}\hlopt{,\ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{lt}\hlopt{,\ }\Righttorque\\
+\hllin{409\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{rt}\hlopt{)}\\
+\hllin{410\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{:\ }\hlstd{}\hlkwd{data}\hlstd{}\hlopt{(}\hlstd{theData}\hlopt{),\ }\hlstd{}\hlkwd{left}\hlstd{}\hlopt{(}\hlstd{lt}\hlopt{),\ }\hlstd{}\hlkwd{right}\hlstd{}\hlopt{(}\hlstd{rt}\hlopt{),\ }\hlstd{}\hlkwd{lTag}\hlstd{}\hlopt{(}\hlstd{}\hlkwa{true}\hlstd{}\hlopt{),}\Righttorque\\
+\hllin{411\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{rTag}\hlstd{}\hlopt{(}\hlstd{}\hlkwa{true}\hlstd{}\hlopt{)\ \{\}}\\
+\hllin{412\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{BitNode}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{Comparable\ }\hlopt{\&\&}\hlstd{theData}\hlopt{,\ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{lt}\hlopt{,\ }\Righttorque\\
+\hllin{413\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{rt}\hlopt{)}\\
+\hllin{414\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{:\ }\hlstd{}\hlkwd{data}\hlstd{}\hlopt{(}\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{}\hlkwd{move}\hlstd{}\hlopt{(}\hlstd{theData}\hlopt{)),\ }\hlstd{}\hlkwd{left}\hlstd{}\hlopt{(}\hlstd{lt}\hlopt{),\ }\hlstd{}\hlkwd{right}\hlstd{}\hlopt{(}\hlstd{rt}\hlopt{),\ }\Righttorque\\
+\hllin{415\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{lTag}\hlstd{}\hlopt{(}\hlstd{}\hlkwa{true}\hlstd{}\hlopt{),\ }\hlstd{}\hlkwd{rTag}\hlstd{}\hlopt{(}\hlstd{}\hlkwa{true}\hlstd{}\hlopt{)\ \{}\\
+\hllin{416\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{417\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\};}\\
+\hllin{418\ }\hlstd{}\\
+\hllin{419\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 树的根节点\ {*}/}\hlstd{}\\
+\hllin{420\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{root}\hlopt{;}\\
+\hllin{421\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 线索树的头\ {*}/}\hlstd{}\\
+\hllin{422\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{header}\hlopt{;}\\
+\hllin{423\ }\hlstd{}\\
+\hllin{424\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{makeEmpty}\hlstd{}\hlopt{(}\hlstd{BitNode\ }\hlopt{{*}\&}\hlstd{t}\hlopt{)\ \{}\\
+\hllin{425\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{t\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{}\\
+\hllin{426\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{lTag}\hlopt{)}\\
+\hllin{427\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{makeEmpty}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{left}\hlopt{);}\\
+\hllin{428\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{rTag}\hlopt{)}\\
+\hllin{429\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{makeEmpty}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{right}\hlopt{);}\\
+\hllin{430\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{delete\ }\hlstd{t}\hlopt{;}\\
+\hllin{431\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{432\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{t\ }\hlopt{=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;}\\
+\hllin{433\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{434\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{insertR}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{Comparable\ }\hlopt{\&}\hlstd{x}\hlopt{,\ }\hlstd{BitNode\ }\hlopt{{*}\&}\hlstd{t}\hlopt{)\ \{}\\
+\hllin{435\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{t\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{436\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{t\ }\hlopt{=\ }\hlstd{}\hlkwa{new\ }\hlstd{}\hlkwd{BitNode}\hlstd{}\hlopt{(}\hlstd{x}\hlopt{,\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{);}\\
+\hllin{437\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else\ if\ }\hlstd{}\hlopt{(}\hlstd{x\ }\hlopt{$<$\ }\hlstd{t}\hlopt{{-}$>$}\hlstd{data}\hlopt{)}\\
+\hllin{438\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{insertR}\hlstd{}\hlopt{(}\hlstd{x}\hlopt{,\ }\hlstd{t}\hlopt{{-}$>$}\hlstd{left}\hlopt{);}\\
+\hllin{439\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else\ if\ }\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{data\ }\hlopt{$<$\ }\hlstd{x}\hlopt{)}\\
+\hllin{440\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{insertR}\hlstd{}\hlopt{(}\hlstd{x}\hlopt{,\ }\hlstd{t}\hlopt{{-}$>$}\hlstd{right}\hlopt{);}\\
+\hllin{441\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else}\\
+\hllin{442\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{443\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{444\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{insert}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{Comparable\ }\hlopt{\&}\hlstd{x}\hlopt{,\ }\hlstd{BitNode\ }\hlopt{{*}\&}\hlstd{t}\hlopt{)\ \{}\\
+\hllin{445\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{t\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{}\\
+\hllin{446\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{t\ }\hlopt{=\ }\hlstd{}\hlkwa{new\ }\hlstd{}\hlkwd{BitNode}\hlstd{}\hlopt{(}\hlstd{x}\hlopt{,\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{);}\\
+\hllin{447\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlopt{\{}\\
+\hllin{448\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{BitTree}\hlopt{$<$}\hlstd{Comparable}\hlopt{$>$::}\hlstd{BitNode\ }\hlopt{{*}}\hlstd{node\ }\hlopt{=\ }\hlstd{t}\hlopt{;}\\
+\hllin{449\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(}\hlstd{}\hlkwa{true}\hlstd{}\hlopt{)\ \{}\\
+\hllin{450\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//相等则忽略}\\
+\hllin{451\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{x\ }\hlopt{==\ }\hlstd{node}\hlopt{{-}$>$}\hlstd{data}\hlopt{)}\\
+\hllin{452\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{453\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{x\ }\hlopt{$<$\ }\hlstd{node}\hlopt{{-}$>$}\hlstd{data}\hlopt{)\ \{}\\
+\hllin{454\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{node}\hlopt{{-}$>$}\hlstd{left\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{455\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{node\ }\hlopt{=\ }\hlstd{node}\hlopt{{-}$>$}\hlstd{left}\hlopt{;}\\
+\hllin{456\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlopt{\{}\\
+\hllin{457\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{node}\hlopt{{-}$>$}\hlstd{left\ }\hlopt{=\ }\hlstd{}\hlkwa{new\ }\hlstd{}\hlkwd{BitNode}\hlstd{}\hlopt{(}\hlstd{x}\hlopt{,\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{,\ }\Righttorque\\
+\hllin{458\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{);}\\
+\hllin{459\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{460\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{461\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlopt{\{}\\
+\hllin{462\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{node}\hlopt{{-}$>$}\hlstd{right\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{463\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{node\ }\hlopt{=\ }\hlstd{node}\hlopt{{-}$>$}\hlstd{right}\hlopt{;}\\
+\hllin{464\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else\ }\hlstd{}\hlopt{\{}\\
+\hllin{465\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{node}\hlopt{{-}$>$}\hlstd{right\ }\hlopt{=\ }\hlstd{}\hlkwa{new\ }\hlstd{}\hlkwd{BitNode}\hlstd{}\hlopt{(}\hlstd{x}\hlopt{,\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{,}\Righttorque\\
+\hllin{466\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{);}\\
+\hllin{467\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{468\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{469\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{470\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{471\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{472\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{473\ }\hlstd{}\\
+\hllin{474\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 先序遍历\ {*}/}\hlstd{}\\
+\hllin{475\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{visitTreeR}\hlstd{}\hlopt{(}\hlstd{BitNode\ }\hlopt{{*}}\hlstd{t}\hlopt{,\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{void}\hlstd{}\hlopt{(}\Righttorque\\
+\hllin{476\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{BitNode\ }\hlopt{{*})$>$\ \&}\hlstd{visit}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{\{}\\
+\hllin{477\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{t\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{}\\
+\hllin{478\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{visit}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{);}\\
+\hllin{479\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{lTag}\hlopt{)}\\
+\hllin{480\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{visitTreeR}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{left}\hlopt{,\ }\hlstd{visit}\hlopt{);}\\
+\hllin{481\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{rTag}\hlopt{)}\\
+\hllin{482\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{visitTreeR}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{right}\hlopt{,\ }\hlstd{visit}\hlopt{);}\\
+\hllin{483\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{484\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{485\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 中序遍历\ {*}/}\hlstd{}\\
+\hllin{486\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{visitTreeMR}\hlstd{}\hlopt{(}\hlstd{BitNode\ }\hlopt{{*}}\hlstd{t}\hlopt{,\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{void}\hlstd{}\hlopt{(}\Righttorque\\
+\hllin{487\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{BitNode\ }\hlopt{{*})$>$\ \&}\hlstd{visit}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{\{}\\
+\hllin{488\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{t\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{}\\
+\hllin{489\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{lTag}\hlopt{)}\\
+\hllin{490\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{visitTreeMR}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{left}\hlopt{,\ }\hlstd{visit}\hlopt{);}\\
+\hllin{491\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{visit}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{);}\\
+\hllin{492\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{rTag}\hlopt{)}\\
+\hllin{493\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{visitTreeMR}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{right}\hlopt{,\ }\hlstd{visit}\hlopt{);}\\
+\hllin{494\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{495\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{496\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 后序遍历\ {*}/}\hlstd{}\\
+\hllin{497\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{visitTreeBR}\hlstd{}\hlopt{(}\hlstd{BitNode\ }\hlopt{{*}}\hlstd{t}\hlopt{,\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{void}\hlstd{}\hlopt{(}\Righttorque\\
+\hllin{498\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{BitNode\ }\hlopt{{*})$>$\ \&}\hlstd{visit}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{\{}\\
+\hllin{499\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{t\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{}\\
+\hllin{500\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{lTag}\hlopt{)}\\
+\hllin{501\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{visitTreeBR}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{left}\hlopt{,\ }\hlstd{visit}\hlopt{);}\\
+\hllin{502\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{rTag}\hlopt{)}\\
+\hllin{503\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{visitTreeBR}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{right}\hlopt{,\ }\hlstd{visit}\hlopt{);}\\
+\hllin{504\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{visit}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{);}\\
+\hllin{505\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{506\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{507\ }\hlstd{}\\
+\hllin{508\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 先序遍历\ {*}/}\hlstd{}\\
+\hllin{509\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{visitTree}\hlstd{}\hlopt{(}\hlstd{BitNode\ }\hlopt{{*}}\hlstd{t}\hlopt{,\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{void}\hlstd{}\hlopt{(}\Righttorque\\
+\hllin{510\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{BitNode\ }\hlopt{{*})$>$\ \&}\hlstd{visit}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{\{}\\
+\hllin{511\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{t\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{512\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{513\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{stack}\hlopt{$<$}\hlstd{BitTree}\hlopt{$<$}\hlstd{Comparable}\hlopt{$>$::}\hlstd{BitNode\ }\hlopt{{*}$>$\ }\hlstd{nodeStack}\hlopt{;}\\
+\hllin{514\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{BitTree}\hlopt{$<$}\hlstd{Comparable}\hlopt{$>$::}\hlstd{BitNode\ }\hlopt{{*}}\hlstd{curr\ }\hlopt{=\ }\hlstd{t}\hlopt{;}\\
+\hllin{515\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(}\hlstd{curr\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr\ }\hlstd{}\hlopt{\textbar \textbar \ !}\hlstd{nodeStack}\hlopt{.}\hlstd{}\hlkwd{empty}\hlstd{}\hlopt{())\ \{}\\
+\hllin{516\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(}\hlstd{curr\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{}\\
+\hllin{517\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//先序遍历，所以可以直接访问，�}\Righttorque\\
+\hllin{518\ }\hlslc{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlslc{��后入栈，访问左子树}\\
+\hllin{519\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{visit}\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{);}\\
+\hllin{520\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{nodeStack}\hlopt{.}\hlstd{}\hlkwd{push}\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{);}\\
+\hllin{521\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{{-}$>$}\hlstd{lTag}\hlopt{)}\\
+\hllin{522\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{curr}\hlopt{{-}$>$}\hlstd{left}\hlopt{;}\\
+\hllin{523\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else}\\
+\hllin{524\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{525\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{526\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//栈不空}\\
+\hllin{527\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(!}\hlstd{nodeStack}\hlopt{.}\hlstd{}\hlkwd{empty}\hlstd{}\hlopt{())\ \{}\\
+\hllin{528\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//之前左子树已经访问过了，栈顶�}\Righttorque\\
+\hllin{529\ }\hlslc{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlslc{��定是之前的最左子树}\\
+\hllin{530\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//将其出栈访问其右子树}\\
+\hllin{531\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{nodeStack}\hlopt{.}\hlstd{}\hlkwd{top}\hlstd{}\hlopt{();}\\
+\hllin{532\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{nodeStack}\hlopt{.}\hlstd{}\hlkwd{pop}\hlstd{}\hlopt{();}\\
+\hllin{533\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{{-}$>$}\hlstd{rTag}\hlopt{)}\\
+\hllin{534\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{curr}\hlopt{{-}$>$}\hlstd{right}\hlopt{;}\\
+\hllin{535\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else}\\
+\hllin{536\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;}\\
+\hllin{537\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{538\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{539\ }\hlstd{}\\
+\hllin{540\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{541\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 中序遍历\ {*}/}\hlstd{}\\
+\hllin{542\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{visitTreeM}\hlstd{}\hlopt{(}\hlstd{BitNode\ }\hlopt{{*}}\hlstd{t}\hlopt{,\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{void}\hlstd{}\hlopt{(}\Righttorque\\
+\hllin{543\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{BitNode\ }\hlopt{{*})$>$\ \&}\hlstd{visit}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{\{}\\
+\hllin{544\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{t\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{545\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{546\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{stack}\hlopt{$<$}\hlstd{BitTree}\hlopt{$<$}\hlstd{Comparable}\hlopt{$>$::}\hlstd{BitNode\ }\hlopt{{*}$>$\ }\hlstd{nodeStack}\hlopt{;}\\
+\hllin{547\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{BitTree}\hlopt{$<$}\hlstd{Comparable}\hlopt{$>$::}\hlstd{BitNode\ }\hlopt{{*}}\hlstd{curr\ }\hlopt{=\ }\hlstd{t}\hlopt{;}\\
+\hllin{548\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(}\hlstd{curr\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr\ }\hlstd{}\hlopt{\textbar \textbar \ !}\hlstd{nodeStack}\hlopt{.}\hlstd{}\hlkwd{empty}\hlstd{}\hlopt{())\ \{}\\
+\hllin{549\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(}\hlstd{curr\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{}\\
+\hllin{550\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//中序遍历，将左子树入栈}\\
+\hllin{551\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{nodeStack}\hlopt{.}\hlstd{}\hlkwd{push}\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{);}\\
+\hllin{552\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{{-}$>$}\hlstd{lTag}\hlopt{)}\\
+\hllin{553\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{curr}\hlopt{{-}$>$}\hlstd{left}\hlopt{;}\\
+\hllin{554\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else}\\
+\hllin{555\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{556\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{557\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(!}\hlstd{nodeStack}\hlopt{.}\hlstd{}\hlkwd{empty}\hlstd{}\hlopt{())\ \{}\\
+\hllin{558\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//当前栈顶是最左子树}\\
+\hllin{559\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{nodeStack}\hlopt{.}\hlstd{}\hlkwd{top}\hlstd{}\hlopt{();}\\
+\hllin{560\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//访问左子树，而后出栈，访问栈�}\Righttorque\\
+\hllin{561\ }\hlslc{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlslc{��的右子树}\\
+\hllin{562\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{visit}\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{);}\\
+\hllin{563\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{nodeStack}\hlopt{.}\hlstd{}\hlkwd{pop}\hlstd{}\hlopt{();}\\
+\hllin{564\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{{-}$>$}\hlstd{rTag}\hlopt{)}\\
+\hllin{565\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{curr}\hlopt{{-}$>$}\hlstd{right}\hlopt{;}\\
+\hllin{566\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else}\\
+\hllin{567\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;}\\
+\hllin{568\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{569\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{570\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{571\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 后序遍历\ {*}/}\hlstd{}\\
+\hllin{572\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{void\ }\hlstd{}\hlkwd{visitTreeB}\hlstd{}\hlopt{(}\hlstd{BitNode\ }\hlopt{{*}}\hlstd{t}\hlopt{,\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{function}\hlopt{$<$}\hlstd{}\hlkwb{void}\hlstd{}\hlopt{(}\Righttorque\\
+\hllin{573\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{BitNode\ }\hlopt{{*})$>$\ \&}\hlstd{visit}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{\{}\\
+\hllin{574\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{t\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{575\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return}\hlstd{}\hlopt{;}\\
+\hllin{576\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{stack}\hlopt{$<$}\hlstd{BitTree}\hlopt{$<$}\hlstd{Comparable}\hlopt{$>$::}\hlstd{BitNode\ }\hlopt{{*}$>$\ }\hlstd{nodeStack}\hlopt{;}\\
+\hllin{577\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{BitTree}\hlopt{$<$}\hlstd{Comparable}\hlopt{$>$::}\hlstd{BitNode\ }\hlopt{{*}}\hlstd{curr\ }\hlopt{=\ }\hlstd{t}\hlopt{;}\\
+\hllin{578\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{BitTree}\hlopt{$<$}\hlstd{Comparable}\hlopt{$>$::}\hlstd{BitNode\ }\hlopt{{*}}\hlstd{visited\ }\hlopt{=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;}\\
+\hllin{579\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(}\hlstd{curr\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr\ }\hlstd{}\hlopt{\textbar \textbar \ !}\hlstd{nodeStack}\hlopt{.}\hlstd{}\hlkwd{empty}\hlstd{}\hlopt{())\ \{}\\
+\hllin{580\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{while\ }\hlstd{}\hlopt{(}\hlstd{curr\ }\hlopt{!=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)\ \{}\\
+\hllin{581\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//左子树全部入栈}\\
+\hllin{582\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{nodeStack}\hlopt{.}\hlstd{}\hlkwd{push}\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{);}\\
+\hllin{583\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{{-}$>$}\hlstd{lTag}\hlopt{)}\\
+\hllin{584\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{curr}\hlopt{{-}$>$}\hlstd{left}\hlopt{;}\\
+\hllin{585\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else}\\
+\hllin{586\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\\
+\hllin{587\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{588\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//取得最左子树}\\
+\hllin{589\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{nodeStack}\hlopt{.}\hlstd{}\hlkwd{top}\hlstd{}\hlopt{();}\\
+\hllin{590\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{{-}$>$}\hlstd{right\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr\ }\hlstd{}\hlopt{\textbar \textbar \ !}\hlstd{curr}\hlopt{{-}$>$}\hlstd{rTag\ }\hlopt{\textbar \textbar \ }\Righttorque\\
+\hllin{591\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr}\hlopt{{-}$>$}\hlstd{right\ }\hlopt{==\ }\hlstd{visited}\hlopt{)\ \{}\\
+\hllin{592\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//右子树为空或者已经访问过了}\\
+\hllin{593\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//说明当前该访问中间了}\\
+\hllin{594\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{visit}\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{);}\\
+\hllin{595\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{visited\ }\hlopt{=\ }\hlstd{curr}\hlopt{;}\\
+\hllin{596\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{nodeStack}\hlopt{.}\hlstd{}\hlkwd{pop}\hlstd{}\hlopt{();}\\
+\hllin{597\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;}\\
+\hllin{598\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}\ }\hlstd{}\hlkwa{else\ }\Righttorque\\
+\hllin{599\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//右子树没有访问过，访问右子树}\\
+\hllin{600\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{curr}\hlopt{{-}$>$}\hlstd{rTag}\hlopt{)}\\
+\hllin{601\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{curr}\hlopt{{-}$>$}\hlstd{right}\hlopt{;}\\
+\hllin{602\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else}\\
+\hllin{603\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{curr\ }\hlopt{=\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;}\\
+\hllin{604\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{605\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{606\ }\hlstd{}\\
+\hllin{607\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 前序+中序建树\ {*}/}\hlstd{}\\
+\hllin{608\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{static\ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{}\hlkwd{CreateNodePreMiddle}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{vector}\hlopt{$<$}\Righttorque\\
+\hllin{609\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{Comparable}\hlopt{$>$\ \&}\hlstd{vec}\hlopt{,}\\
+\hllin{610\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{vector}\hlopt{$<$}\Righttorque\\
+\hllin{611\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Comparable}\hlopt{$>$\ \&}\hlstd{vecM}\hlopt{,}\\
+\hllin{612\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{start}\hlopt{,}\\
+\hllin{613\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{end}\hlopt{,}\\
+\hllin{614\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{startM}\hlopt{,}\\
+\hllin{615\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{endM}\hlopt{)\ \{}\\
+\hllin{616\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{auto\ }\hlstd{}\hlopt{{*}}\hlstd{root\ }\hlopt{=\ }\hlstd{}\hlkwa{new\ }\hlstd{}\hlkwd{BitNode}\hlstd{}\hlopt{(}\hlstd{vec}\hlopt{{[}}\hlstd{start}\hlopt{{]},\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{,\ }\Righttorque\\
+\hllin{617\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{);}\\
+\hllin{618\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{startM\ }\hlopt{==\ }\hlstd{endM\ }\hlopt{\&\&\ }\hlstd{start\ }\hlopt{==\ }\hlstd{end\ }\hlopt{\&\&\ }\hlstd{startM\ }\hlopt{==\ }\Righttorque\\
+\hllin{619\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{start}\hlopt{)}\\
+\hllin{620\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{root}\hlopt{;}\\
+\hllin{621\ }\hlstd{}\\
+\hllin{622\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{rootM}\hlopt{;}\\
+\hllin{623\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{rootM\ }\hlopt{=\ }\hlstd{startM}\hlopt{;\ }\hlstd{rootM\ }\hlopt{$<$=\ }\hlstd{endM}\hlopt{;\ ++}\hlstd{rootM}\hlopt{)}\\
+\hllin{624\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{vecM}\hlopt{{[}}\hlstd{rootM}\hlopt{{]}\ ==\ }\hlstd{vec}\hlopt{{[}}\hlstd{start}\hlopt{{]})}\\
+\hllin{625\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\hlstd{}\hlslc{//\ 找到中序的根节点}\\
+\hllin{626\ }\hlstd{}\\
+\hllin{627\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//\ \textbar root\textbar }\hlstd{\ \ \ }\hlslc{left}\hlstd{\ \ }\hlslc{\textbar }\hlstd{\ \ \ }\hlslc{right}\hlstd{\ \ }\hlslc{\textbar }\\
+\hllin{628\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//\ \textbar }\hlstd{\ \ \ }\hlslc{left}\hlstd{\ \ }\hlslc{\textbar root\textbar }\hlstd{\ \ \ }\hlslc{right}\hlstd{\ \ }\hlslc{\textbar }\\
+\hllin{629\ }\hlstd{}\\
+\hllin{630\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{rootM\ }\hlopt{$>$\ }\hlstd{startM}\hlopt{)}\\
+\hllin{631\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{root}\hlopt{{-}$>$}\hlstd{left\ }\hlopt{=\ }\hlstd{}\hlkwd{CreateNodePreMiddle}\hlstd{}\hlopt{(}\hlstd{vec}\hlopt{,\ }\hlstd{vecM}\hlopt{,\ }\Righttorque\\
+\hllin{632\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{start\ }\hlopt{+\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{start\ }\hlopt{+\ }\hlstd{rootM\ }\hlopt{{-}\ }\hlstd{startM}\hlopt{,\ }\hlstd{startM}\hlopt{,\ }\hlstd{rootM\ }\Righttorque\\
+\hllin{633\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{{-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{);}\\
+\hllin{634\ }\hlstd{}\\
+\hllin{635\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{rootM\ }\hlopt{$<$\ }\hlstd{endM}\hlopt{)}\\
+\hllin{636\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{root}\hlopt{{-}$>$}\hlstd{right\ }\hlopt{=\ }\hlstd{}\hlkwd{CreateNodePreMiddle}\hlstd{}\hlopt{(}\hlstd{vec}\hlopt{,\ }\hlstd{vecM}\hlopt{,\ }\Righttorque\\
+\hllin{637\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{start\ }\hlopt{+\ }\hlstd{rootM\ }\hlopt{{-}\ }\hlstd{startM\ }\hlopt{+\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{end}\hlopt{,\ }\hlstd{rootM\ }\hlopt{+\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{endM}\hlopt{)}\Righttorque\\
+\hllin{638\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{;}\\
+\hllin{639\ }\hlstd{}\\
+\hllin{640\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{root}\hlopt{;}\\
+\hllin{641\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{642\ }\hlstd{}\\
+\hllin{643\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlcom{/{*}{*}\ 中序+后序建树\ {*}/}\hlstd{}\\
+\hllin{644\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlkwb{static\ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{}\hlkwd{CreateNodeMiddlePost}\hlstd{}\hlopt{(}\hlstd{}\hlkwb{const\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{vector}\hlopt{$<$}\Righttorque\\
+\hllin{645\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{Comparable}\hlopt{$>$\ \&}\hlstd{vecM}\hlopt{,}\\
+\hllin{646\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlkwc{std}\hlstd{}\hlopt{::}\hlstd{vector}\hlopt{$<$}\Righttorque\\
+\hllin{647\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{Comparable}\hlopt{$>$\ \&}\hlstd{vec}\hlopt{,}\\
+\hllin{648\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\Righttorque\\
+\hllin{649\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{startM}\hlopt{,}\\
+\hllin{650\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{endM}\hlopt{,}\\
+\hllin{651\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{start}\hlopt{,}\\
+\hllin{652\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{end}\hlopt{)\ \{}\\
+\hllin{653\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{auto\ }\hlstd{}\hlopt{{*}}\hlstd{root\ }\hlopt{=\ }\hlstd{}\hlkwa{new\ }\hlstd{}\hlkwd{BitNode}\hlstd{}\hlopt{(}\hlstd{vec}\hlopt{{[}}\hlstd{end}\hlopt{{]},\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{);}\\
+\hllin{654\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{startM\ }\hlopt{==\ }\hlstd{endM\ }\hlopt{\&\&\ }\hlstd{start\ }\hlopt{==\ }\hlstd{end\ }\hlopt{\&\&\ }\hlstd{start\ }\hlopt{==\ }\Righttorque\\
+\hllin{655\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{startM}\hlopt{)}\\
+\hllin{656\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{root}\hlopt{;}\\
+\hllin{657\ }\hlstd{}\\
+\hllin{658\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwb{unsigned\ long\ }\hlstd{rootM}\hlopt{;}\\
+\hllin{659\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{for\ }\hlstd{}\hlopt{(}\hlstd{rootM\ }\hlopt{=\ }\hlstd{startM}\hlopt{;\ }\hlstd{rootM\ }\hlopt{$<$=\ }\hlstd{endM}\hlopt{;\ ++}\hlstd{rootM}\hlopt{)}\\
+\hllin{660\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{vecM}\hlopt{{[}}\hlstd{rootM}\hlopt{{]}\ ==\ }\hlstd{vec}\hlopt{{[}}\hlstd{end}\hlopt{{]})}\\
+\hllin{661\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{break}\hlstd{}\hlopt{;}\hlstd{}\hlslc{//\ 找到中序的根节点}\\
+\hllin{662\ }\hlstd{}\\
+\hllin{663\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//\ \textbar }\hlstd{\ \ \ }\hlslc{left}\hlstd{\ \ }\hlslc{\textbar }\hlstd{\ \ \ }\hlslc{right}\hlstd{\ \ }\hlslc{\textbar root\textbar }\\
+\hllin{664\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlslc{//\ \textbar }\hlstd{\ \ \ }\hlslc{left}\hlstd{\ \ }\hlslc{\textbar root\textbar }\hlstd{\ \ \ }\hlslc{right}\hlstd{\ \ }\hlslc{\textbar }\\
+\hllin{665\ }\hlstd{}\\
+\hllin{666\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{rootM\ }\hlopt{$>$\ }\hlstd{startM}\hlopt{)}\\
+\hllin{667\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{root}\hlopt{{-}$>$}\hlstd{left\ }\hlopt{=\ }\hlstd{}\hlkwd{CreateNodeMiddlePost}\hlstd{}\hlopt{(}\hlstd{vecM}\hlopt{,\ }\hlstd{vec}\hlopt{,\ }\Righttorque\\
+\hllin{668\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{startM}\hlopt{,\ }\hlstd{rootM\ }\hlopt{{-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{start}\hlopt{,\ }\hlstd{start\ }\hlopt{+\ (}\hlstd{rootM\ }\hlopt{{-}\ }\hlstd{}\hlnum{1\ }\hlstd{}\hlopt{{-}\ }\Righttorque\\
+\hllin{669\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{startM}\hlopt{));}\\
+\hllin{670\ }\hlstd{}\\
+\hllin{671\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{rootM\ }\hlopt{$<$\ }\hlstd{endM}\hlopt{)}\\
+\hllin{672\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{root}\hlopt{{-}$>$}\hlstd{right\ }\hlopt{=\ }\hlstd{}\hlkwd{CreateNodeMiddlePost}\hlstd{}\hlopt{(}\hlstd{vecM}\hlopt{,\ }\hlstd{vec}\hlopt{,\ }\Righttorque\\
+\hllin{673\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{rootM\ }\hlopt{+\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{,\ }\hlstd{endM}\hlopt{,\ }\hlstd{start\ }\hlopt{+\ }\hlstd{rootM\ }\hlopt{{-}\ }\hlstd{startM}\hlopt{,\ }\hlstd{end\ }\hlopt{{-}\ }\hlstd{}\hlnum{1}\hlstd{}\hlopt{)}\Righttorque\\
+\hllin{674\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlopt{;}\\
+\hllin{675\ }\hlstd{}\\
+\hllin{676\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{root}\hlopt{;}\\
+\hllin{677\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{678\ }\hlstd{}\\
+\hllin{679\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{BitNode\ }\hlopt{{*}}\hlstd{}\hlkwd{clone}\hlstd{}\hlopt{(}\hlstd{BitNode\ }\hlopt{{*}}\hlstd{t}\hlopt{)\ }\hlstd{}\hlkwb{const\ }\hlstd{}\hlopt{\{}\\
+\hllin{680\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{if\ }\hlstd{}\hlopt{(}\hlstd{t\ }\hlopt{==\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{)}\\
+\hllin{681\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{;}\\
+\hllin{682\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else\ if\ }\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{lTag\ }\hlopt{\&\&\ }\hlstd{t}\hlopt{{-}$>$}\hlstd{rTag}\hlopt{)}\\
+\hllin{683\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ new\ }\hlstd{}\hlkwd{BitNode}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{data}\hlopt{,\ }\hlstd{}\hlkwd{clone}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{left}\hlopt{),\ }\Righttorque\\
+\hllin{684\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwd{clone}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{right}\hlopt{));}\\
+\hllin{685\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else\ if\ }\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{lTag}\hlopt{)}\\
+\hllin{686\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ new\ }\hlstd{}\hlkwd{BitNode}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{data}\hlopt{,\ }\hlstd{}\hlkwd{clone}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{left}\hlopt{),\ }\Righttorque\\
+\hllin{687\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{);}\\
+\hllin{688\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{else\ if\ }\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{rTag}\hlopt{)}\\
+\hllin{689\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{}\hlkwa{return\ new\ }\hlstd{}\hlkwd{BitNode}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\hlstd{data}\hlopt{,\ }\hlstd{}\hlkwc{nullptr}\hlstd{}\hlopt{,\ }\hlstd{}\hlkwd{clone}\hlstd{}\hlopt{(}\hlstd{t}\hlopt{{-}$>$}\Righttorque\\
+\hllin{690\ }\hlstd{}\hlstd{\ \ \ \ \ \ \ \ \ \ \ \ }\hlstd{right}\hlopt{));}\\
+\hllin{691\ }\hlstd{}\hlstd{\ \ \ \ }\hlstd{}\hlopt{\}}\\
+\hllin{692\ }\hlstd{}\\
+\hllin{693\ }\hlstd{}\hlopt{\};}\\
+\hllin{694\ }\hlstd{}\\
+\hllin{695\ }\hlstd{}\hlppc{\#endif\ }\hlslc{//PROJECT\textunderscore BITTREE\textunderscore H}\\
+\hllin{696\ }\hlppc{}\hlstd{}\\
+\mbox{}
+\normalfont
+\normalsize
+\end {document}
+(* LaTeX generated by highlight 3.40, http://www.andre-simon.de/ *)
