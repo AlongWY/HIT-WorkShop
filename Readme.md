@@ -4,7 +4,7 @@
 
 + [大一年度项目](https://github.com/AlongWY/HIT-WorkShop/tree/master/Text2Scene)
 + [计算机图形学](https://github.com/AlongWY/HIT-WorkShop/tree/master/CG/ComputerGraphics)
-+ [计算机体系结构]https://github.com/AlongWY/HIT-WorkShop/tree/master/Arch/Arch-MIPS
++ [计算机体系结构](https://github.com/AlongWY/HIT-WorkShop/tree/master/Arch/Arch-MIPS)
 + [大数据开发环境](https://github.com/AlongWY/HIT-WorkShop/tree/master/BigData/Spark-cluster)
 + [深入理解计算机系统](https://github.com/AlongWY/HIT-WorkShop/tree/master/CSAPP)
 + [编译原理](https://github.com/AlongWY/HIT-WorkShop/tree/master/Compiler)
