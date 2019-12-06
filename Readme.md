@@ -1,4 +1,4 @@
-# HIT WorkShop
+# HIT WorkShop ![GitHub](https://img.shields.io/github/license/alongwy/latex-template?style=for-the-badge)
 
 本仓库整理收集了本人从进入[哈尔滨工业大学(HIT,Harbin Institute of Technology)](http://www.hit.edu.cn/)以来，大部分课程的实验以及实验报告，供学弟学妹们参考。
 
