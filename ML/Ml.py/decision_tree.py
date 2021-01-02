@@ -22,7 +22,22 @@ def calcGain(datasets: DataFrame, class_, ent=None):
     return ent - sum([group_size / num_samples * group_ent for group_size, group_ent in groups])
 
 
-def createTree(datasets: DataFrame, classes=None):
+def calcGainRatio(datasets: DataFrame, class_, ent=None):
+    if ent is None:
+        ent = calcEnt(datasets)
+    num_samples = len(datasets)
+    groups = datasets.groupby(class_).apply(lambda x: (len(x), calcEnt(x)))
+
+    # $Gain(D,a) = Ent(D) - ∑_{v ∈ V} |D^v| / |D| Ent(D^v)$
+    gain = ent - sum([group_size / num_samples * group_ent for group_size, group_ent in groups])
+
+    # $IV = - ∑^V_{v=1} |D^v| / |D| log2(|D^v| / |D|)$
+    IV = - sum([group_size / num_samples * log2(group_size / num_samples) for (group_size, grout_ent) in groups])
+    # $Gain(D,a) = Gain(D,a) / IV$
+    return gain / IV
+
+
+def createTree(datasets: DataFrame, gain=calcGain, classes=None):
     if classes is None:
         classes = datasets.columns[:-1]
 
@@ -35,13 +50,13 @@ def createTree(datasets: DataFrame, classes=None):
     if len(classes) == 1:  # 没有别的类别可以用来分割，取概率最大的分类标签
         return groups.size().idxmax()
 
-    class_gains = {class_: calcGain(datasets, class_) for class_ in classes}
+    class_gains = {class_: gain(datasets, class_) for class_ in classes}
     best_class, best_gains = max(class_gains.items(), key=lambda x: x[1])
 
     tree = {best_class: {}}
     search_classes = [key for key in classes if key != best_class]
     for sub_type, group in datasets.groupby(best_class):
-        sub_tree = createTree(group, search_classes)
+        sub_tree = createTree(group, classes=search_classes)
         tree[best_class][sub_type] = sub_tree
 
     return tree
@@ -50,8 +65,10 @@ def createTree(datasets: DataFrame, classes=None):
 def main():
     dataset = pandas.read_csv('data/2.0.csv')
 
-    tree = createTree(dataset)
-    print(json.dumps(tree, ensure_ascii=False, indent=2))
+    tree1 = createTree(dataset)
+    print(json.dumps(tree1, ensure_ascii=False, indent=2))
+    tree2 = createTree(dataset, gain=calcGainRatio)
+    print(json.dumps(tree2, ensure_ascii=False, indent=2))
 
 
 if __name__ == '__main__':
