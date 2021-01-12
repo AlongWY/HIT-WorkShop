@@ -17,7 +17,7 @@ Momentum = 0.9                        # 动量，为了快速收敛
 MAX_ITER = 10000                      # 最大迭代次数
 BATCH_SIZE = 25                       # 批次
 rng = MersenneTwister(1234);
-noise(x) = x + MAX_NOISE * randn(rng,Float64,size(x))
+noise(x) = x + MAX_NOISE * randn(rng, Float64, size(x))
 
 f(x) = sin(2π * x)
 
@@ -31,20 +31,20 @@ function Calc(X_r, Y_r, GetW::Function)
     # 训练数据集（train dataset）：用来构建机器学习模型
     # 验证数据集（validation dataset）：辅助构建模型，用于在构建过程中评估模型，为模型提供无偏估计，进而调整模型超参数
     # 测试数据集（test dataset）：用来评估训练好的最终模型的性能
-    train = 1:round(Integer,0.6MAX_DATA_NUM)
-    valid = round(Integer,0.6MAX_DATA_NUM)+1:round(Integer,0.8MAX_DATA_NUM)
-    test  = round(Integer,0.8MAX_DATA_NUM)+1:round(Integer,MAX_DATA_NUM)
+    train = 1:round(Integer, 0.6MAX_DATA_NUM)
+    valid = round(Integer, 0.6MAX_DATA_NUM) + 1:round(Integer, 0.8MAX_DATA_NUM)
+    test  = round(Integer, 0.8MAX_DATA_NUM) + 1:round(Integer, MAX_DATA_NUM)
 
-    X_train,Y_train = X_r[train,:],Y_r[train]
-    X_valid,Y_valid = X_r[valid,:],Y_r[valid]
+    X_train, Y_train = X_r[train,:], Y_r[train]
+    X_valid, Y_valid = X_r[valid,:], Y_r[valid]
     X_test, Y_test  = X_r[test,:], Y_r[test]
 
-    W_hat = zeros(MAX_ORDER + 1,1)
+    W_hat = zeros(MAX_ORDER + 1, 1)
     lnλ = 0 # 正则项系数的自然对数
-    err = E(Y_valid,X_valid * W_hat)
+    err = E(Y_valid, X_valid * W_hat)
     for t_lnλ in -30:0.01:10
-        W = GetW(X_train,Y_train,exp(t_lnλ))
-        new_error = E(Y_valid,X_valid * W)
+        W = GetW(X_train, Y_train, exp(t_lnλ))
+        new_error = E(Y_valid, X_valid * W)
         if new_error <= err
             err = new_error
             lnλ = t_lnλ
@@ -52,30 +52,30 @@ function Calc(X_r, Y_r, GetW::Function)
         end
         push!(λs, t_lnλ => new_error)
     end
-    return W_hat, lnλ, λs, E(Y_test,X_test * W_hat)
+    return W_hat, lnλ, λs, E(Y_test, X_test * W_hat)
 end
 
 # 用于绘图
-function W_Plot(X,Y,W)
+function W_Plot(X, Y, W)
     x_Plot = 0:0.01:1
-    X_Plot = reshape([xd^i for i in MAX_ORDER:-1:0 for xd in x_Plot],length(x_Plot),MAX_ORDER+1)
+    X_Plot = reshape([xd^i for i in MAX_ORDER:-1:0 for xd in x_Plot], length(x_Plot), MAX_ORDER + 1)
     Y_Plot = X_Plot * W
 
-    scatter(X,Y,label="data")
-    plot!(x_Plot,f.(x_Plot),label="real(x)")
-    plot!(x_Plot,Y_Plot,label="predict(x)")
+    scatter(X, Y, label="data")
+    plot!(x_Plot, f.(x_Plot), label="real(x)")
+    plot!(x_Plot, Y_Plot, label="predict(x)")
 end
 
 # 生成标签数据并打乱
-x_s = shuffle(range(0,stop=1,length=MAX_DATA_NUM))
-X_s = reshape([xd^i for i in MAX_ORDER:-1:0 for xd in x_s],length(x_s),MAX_ORDER+1)
+x_s = shuffle(range(0, stop=1, length=MAX_DATA_NUM))
+X_s = reshape([xd^i for i in MAX_ORDER:-1:0 for xd in x_s], length(x_s), MAX_ORDER + 1)
 Y_s = noise(f.(x_s))
 
-train = 1:round(Integer,0.8MAX_DATA_NUM)
-test = round(Integer,0.8MAX_DATA_NUM)+1:round(Integer,MAX_DATA_NUM)
+train = 1:round(Integer, 0.8MAX_DATA_NUM)
+test = round(Integer, 0.8MAX_DATA_NUM) + 1:round(Integer, MAX_DATA_NUM)
 
-X_train,Y_train = X_s[train,:],Y_s[train]
-X_test,Y_test = X_s[test,:],Y_s[test]
+X_train, Y_train = X_s[train,:], Y_s[train]
+X_test, Y_test = X_s[test,:], Y_s[test]
 
 # 解析解 无正则项
 # $E_{\hat{W}} = \frac{1}{length(X)} ∑ (y - x\hat{w}))^2$
@@ -87,7 +87,7 @@ X_test,Y_test = X_s[test,:],Y_s[test]
 W_hat = (X_train' * X_train)^-1 * X_train' * Y_train
 
 W_Plot(x_s,Y_s,W_hat)
-savefig("ResolveNoLambda:$(E(Y_test,X_test * W_hat))")
+savefig("ResolveNoLambda:$(E(Y_test, X_test * W_hat)).png")
 
 
 # 解析解 有正则项
@@ -97,22 +97,22 @@ savefig("ResolveNoLambda:$(E(Y_test,X_test * W_hat))")
 # $\frac{∂E_{\hat{W}}}{∂\hat{W}} = 0$
 #      ==> $\hat{W} = (X^T * X + λI )^{-1}X^Ty$
 
-GetW(X_train,Y_train,λ) = (X_train' * X_train + Matrix(I,MAX_ORDER + 1,MAX_ORDER + 1) * λ)^-1 * X_train' * Y_train
+GetW(X_train,Y_train,λ) = (X_train' * X_train + Matrix(I, MAX_ORDER + 1, MAX_ORDER + 1) * λ)^-1 * X_train' * Y_train
 
-W_hat,lnλ,λs,err = Calc(X_s,Y_s,GetW)
+W_hat, lnλ, λs, err = Calc(X_s, Y_s, GetW)
 
 plot([x[1] for x in λs],[y[2] for y in λs])
-savefig("ResolveWithLambda-lambda-err")
+savefig("ResolveWithLambda-lambda-err.png")
 W_Plot(x_s,Y_s,W_hat)
-savefig("ResolveWithLambda:$(E(Y_test,X_test * W_hat))")
+savefig("ResolveWithLambda:$(E(Y_test, X_test * W_hat)).png")
 
 # 梯度下降 无正则项
 # $\hat{W} = \hat{W} - α\frac{∂E_{\hat{W}}}{∂\hat{W}}$
-W_hat = ones(MAX_ORDER+1)
-v = zeros(MAX_ORDER+1)
+W_hat = ones(MAX_ORDER + 1)
+v = zeros(MAX_ORDER + 1)
 
 for i = 1:MAX_ITER
-    global W_hat,v
+    global W_hat, v
     ∂E_W = (X_train' * (X_train * W_hat - Y_train)) * (2 / MAX_DATA_NUM)
     lr_i = α / (1 + lr_decay * i)
     v = Momentum * v - lr_i * ∂E_W
@@ -120,14 +120,14 @@ for i = 1:MAX_ITER
 end
 
 W_Plot(x_s,Y_s,W_hat)
-savefig("SGDNoLambda:$(E(Y_test,X_test * W_hat))")
+savefig("SGDNoLambda:$(E(Y_test, X_test * W_hat)).png")
 
 # 梯度下降 有正则项
 # $E_{\hat{W}} = \frac{1}{length(X)} [ ∑(x\hat{w} -y)^2 + λ∑\hat{w}^2 ]$
 # $E_{\hat{W}} = \frac{1}{length(X)} [ (X\hat{W} - y)^T(X\hat{W} - y) + λ\hat{W}^T * \hat{W}]$
 # $\frac{∂E_{\hat{W}}}{∂\hat{W}} = \frac{1}{length(X)} [2X^T(X\hat{W} - y) + 2λ\hat{W}]$
 
-function GetW(X_train,Y_train,λ)
+function GetW(X_train, Y_train, λ)
     W_hat = zeros(MAX_ORDER + 1)
     v = zeros(MAX_ORDER + 1)
 
@@ -140,22 +140,22 @@ function GetW(X_train,Y_train,λ)
     return W_hat
 end
 
-W_hat,lnλ,λs,err = Calc(X_s,Y_s,GetW)
+W_hat, lnλ, λs, err = Calc(X_s, Y_s, GetW)
 
 plot([x[1] for x in λs],[y[2] for y in λs])
-savefig("SGDWithLambda-lambda-err")
+savefig("SGDWithLambda-lambda-err.png")
 W_Plot(x_s,Y_s,W_hat)
-savefig("SGDWithLambda:$(E(Y_test,X_test * W_hat))")
+savefig("SGDWithLambda:$(E(Y_test, X_test * W_hat)).png")
 
 # 随机梯度下降 无正则项
 # $\hat{W} = \hat{W} - α\frac{∂E_{\hat{W}}}{∂\hat{W}}$
 
-W_hat = zeros(MAX_ORDER+1)
-v = zeros(MAX_ORDER+1)
+W_hat = zeros(MAX_ORDER + 1)
+v = zeros(MAX_ORDER + 1)
 
 for i = 1:MAX_ITER
-    global W_hat,v
-    p = rand(1:length(Y_train),BATCH_SIZE)
+    global W_hat, v
+    p = rand(1:length(Y_train), BATCH_SIZE)
     ∂E_W = (X_train[p,:]' * (X_train[p,:] * W_hat - Y_train[p])) * (2 / BATCH_SIZE)
     lr_i = α / (1 + lr_decay * i)
     v = Momentum * v - lr_i * ∂E_W
@@ -170,12 +170,12 @@ E(Y_test,X_test * W_hat)
 # $E_{\hat{W}} = \frac{1}{length(X)} [ (X\hat{W} - y)^T(X\hat{W} - y) + λ\hat{W}^T * \hat{W}]$
 # $\frac{∂E_{\hat{W}}}{∂\hat{W}} = \frac{1}{length(X)} [2X^T(X\hat{W} - y) + 2λ\hat{W}]$
 
-function GetW(X_train,Y_train,λ)
-    W_hat = zeros(MAX_ORDER+1)
-    v = zeros(MAX_ORDER+1)
+function GetW(X_train, Y_train, λ)
+    W_hat = zeros(MAX_ORDER + 1)
+    v = zeros(MAX_ORDER + 1)
 
     for i = 1:MAX_ITER
-        p = rand(1:length(Y_train),BATCH_SIZE)
+        p = rand(1:length(Y_train), BATCH_SIZE)
         ∂E_W = (X_train[p,:]' * (X_train[p,:] * W_hat - Y_train[p]) + λ * W_hat) * (2 / BATCH_SIZE)
         lr_i = α / (1 + lr_decay * i)
         v = Momentum * v - lr_i * ∂E_W
@@ -184,7 +184,7 @@ function GetW(X_train,Y_train,λ)
     return W_hat
 end
 
-W_hat,lnλ,λs,err = Calc(X_s,Y_s,GetW)
+W_hat, lnλ, λs, err = Calc(X_s, Y_s, GetW)
 
 plot([x[1] for x in λs],[y[2] for y in λs])
 W_Plot(x_s,Y_s,W_hat)
@@ -196,13 +196,13 @@ W_Plot(x_s,Y_s,W_hat)
 
 A = X_train' * X_train
 b = X_train' * Y_train
-W_hat = ones(MAX_ORDER+1)
+W_hat = ones(MAX_ORDER + 1)
 
 rk = b - A * W_hat
 pk = rk
 
 while true
-    global W_hat,rk,pk
+    global W_hat, rk, pk
     αk = rk' * rk / (pk' * A * pk)
     W_hat = W_hat + αk * pk
     rk2 = rk -  αk * A * pk
@@ -220,7 +220,7 @@ while true
 end
 
 W_Plot(x_s,Y_s,W_hat)
-savefig("ConjugationNoLambda:$(E(Y_test,X_test * W_hat))")
+savefig("ConjugationNoLambda:$(E(Y_test, X_test * W_hat)).png")
 
 # 共轭梯度下降 有正则项
 # $E_{\hat{W}} = \frac{1}{length(X)} [ ∑(x\hat{w} -y)^2 + λ∑\hat{w}^2 ]$
@@ -231,10 +231,10 @@ savefig("ConjugationNoLambda:$(E(Y_test,X_test * W_hat))")
 #      ==> $(X^T * X + λI ) \hat{W} = X^Ty$
 #                    $A  X  = b$
 
-function GetW(X_train,Y_train,λ)
-    A = X_train' * X_train + Matrix(I,MAX_ORDER + 1,MAX_ORDER + 1) * λ
+function GetW(X_train, Y_train, λ)
+    A = X_train' * X_train + Matrix(I, MAX_ORDER + 1, MAX_ORDER + 1) * λ
     b = X_train' * Y_train
-    W_hat = ones(MAX_ORDER+1)
+    W_hat = ones(MAX_ORDER + 1)
 
     rk = b - A * W_hat
     pk = rk
@@ -258,9 +258,9 @@ function GetW(X_train,Y_train,λ)
     return W_hat
 end
 
-W_hat,lnλ,λs,err = Calc(X_s,Y_s,GetW)
+W_hat, lnλ, λs, err = Calc(X_s, Y_s, GetW)
 
 plot([x[1] for x in λs],[y[2] for y in λs])
-savefig("ConjugationWithLambda-Lambda-err")
+savefig("ConjugationWithLambda-Lambda-err.png")
 W_Plot(x_s,Y_s,W_hat)
-savefig("ConjugationWithLambda:$(E(Y_test,X_test * W_hat))")
+savefig("ConjugationWithLambda:$(E(Y_test, X_test * W_hat)).png")
