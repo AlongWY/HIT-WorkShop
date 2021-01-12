@@ -8,7 +8,7 @@ from pandas import DataFrame
 def calcEnt(datasets: DataFrame):
     num_samples = len(datasets)
     label_counts = datasets.groupby(datasets.columns[-1]).size()
-    # $ Ent(D) = - ∑_{p ∈ P} p log_2(p) $
+    # $ Ent(D) = - \sum_{p \in P} p \log_2(p) $
     return - sum([p * log2(p) / num_samples for p in label_counts])
 
 
@@ -18,7 +18,7 @@ def calcGain(datasets: DataFrame, class_, ent=None):
     num_samples = len(datasets)
     groups = datasets.groupby(class_).apply(lambda x: (len(x), calcEnt(x)))
 
-    # $Gain(D,a) = Ent(D) - ∑_{v ∈ V} |D^v| / |D| Ent(D^v)$
+    # $Gain(D,a) = Ent(D) - \sum_{v \in V} \frac{ |D^v| }{ |D| Ent(D^v) }$
     return ent - sum([group_size / num_samples * group_ent for group_size, group_ent in groups])
 
 
@@ -28,12 +28,12 @@ def calcGainRatio(datasets: DataFrame, class_, ent=None):
     num_samples = len(datasets)
     groups = datasets.groupby(class_).apply(lambda x: (len(x), calcEnt(x)))
 
-    # $Gain(D,a) = Ent(D) - ∑_{v ∈ V} |D^v| / |D| Ent(D^v)$
+    # $Gain(D,a) = Ent(D) - \sum_{v \in V} \frac{ |D^v| }{ |D| Ent(D^v) }$
     gain = ent - sum([group_size / num_samples * group_ent for group_size, group_ent in groups])
 
-    # $IV = - ∑^V_{v=1} |D^v| / |D| log2(|D^v| / |D|)$
+    # $IV = - \sum^V_{v=1} \frac{ |D^v| }{ |D| } log2( \frac{ |D^v| }{ |D| })$
     IV = - sum([group_size / num_samples * log2(group_size / num_samples) for (group_size, grout_ent) in groups])
-    # $Gain(D,a) = Gain(D,a) / IV$
+    # $Gain(D,a) = \frac{ Gain(D,a) }{ IV }$
     return gain / IV
 
 

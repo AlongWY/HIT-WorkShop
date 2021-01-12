@@ -1,0 +1,92 @@
+\documentclass{ML}
+\usepackage{amsthm}
+\usepackage{fontspec}
+\usepackage[ruled,linesnumbered]{algorithm2e}
+
+\setmonofont{Iosevka Nerd Font Mono}
+
+\newtheorem{theorem}{定理}
+% \newtheorem{proof}{证明}
+
+% 姓名，学号
+\infoauthor{冯云龙}{20s103221}
+
+% 课程类型，实验名称
+\infoexp{选修}{决策树ID3算法}
+
+\begin{document}
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section{实验目的}
+
+\begin{enumerate}
+	\item 掌握最小二乘法求解(无惩罚项的损失函数)
+	\item 掌握加惩罚项 (2范数) 的损失函数优化
+	\item 掌握梯度下降法
+	\item 掌握共轭梯度法
+	\item 理解过拟合
+	\item 掌握克服过拟合的方法(加惩罚项、增加样本)
+\end{enumerate}
+
+\section{实验要求及实验环境}
+
+\subsection{实验要求}
+
+\begin{enumerate}
+	\item 生成数据、加入噪声
+	\item 用高阶多项式拟合曲线
+	\item 用解析解求解两种loss的最优解(无正则项和有正则项)
+	\item 优化方法求解最优解(梯度下降、共轭梯度)
+	\item 用不同数据集，不同超参数，不同的多项式阶数，比较实验效果
+\end{enumerate}
+
+\subsection{实验环境}
+
+\begin{itemize}
+	\item 操作系统：Manjaro Linux x64
+	\item 编程语言：Python
+	\item IDE：PyCharm
+\end{itemize}
+
+\section{设计思想}
+
+
+\subsection{算法原理}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{ccc}
+		\\ \hline
+		符号                          & 释义           & 注释        \\ \hline
+		\(X = x^{1},x^{2},…,x^{m}\)   & 样本集         &             \\
+		\(x^i = x_1^i,x_2^i,…,x_n^i\) & 样本属性集     & 通常会包含b \\
+		\(Y = y^{1},y^{2},…,y^{m}\)   & 标签集         &             \\
+		\(W = w^{1},w^{2},…,w^{n}\)   & 依赖关系描述集 &
+		\\ \hline
+	\end{tabular}
+\end{table}
+
+\subsection{算法的实现}
+
+
+\section{实验结果与分析}
+
+
+\section{结论}
+
+
+% \begin{thebibliography}{0}
+%     \addcontentsline{toc}{section}{参考文献}
+%     \bibitem{共轭梯度法} 维基百科，{\it \href{https://zh.wikipedia.org/wiki/共轭梯度法}{共轭梯度法词条}}
+% \end{thebibliography}
+
+\appendix
+
+\section{源代码}
+
+\inputminted[breaklines=true,frame=lines,mathescape=true]{python}{../decision_tree.py}
+
+\end{document}
